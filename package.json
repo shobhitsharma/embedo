@@ -5,7 +5,9 @@
   "main": "embedder.js",
   "scripts": {
     "test": "mocha",
-    "start": "python -m SimpleHTTPServer"
+    "prestart": "npm install",
+    "start": "python -m SimpleHTTPServer",
+    "build": "uglifyjs embedder.js --compress drop_console=true --mangle --screw-ie8 --stats --o=embedder.min.js"
   },
   "repository": {
     "type": "git",
@@ -25,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/shobhitsharma/embedder/issues"
   },
-  "homepage": "https://github.com/shobhitsharma/embedder"
+  "homepage": "https://github.com/shobhitsharma/embedder",
+  "devDependencies": {
+    "uglify-js": "2.7.4"
+  }
 }
