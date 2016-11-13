@@ -31,25 +31,21 @@
 
   Embedder.defaults = {
     FACEBOOK: {
-      color: '#3b5999',
       SDK: 'https://connect.facebook.net/en_US/sdk.js',
       oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
       REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i
     },
     TWITTER: {
-      color: '#55acee',
       SDK: 'https://platform.twitter.com/widgets.js',
       oEmbed: 'https://publish.twitter.com/oembed',
       REGEX: /^http[s]*:\/\/[www.]*twitter\.com.*/i
     },
     INSTAGRAM: {
-      color: '#3f729b',
       SDK: 'https://platform.instagram.com/en_US/embeds.js',
       oEmbed: 'https://api.instagram.com/oembed',
       REGEX: /^http[s]*:\/\/[www.]*instagram\.com.*/i
     },
     YOUTUBE: {
-      color: '#cd201f',
       SDK: null,
       oEmbed: 'https://www.youtube.com/embed/',
       REGEX: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/
