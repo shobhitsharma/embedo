@@ -290,18 +290,6 @@
   };
 
   /**
-   * @method Initialize auth component
-   *
-   * @name init
-   * @function
-   * @param {object} options Optional parameters.
-   * @return callback
-   */
-  Embedder.prototype.resize = function (options) {
-    console.log('Embedder Loaded..', options);
-  };
-
-  /**
    *
    *
    * @param {any} source
