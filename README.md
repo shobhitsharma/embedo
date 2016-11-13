@@ -1,4 +1,4 @@
-embedder [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)](https://travis-ci.org/w0rm/gulp-svgstore)
+embedder [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)](https://travis-ci.org/shobhitsharma/embedder)
 =============
 
 <img align="right" width="100" height="100"
