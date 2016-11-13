@@ -100,7 +100,8 @@
 
         element.addEventListener('DOMSubtreeModified', function () {
           automagic(element, {
-            scale: true
+            scale: true,
+            frame: 'fb_iframe_widget'
           });
         });
       });
@@ -136,13 +137,17 @@
         element.appendChild(generateEmbed('twitter', content.html));
 
         handleSDKLoader('twitter', function () {
-          window.twttr.widgets.load();
+          window.twttr.widgets.load(element);
         });
 
         element.addEventListener('DOMSubtreeModified', function () {
           automagic(element, {
             scale: true
           });
+        });
+
+        automagic(element, {
+          scale: true
         });
       });
     },
@@ -184,7 +189,7 @@
         element.addEventListener('DOMSubtreeModified', function () {
           automagic(element, {
             scale: true,
-            iframe: true
+            frame: 'iframe'
           });
         });
       });
@@ -470,18 +475,22 @@
     options = options || {};
 
     var gutterX, gutterY, translate;
-    var embeded = container.querySelectorAll('[data-embed]')[0];
+    var embeded = options.frame ?
+      container.querySelectorAll(options.frame)[0] :
+      container.querySelectorAll('[data-embed]')[0];
+
+    if (!embeded) {
+      return;
+    }
+
     var containerWidth = parseInt(options.width || container.style.width || container.offsetWidth);
     var containerHeight = parseInt(options.height || container.style.height || container.offsetHeight);
-    var embeddedWidth = embeded.offsetWidth;
-    var embeddedHeight = embeded.offsetHeight;
+    var embeddedWidth = parseInt(embeded.style.maxWidth || embeded.style.width || embeded.offsetWidth);
+    var embeddedHeight = parseInt(embeded.style.maxHeight || embeded.style.height || embeded.offsetHeight);
 
-    container.style.width = containerWidth + 'px';
-
-    if (options.iframe) {
-      var iframe = embeded.querySelectorAll('iframe')[0];
-      embeddedWidth = iframe.offsetWidth;
-      embeddedHeight = iframe.offsetHeight;
+    if (!options.frame) {
+      embeddedWidth = embeded.firstChild.offsetWidth;
+      embeddedHeight = embeded.firstChild.offsetHeight;
     }
 
     gutterX = (containerWidth - embeddedWidth) / 2;
