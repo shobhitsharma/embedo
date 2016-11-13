@@ -31,20 +31,28 @@
 
   Embedder.defaults = {
     FACEBOOK: {
+      color: '#3b5999',
       SDK: '//connect.facebook.net/es_LA/sdk.js',
-      oEmbed: ''
+      oEmbed: 'https://www.facebook.com/plugins/facebook/oembed.json',
+      REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i
     },
     TWITTER: {
+      color: '#55acee',
       SDK: '//platform.twitter.com/widgets.js',
-      oEmbed: ''
+      oEmbed: 'https://publish.twitter.com/oembed',
+      REGEX: /^http[s]*:\/\/[www.]*twitter\.com.*/i
     },
     INSTAGRAM: {
+      color: '#3f729b',
       SDK: '//platform.instagram.com/en_US/embeds.js',
-      oEmbed: ''
+      oEmbed: 'https://api.instagram.com/oembed',
+      REGEX: /^http[s]*:\/\/[www.]*instagram\.com.*/i
     },
     YOUTUBE: {
+      color: '#cd201f',
       SDK: null,
-      oEmbed: ''
+      oEmbed: 'https://www.youtube.com/embed/',
+      REGEX: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/
     }
   };
 
@@ -65,13 +73,24 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    facebook: function (url, callback) {
-      fetch(buildURL(url, this.options), function (error, response) {
-        if (error) {
-          return console.error(error);
-        }
+    facebook: function (url, options, callback) {
+      var embed_uri = Embedder.defaults.FACEBOOK.oEmbed;
+      var query = {
+        url: encodeURI(url),
+        omitscript: true
+      };
 
-        // Do Something
+      if (options.width && parseInt(options.width) > 0) {
+        query.maxwidth = options.width;
+      }
+
+      embed_uri += '?' + toQueryString(query);
+
+      fetch(embed_uri, function (error, content) {
+        if (error) {
+          return callback(error);
+        }
+        callback(null, content.html);
       });
     },
 
@@ -83,13 +102,24 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    twitter: function (url, callback) {
-      fetch(buildURL(url, this.options), function (error, response) {
-        if (error) {
-          return console.error(error);
-        }
+    twitter: function (url, options, callback) {
+      var embed_uri = Embedder.defaults.TWITTER.oEmbed;
+      var query = {
+        url: encodeURI(url),
+        omit_script: 1
+      };
 
-        // Do Something
+      if (options.width && parseInt(options.width) > 0) {
+        query.maxwidth = options.width;
+      }
+
+      embed_uri += '?' + toQueryString(query);
+
+      fetch(embed_uri, function (error, content) {
+        if (error) {
+          return callback(error);
+        }
+        callback(null, content.html);
       });
     },
 
@@ -101,13 +131,25 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    instagram: function (url, callback) {
-      fetch(buildURL(url, this.options), function (error, response) {
-        if (error) {
-          return console.error(error);
-        }
+    instagram: function (url, options, callback) {
+      var embed_uri = Embedder.defaults.INSTAGRAM.oEmbed;
+      var query = {
+        url: encodeURI(url),
+        omitscript: true,
+        hidecaption: true
+      };
 
-        // Do Something
+      if (options.width && parseInt(options.width) > 0) {
+        query.maxwidth = options.width;
+      }
+
+      embed_uri += '?' + toQueryString(query);
+
+      fetch(embed_uri, function (error, content) {
+        if (error) {
+          return callback(error);
+        }
+        callback(null, content.html);
       });
     },
 
@@ -119,15 +161,39 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    youtube: function () {
-      fetch(buildURL(url, this.options), function (error, response) {
-        if (error) {
-          return console.error(error);
-        }
+    youtube: function (url, options, callback) {
+      function getYTVideoID(url) {
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (match && match[7].length == 11) ? match[7] : false;
+      }
 
-        // Do Something
-      });
-    },
+      var embed_uri = Embedder.defaults.YOUTUBE.oEmbed;
+      var video_id = '';
+      var query = {
+        url: encodeURI(url),
+        modestbranding: 1,
+        autohide: 1,
+        showinfo: 0,
+        controls: 0
+      };
+
+      if (options.width && parseInt(options.width || 0) > 10) {
+        query.width = options.width;
+      }
+
+      if (options.height && parseInt(options.height || 0) > 10) {
+        query.height = options.height;
+      }
+
+      if (!getYTVideoID(url)) {
+        return callback(new Error('Unable to detect Youtube video id.'));
+      }
+
+      embed_uri += video_id + '?' + toQueryString(query);
+
+      callback(null, '<iframe src="' + embed_uri + '" frameborder="0" allowtransparency="true"></iframe>');
+    }
 
   };
 
@@ -141,9 +207,9 @@
    */
   Embedder.prototype.init = function (options) {
     console.log('Embedder Initialized..', options);
-    document.body.appendChild(buildSDK(Embedder.defaults.FACEBOOK.SDK));
-    document.body.appendChild(buildSDK(Embedder.defaults.TWITTER.SDK));
-    document.body.appendChild(buildSDK(Embedder.defaults.INSTAGRAM.SDK));
+    document.body.appendChild(generateSDK(Embedder.defaults.FACEBOOK.SDK));
+    document.body.appendChild(generateSDK(Embedder.defaults.TWITTER.SDK));
+    document.body.appendChild(generateSDK(Embedder.defaults.INSTAGRAM.SDK));
   };
 
   /**
@@ -154,9 +220,37 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedder.prototype.load = function (options) {
-    console.log('Embedder Loaded..', options);
+  Embedder.prototype.load = function (element, url, options) {
+    console.log('Embedder Loaded..', element, url, options);
+    options = options || {};
 
+    if (!element || !validateElement(element)) {
+      console.error('`element` is either missing or invalid');
+      return;
+    }
+
+    var source = getURLSource(url);
+
+    if (!source) {
+      console.error(new Error('Invalid or Unsupported URL'));
+      return;
+    }
+
+    this[source](url, options, function (err, html) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      element.innerHTML = html;
+    });
+
+    function twttr_check() {
+      if (window.twttr) {
+        window.twttr.widgets.load();
+      } else {
+        setTimeout(twttr_check, 100);
+      }
+    }
   };
 
   /**
@@ -172,13 +266,7 @@
 
   };
 
-  function buildURL(url, options) {
-    var custom_url = '';
-
-    return custom_url;
-  }
-
-  function buildSDK(source) {
+  function generateSDK(source) {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = encodeURI(source);
@@ -187,6 +275,35 @@
     script.setAttribute('charset', 'utf-8');
 
     return script;
+  }
+
+  function validateElement(obj) {
+    try {
+      return obj instanceof HTMLElement;
+    } catch (e) {
+      return (typeof obj === "object") &&
+        (obj.nodeType === 1) && (typeof obj.style === "object") &&
+        (typeof obj.ownerDocument === "object");
+    }
+  }
+
+  function getURLSource(url) {
+    var type;
+    var urlRegExp = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+
+    if (!urlRegExp.test(url)) {
+      return;
+    }
+
+    if (url.match(Embedder.defaults.FACEBOOK.REGEX)) {
+      return 'facebook';
+    } else if (url.match(Embedder.defaults.TWITTER.REGEX)) {
+      return 'twitter';
+    } else if (url.match(Embedder.defaults.INSTAGRAM.REGEX)) {
+      return 'instagram';
+    } else if (url.match(Embedder.defaults.YOUTUBE.REGEX)) {
+      return 'youtube';
+    }
   }
 
   function literalize(value) {
@@ -201,6 +318,16 @@
     return ((value in props) ? props[value] : value);
   }
 
+  function toQueryString(obj) {
+    var parts = [];
+    for (var i in obj) {
+      if (obj.hasOwnProperty(i)) {
+        parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]));
+      }
+    }
+    return parts.join('&');
+  }
+
   function fetch(url, options, callback) {
     if (typeof options === 'function') {
       callback = options;
@@ -208,37 +335,17 @@
     }
     options = options || {};
 
-    var http = new XMLHttpRequest();
-    var request = {
-      type: options.type || 'GET',
-      contentType: options.contentType || 'application/json',
-      query: options.formData || options.params || ''
+    var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+    window[callbackName] = function (data) {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      callback(null, data);
     };
 
-    http.open(request.type, url);
-    http.setRequestHeader('Accept', 'application/json, text/javascript, */*; q=0.01');
-    http.setRequestHeader('Content-Type', request.contentType);
-
-    http.onload = function () {
-      if (http.status >= 200 && http.status < 300) {
-        var responseText = http.responseText;
-        if (responseText) {
-          var message = '';
-          try {
-            message = JSON.parse(responseText);
-          } catch (e) {
-            message = responseText;
-          }
-          callback(null, message);
-        } else {
-          callback(new Error('invalid_response_type', 400));
-        }
-      } else if (http.status < 200 || http.status >= 300) {
-        callback(new Error(http.responseText || http.statusText, http.status));
-      }
-    };
-
-    http.send(request.query);
+    var script = document.createElement('script');
+    script.type = 'application/javascript';
+    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+    document.body.appendChild(script);
   }
 
   return Embedder;

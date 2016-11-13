@@ -38,12 +38,27 @@
 			-ms-box-sizing: border-box;
 			box-sizing: border-box;
 		}
+
+    main {
+      display: block;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    main > div {
+      margin: 0 auto;
+      text-align: center;
+    }
 	</style>
 </head>
 
 <body>
   <main>
     <h1>Embedder Test</h1>
+    <div id="twttr-tweet"></div>
+    <div id="fb-post"></div>
+    <div id="instgrm-photo"></div>
+    <div id="yt-video"></div>
   </main>
   <!-- Here is how embedder.js get declared on top of your implementation -->
 	<script src="../embedder.js"></script>
