@@ -1,4 +1,4 @@
-embedo [![Build Status](https://api.travis-ci.org/shobhitsharma/embedo.svg)](https://travis-ci.org/shobhitsharma/embedo)
+embedo [![Build Status](https://api.travis-ci.org/shobhitsharma/embedo.svg)](https://travis-ci.org/shobhitsharma/embedo) [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
 =============
 
 <img align="right" width="100" height="100"
