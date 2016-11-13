@@ -1,0 +1,26 @@
+{
+  "name": "embedo",
+  "description": "Social media posts embedder",
+  "main": "embedo.js",
+  "authors": [
+    "Shobhit Sharma <hi@shobh.it>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "embed",
+    "embedo",
+    "twitter",
+    "embed",
+    "facebook",
+    "embed",
+    "oemebed"
+  ],
+  "homepage": "https://github.com/shobhitsharma/embedder",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
