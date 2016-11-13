@@ -1,0 +1,29 @@
+{
+  "name": "embedder",
+  "version": "0.1.0",
+  "description": "Social media posts embedder",
+  "main": "embedder.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "python -m SimpleHTTPServer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shobhitsharma/embedder.git"
+  },
+  "keywords": [
+    "embed",
+    "embedder",
+    "twitter",
+    "embed",
+    "facebook",
+    "embed",
+    "oemebed"
+  ],
+  "author": "Shobhit Sharma <hi@shobh.it>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shobhitsharma/embedder/issues"
+  },
+  "homepage": "https://github.com/shobhitsharma/embedder"
+}
