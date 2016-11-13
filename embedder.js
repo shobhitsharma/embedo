@@ -91,10 +91,17 @@
           console.error(error);
           return;
         }
-        element.innerHTML = content.html;
+
+        element.appendChild(generateEmbed('facebook', content.html));
 
         handleSDKLoader('facebook', function () {
           window.FB.XFBML.parse(element);
+        });
+
+        element.addEventListener('DOMSubtreeModified', function () {
+          automagic(element, {
+            scale: true
+          });
         });
       });
     },
@@ -120,15 +127,22 @@
 
       embed_uri += '?' + toQueryString(query);
 
-      fetch(embed_uri, function (error, data) {
+      fetch(embed_uri, function (error, content) {
         if (error) {
           console.error(error);
           return;
         }
-        element.innerHTML = data.html;
+
+        element.appendChild(generateEmbed('twitter', content.html));
 
         handleSDKLoader('twitter', function () {
-          window.twttr.widgets.load(element);
+          window.twttr.widgets.load();
+        });
+
+        element.addEventListener('DOMSubtreeModified', function () {
+          automagic(element, {
+            scale: true
+          });
         });
       });
     },
@@ -160,10 +174,18 @@
           console.error(error);
           return;
         }
-        element.innerHTML = content.html;
+
+        element.appendChild(generateEmbed('instagram', content.html));
 
         handleSDKLoader('instagram', function () {
           window.instgrm.Embeds.process();
+        });
+
+        element.addEventListener('DOMSubtreeModified', function () {
+          automagic(element, {
+            scale: true,
+            iframe: true
+          });
         });
       });
     },
@@ -202,9 +224,11 @@
 
       embed_uri += video_id + '?' + toQueryString(query);
 
-      element.innerHTML = '<iframe src="' + embed_uri + '" ' +
+      element.appendChild(generateEmbed('youtube',
+        '<iframe src="' + embed_uri + '" ' +
         'width="' + width + '" height="' + height + '"' +
-        'frameborder="0" allowtransparency="true"></iframe>';
+        'frameborder="0" allowtransparency="true"></iframe>'
+      ));
     }
 
   };
@@ -408,6 +432,75 @@
     script.async = true;
     script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
     document.body.appendChild(script);
+  }
+
+  /**
+   *
+   *
+   * @param {any} html
+   * @returns
+   */
+  function generateEmbed(source, html) {
+    var container = document.createElement('div');
+    container.setAttribute('data-embed', source);
+    container.innerHTML = html;
+    return container;
+  }
+
+  /**
+   *
+   *
+   * @param {any} el
+   * @param {any} className
+   * @returns
+   */
+  function findAncestor(el, className) {
+    while ((el = el.parentElement) && !el.classList.contains(className));
+    return el;
+  }
+
+  /**
+   *
+   *
+   * @param {any} parent
+   * @param {any} element
+   * @param {any} options
+   */
+  function automagic(container, options) {
+    options = options || {};
+
+    var gutterX, gutterY, translate;
+    var embeded = container.querySelectorAll('[data-embed]')[0];
+    var containerWidth = parseInt(options.width || container.style.width || container.offsetWidth);
+    var containerHeight = parseInt(options.height || container.style.height || container.offsetHeight);
+    var embeddedWidth = embeded.offsetWidth;
+    var embeddedHeight = embeded.offsetHeight;
+
+    container.style.width = containerWidth + 'px';
+
+    if (options.iframe) {
+      var iframe = embeded.querySelectorAll('iframe')[0];
+      embeddedWidth = iframe.offsetWidth;
+      embeddedHeight = iframe.offsetHeight;
+    }
+
+    gutterX = (containerWidth - embeddedWidth) / 2;
+    gutterY = (containerHeight - embeddedHeight) / 2;
+
+    translate = 'translate(' + gutterX + 'px,' + gutterY + 'px)';
+
+    if (options.scale) {
+      if (embeded.offsetHeight > containerHeight) {
+        var scale = containerHeight / embeded.offsetHeight;
+        translate += ' scale(' + scale + ')';
+      }
+    }
+
+    embeded.style.webkitTransform = translate;
+    embeded.style.MozTransform = translate;
+    embeded.style.msTransform = translate;
+    embeded.style.OTransform = translate;
+    embeded.style.transform = translate;
   }
 
   return Embedder;
