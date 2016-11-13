@@ -1,7 +1,7 @@
 embedder [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)](https://travis-ci.org/w0rm/gulp-svgstore)
 =============
 
-<img align="right" width="150" height="150"
+<img align="right" width="100" height="100"
      title="Embedder"
      src="https://s16.postimg.org/5aauaeih1/embed.png" style="margin-right: 20px;">
 
