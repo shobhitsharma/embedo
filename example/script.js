@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // Loads youtube video
   embedder.load(
     document.getElementById('yt-video'),
-    'https://www.youtube.com/embed/8pTEmbeENF4'
+    'https://www.youtube.com/embed/8pTEmbeENF4',
+    {
+      width: 640,
+      height: 480
+    }
   );
 });
