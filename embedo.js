@@ -1,5 +1,5 @@
 /**
- * @file Embedder JS
+ * @file Embedo JS
  *
  * @author Shobhit Sharma <hi@shobh.it>
  */
@@ -10,18 +10,18 @@
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
-    global.Embedder = window.Embedder = factory();
+    global.Embedo = window.Embedo = factory();
   }
 })(this, function () {
   'use strict';
 
   /**
-   * Embedder Prototype
+   * Embedo Prototype
    *
    * @class
    * @param {object} options Initialize options.
    */
-  function Embedder(options) {
+  function Embedo(options) {
     this.options = options || {};
 
     this.init(this.options);
@@ -29,7 +29,7 @@
     return this;
   }
 
-  Embedder.defaults = {
+  Embedo.defaults = {
     FACEBOOK: {
       SDK: 'https://connect.facebook.net/en_US/sdk.js',
       oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
@@ -53,13 +53,13 @@
   };
 
   /**
-   * Embedder Methods
+   * Embedo Methods
    *
    * @mixin
    * @implements compile
    * @implements transform
    */
-  Embedder.prototype = {
+  Embedo.prototype = {
 
     /**
      * @method Facebook Embed
@@ -70,7 +70,7 @@
      * @return callback
      */
     facebook: function (element, url, options) {
-      var embed_uri = Embedder.defaults.FACEBOOK.oEmbed;
+      var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
       var query = {
         url: encodeURI(url),
         omitscript: true
@@ -112,7 +112,7 @@
      * @return callback
      */
     twitter: function (element, url, options) {
-      var embed_uri = Embedder.defaults.TWITTER.oEmbed;
+      var embed_uri = Embedo.defaults.TWITTER.oEmbed;
       var query = {
         url: encodeURI(url),
         omit_script: 1
@@ -157,7 +157,7 @@
      * @return callback
      */
     instagram: function (element, url, options) {
-      var embed_uri = Embedder.defaults.INSTAGRAM.oEmbed;
+      var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
       var query = {
         url: encodeURI(url),
         omitscript: true,
@@ -206,7 +206,7 @@
         return (match && match[7].length == 11) ? match[7] : false;
       }
 
-      var embed_uri = Embedder.defaults.YOUTUBE.oEmbed;
+      var embed_uri = Embedo.defaults.YOUTUBE.oEmbed;
       var video_id = '';
       var query = {
         url: encodeURI(url),
@@ -242,11 +242,11 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedder.prototype.init = function (options) {
-    console.log('Embedder Initialized..', options);
-    document.body.appendChild(generateSDK(Embedder.defaults.FACEBOOK.SDK));
-    document.body.appendChild(generateSDK(Embedder.defaults.TWITTER.SDK));
-    document.body.appendChild(generateSDK(Embedder.defaults.INSTAGRAM.SDK));
+  Embedo.prototype.init = function (options) {
+    console.log('Embedo Initialized..', options);
+    document.body.appendChild(generateSDK(Embedo.defaults.FACEBOOK.SDK));
+    document.body.appendChild(generateSDK(Embedo.defaults.TWITTER.SDK));
+    document.body.appendChild(generateSDK(Embedo.defaults.INSTAGRAM.SDK));
 
     handleSDKLoader('facebook', function () {
       window.FB.init({
@@ -266,8 +266,8 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedder.prototype.load = function (element, url, options) {
-    console.log('Embedder Loaded..', element, url, options);
+  Embedo.prototype.load = function (element, url, options) {
+    console.log('Embedo Loaded..', element, url, options);
     options = options || {};
 
     if (!element || !validateElement(element)) {
@@ -330,13 +330,13 @@
       return;
     }
 
-    if (url.match(Embedder.defaults.FACEBOOK.REGEX)) {
+    if (url.match(Embedo.defaults.FACEBOOK.REGEX)) {
       return 'facebook';
-    } else if (url.match(Embedder.defaults.TWITTER.REGEX)) {
+    } else if (url.match(Embedo.defaults.TWITTER.REGEX)) {
       return 'twitter';
-    } else if (url.match(Embedder.defaults.INSTAGRAM.REGEX)) {
+    } else if (url.match(Embedo.defaults.INSTAGRAM.REGEX)) {
       return 'instagram';
-    } else if (url.match(Embedder.defaults.YOUTUBE.REGEX)) {
+    } else if (url.match(Embedo.defaults.YOUTUBE.REGEX)) {
       return 'youtube';
     }
   }
@@ -496,5 +496,5 @@
     embeded.style.transform = translate;
   }
 
-  return Embedder;
+  return Embedo;
 });

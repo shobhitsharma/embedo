@@ -1,36 +1,36 @@
-embedder [![Build Status](https://api.travis-ci.org/w0rm/gulp-svgstore.svg)](https://travis-ci.org/shobhitsharma/embedder)
+embedo [![Build Status](https://api.travis-ci.org/shobhitsharma/embedo.svg)](https://travis-ci.org/shobhitsharma/embedo)
 =============
 
 <img align="right" width="100" height="100"
-     title="Embedder"
+     title="Embedo"
      src="https://s16.postimg.org/5aauaeih1/embed.png" style="margin-right: 20px;">
 
-Embedder is a lightweight JS library which lets you embed social media content without any setup or hassels. It has features like auto-resize or auto-adjustment with respect to your container or passed optional parameters.
+Embedo is a lightweight JS library which lets you embed social media content without any setup or hassels. It has features like auto-resize or auto-adjustment with respect to your container or passed optional parameters.
 
 ## Install
 
 ```sh
 # npm Module
-$ npm install embedder --save
+$ npm install embedo --save
 
 # Bower
-$ bower install embedder
+$ bower install embedo
 ```
 
 ## Usage
 
-Embdedder supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedder/example).
+Embdedder supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/example).
 
 ```js
-var Embedder = require('embedder'); // OR import Embedder from 'embedder';
-var embedder = new Embedder(); // OR const embedder = new Embedder();
+var Embedo = require('embedo'); // OR import Embedo from 'embedo';
+var embedo = new Embedo(); // OR const embedo = new Embedo();
 
-embedder.load(<element[HTMLObject]>, <URL[string]>, <options[object]>);
+embedo.load(<element[HTMLObject]>, <URL[string]>, <options[object]>);
 ```
 
-Embedder automatically injects third-part social media SDKs once you include this to your project.
+Embedo automatically injects third-part social media SDKs once you include this to your project.
 
-### Embed Options
+### Load Options
 
 The following options can be set once `.load` function is called:
 
@@ -44,7 +44,7 @@ The following options can be set once `.load` function is called:
 ### Example
 
 ```js
-embedder.load(
+embedo.load(
   document.getElementById('twttr-tweet'),
   'https://twitter.com/Sh0bhit/status/797584590214926340',
   {

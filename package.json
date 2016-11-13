@@ -1,21 +1,21 @@
 {
-  "name": "embedder",
+  "name": "embedo",
   "version": "0.1.0",
   "description": "Social media posts embedder",
-  "main": "embedder.js",
+  "main": "embedo.js",
   "scripts": {
     "test": "mocha",
     "prestart": "npm install",
     "start": "python -m SimpleHTTPServer",
-    "build": "uglifyjs embedder.js --compress drop_console=true --mangle --screw-ie8 --stats --o=embedder.min.js"
+    "build": "uglifyjs embedo.js --compress drop_console=true --mangle --screw-ie8 --stats --o=embedo.min.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/shobhitsharma/embedder.git"
+    "url": "https://github.com/shobhitsharma/embedo.git"
   },
   "keywords": [
     "embed",
-    "embedder",
+    "embedo",
     "twitter",
     "embed",
     "facebook",
@@ -25,9 +25,9 @@
   "author": "Shobhit Sharma <hi@shobh.it>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shobhitsharma/embedder/issues"
+    "url": "https://github.com/shobhitsharma/embedo/issues"
   },
-  "homepage": "https://github.com/shobhitsharma/embedder",
+  "homepage": "https://github.com/shobhitsharma/embedo",
   "devDependencies": {
     "uglify-js": "2.7.4"
   }
