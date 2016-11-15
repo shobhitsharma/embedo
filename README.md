@@ -32,14 +32,14 @@ Embedo automatically injects third-part social media SDKs once you include this 
 
 ### Load Options
 
-The following options can be set once `.load` function is called:
+The following options can be set during library import is called:
 
 | Parameter       | Type     | Default    | Description                                     |
 | -------------   |----------|------------|-------------------------------------------------|
-| `width`         | number   | null       | Sets width for container                        |
-| `height`        | number   | null       | Sets height for container                       |
-| `noresize`      | boolean  | false      | Automatically adjust element to center          |
-| `scale`         | boolean  | false      | Makes embed element to contain within parent    |
+| `facebook`      | number   | false      | Injects FB SDK                                  |
+| `twitter`       | number   | false      | Injects Twitter SDK                             |
+| `instagram`     | boolean  | false      | Injects Instagram SDK                           |
+| `youtube`       | boolean  | null       | Injects Youtube SDK                             |
 
 ### Example
 
@@ -48,8 +48,7 @@ embedo.load(
   document.getElementById('twttr-tweet'),
   'https://twitter.com/Sh0bhit/status/797584590214926340',
   {
-    width: 500,
-    scale: true
+    strict: true
   }
 );
 ```

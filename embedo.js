@@ -259,10 +259,10 @@
   };
 
   /**
+   * Generates script tag element
    *
-   *
-   * @param {any} source
-   * @returns
+   * @param {string} source
+   * @returns HTMLElement
    */
   function generateScript(source) {
     var script = document.createElement('script');
@@ -281,10 +281,10 @@
   }
 
   /**
+   * Validates if passed argument is valid DOM element
    *
-   *
-   * @param {any} obj
-   * @returns
+   * @param {object} obj
+   * @returns HTMLElement
    */
   function validateElement(obj) {
     try {
@@ -297,9 +297,9 @@
   }
 
   /**
+   * Checks Source from URI
    *
-   *
-   * @param {any} url
+   * @param {string} url
    * @returns
    */
   function getURLSource(url) {
@@ -322,9 +322,9 @@
   }
 
   /**
+   * Object to Query String
    *
-   *
-   * @param {any} obj
+   * @param {object} obj
    * @returns
    */
   function toQueryString(obj) {
@@ -338,49 +338,11 @@
   }
 
   /**
+   * JSONP XHR fetch
    *
-   *
-   * @param {any} sdk
-   * @param {any} callback
-   */
-  function handleSDKLoader(source, callback) {
-    var count = 0;
-    var max_count = 10;
-
-    function check() {
-      count++;
-
-      if (count > max_count) {
-        return;
-      }
-
-      if (source === 'facebook') {
-        if (window.FB) {
-          return callback();
-        }
-        setTimeout(check, 100);
-      } else if (source === 'twitter') {
-        if (window.twttr) {
-          return callback();
-        }
-        setTimeout(check, 100);
-      } else if (source === 'instagram') {
-        if (window.instgrm) {
-          return callback();
-        }
-        setTimeout(check, 100);
-      }
-    }
-
-    check();
-  }
-
-  /**
-   *
-   *
-   * @param {any} url
-   * @param {any} options
-   * @param {any} callback
+   * @param {string} url
+   * @param {object} options
+   * @param {function} callback
    */
   function fetch(url, options, callback) {
     if (typeof options === 'function') {
@@ -404,9 +366,10 @@
   }
 
   /**
+   * Generates Embed Container
    *
-   *
-   * @param {any} html
+   * @param {string} source
+   * @param {string} html
    * @returns
    */
   function generateEmbed(source, html) {
@@ -417,23 +380,11 @@
   }
 
   /**
+   * Parses Facebook SDK
    *
-   *
-   * @param {any} el
-   * @param {any} className
-   * @returns
-   */
-  function findAncestor(el, className) {
-    while ((el = el.parentElement) && !el.classList.contains(className));
-    return el;
-  }
-
-  /**
-   *
-   *
-   * @param {any} parentNode
-   * @param {any} childNode
-   * @param {any} options
+   * @param {HTMLElement} parentNode
+   * @param {HTMLElement} childNode
+   * @param {object} options
    */
   function facebookify(parentNode, childNode, options) {
     var tries = 0;
@@ -457,11 +408,11 @@
   }
 
   /**
+   * Parses Twitter SDK
    *
-   *
-   * @param {any} parentNode
-   * @param {any} childNode
-   * @param {any} options
+   * @param {HTMLElement} parentNode
+   * @param {HTMLElement} childNode
+   * @param {object} options
    */
   function twitterify(parentNode, childNode, options) {
     var tries = 0;
@@ -487,11 +438,11 @@
   }
 
   /**
+   * Parses Instagram SDK
    *
-   *
-   * @param {any} parentNode
-   * @param {any} childNode
-   * @param {any} options
+   * @param {HTMLElement} parentNode
+   * @param {HTMLElement} childNode
+   * @param {object} options
    */
   function instagramify(parentNode, childNode, options) {
     var tries = 0;
@@ -520,11 +471,12 @@
   }
 
   /**
+   * Resizes and adjust embed element to center
+   * and scales if strict mode or dimensions passed
    *
-   *
-   * @param {any} embedNode
-   * @param {any} frameNode
-   * @param {any} options
+   * @param {HTMLElement} embedNode
+   * @param {HTMLElement} frameNode
+   * @param {object} options
    */
   function automagic(embedNode, frameNode, options) {
     options = options || {};
@@ -547,10 +499,10 @@
   }
 
   /**
+   * Cross Browser CSS Transformation
    *
-   *
-   * @param {any} element
-   * @param {any} props
+   * @param {HTMLElement} element
+   * @param {string} props
    */
   function transform(element, props) {
     element.style.webkitTransform = props;
@@ -560,6 +512,13 @@
     element.style.transform = props;
   }
 
+  /**
+   * Computes property value of HTMLElement
+   *
+   * @param {HTMLElement} element
+   * @param {string} prop
+   * @returns
+   */
   function computeDimension(element, prop) {
     try {
       return window.getComputedStyle(element, null).getPropertyValue(prop);

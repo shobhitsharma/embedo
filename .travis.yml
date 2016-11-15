@@ -1,20 +1,13 @@
 sudo: true
-
-branches:
-  only:
-    - master
 language: node_js
-
 notifications:
   email: false
-
 node_js:
   - v6
   - v5
   - v4
   - '0.12'
   - '0.10'
-
 branches:
   only:
     - master
