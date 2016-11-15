@@ -31,7 +31,7 @@
 
   Embedo.defaults = {
     FACEBOOK: {
-      SDK: 'https://connect.facebook.net/en_US/sdk.js',
+      SDK: 'https://connect.facebook.net/en_US/all.js#version=v2.8&appId‌​=771604066204777&coo‌​kie=true&xfbml=true',
       oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
       REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i
     },
@@ -87,18 +87,11 @@
           console.error(error);
           return;
         }
+        var container = generateEmbed('facebook', content.html);
+        element.appendChild(container);
 
-        element.appendChild(generateEmbed('facebook', content.html));
-
-        handleSDKLoader('facebook', function () {
-          window.FB.XFBML.parse(element);
-        });
-
-        element.addEventListener('DOMSubtreeModified', function () {
-          automagic(element, {
-            scale: true,
-            frame: 'fb_iframe_widget'
-          });
+        facebookify(element, container, {
+          strict: options.strict
         });
       });
     },
@@ -114,8 +107,7 @@
     twitter: function (element, url, options) {
       var embed_uri = Embedo.defaults.TWITTER.oEmbed;
       var query = {
-        url: encodeURI(url),
-        omit_script: 1
+        url: encodeURI(url)
       };
 
       if (options.width && parseInt(options.width) > 0) {
@@ -129,21 +121,11 @@
           console.error(error);
           return;
         }
+        var container = generateEmbed('twitter', content.html);
+        element.appendChild(container);
 
-        element.appendChild(generateEmbed('twitter', content.html));
-
-        handleSDKLoader('twitter', function () {
-          window.twttr.widgets.load(element);
-        });
-
-        element.addEventListener('DOMSubtreeModified', function () {
-          automagic(element, {
-            scale: true
-          });
-        });
-
-        automagic(element, {
-          scale: true
+        twitterify(element, container, {
+          strict: options.strict
         });
       });
     },
@@ -175,18 +157,12 @@
           console.error(error);
           return;
         }
+        var container = generateEmbed('instagram', content.html);
 
-        element.appendChild(generateEmbed('instagram', content.html));
+        element.appendChild(container);
 
-        handleSDKLoader('instagram', function () {
-          window.instgrm.Embeds.process();
-        });
-
-        element.addEventListener('DOMSubtreeModified', function () {
-          automagic(element, {
-            scale: true,
-            frame: 'iframe'
-          });
+        instagramify(element, container, {
+          strict: options.strict
         });
       });
     },
@@ -244,18 +220,15 @@
    */
   Embedo.prototype.init = function (options) {
     console.log('Embedo Initialized..', options);
-    document.body.appendChild(generateSDK(Embedo.defaults.FACEBOOK.SDK));
-    document.body.appendChild(generateSDK(Embedo.defaults.TWITTER.SDK));
-    document.body.appendChild(generateSDK(Embedo.defaults.INSTAGRAM.SDK));
-
-    handleSDKLoader('facebook', function () {
-      window.FB.init({
-        appId: '771604066204777',
-        xfbml: true,
-        cookie: true,
-        version: 'v2.7'
-      });
-    });
+    if (options.facebook) {
+      document.body.appendChild(generateScript(Embedo.defaults.FACEBOOK.SDK));
+    }
+    if (options.twitter) {
+      document.body.appendChild(generateScript(Embedo.defaults.TWITTER.SDK));
+    }
+    if (options.instagram) {
+      document.body.appendChild(generateScript(Embedo.defaults.INSTAGRAM.SDK));
+    }
   };
 
   /**
@@ -291,13 +264,20 @@
    * @param {any} source
    * @returns
    */
-  function generateSDK(source) {
+  function generateScript(source) {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = encodeURI(source);
     script.setAttribute('async', '');
     script.setAttribute('charset', 'utf-8');
     return script;
+  }
+
+  function generateElement(type, id, className) {
+    var elm = document.createElement(type);
+    elm.setAttribute('id', id);
+    elm.setAttribute('className', className);
+    return elm;
   }
 
   /**
@@ -451,49 +431,141 @@
   /**
    *
    *
-   * @param {any} parent
-   * @param {any} element
+   * @param {any} parentNode
+   * @param {any} childNode
    * @param {any} options
    */
-  function automagic(container, options) {
-    options = options || {};
-
-    var gutterX, gutterY, translate;
-    var embeded = options.frame ?
-      container.querySelectorAll(options.frame)[0] :
-      container.querySelectorAll('[data-embed]')[0];
-
-    if (!embeded) {
-      return;
-    }
-
-    var containerWidth = parseInt(options.width || container.style.width || container.offsetWidth);
-    var containerHeight = parseInt(options.height || container.style.height || container.offsetHeight);
-    var embeddedWidth = parseInt(embeded.style.maxWidth || embeded.style.width || embeded.offsetWidth);
-    var embeddedHeight = parseInt(embeded.style.maxHeight || embeded.style.height || embeded.offsetHeight);
-
-    if (!options.frame) {
-      embeddedWidth = embeded.firstChild.offsetWidth;
-      embeddedHeight = embeded.firstChild.offsetHeight;
-    }
-
-    gutterX = (containerWidth - embeddedWidth) / 2;
-    gutterY = (containerHeight - embeddedHeight) / 2;
-
-    translate = 'translate(' + gutterX + 'px,' + gutterY + 'px)';
-
-    if (options.scale) {
-      if (embeded.offsetHeight > containerHeight) {
-        var scale = containerHeight / embeded.offsetHeight;
-        translate += ' scale(' + scale + ')';
+  function facebookify(parentNode, childNode, options) {
+    var tries = 0;
+    function fb_check() {
+      tries++;
+      if (tries > 100) {
+        return;
+      }
+      if (window.FB) {
+        setTimeout(function () {
+          window.FB.XFBML.parse(childNode, function () {
+            automagic(childNode, childNode.firstChild, options);
+          });
+        }, 0);
+      } else {
+        setTimeout(fb_check, 100);
       }
     }
 
-    embeded.style.webkitTransform = translate;
-    embeded.style.MozTransform = translate;
-    embeded.style.msTransform = translate;
-    embeded.style.OTransform = translate;
-    embeded.style.transform = translate;
+    fb_check();
+  }
+
+  /**
+   *
+   *
+   * @param {any} parentNode
+   * @param {any} childNode
+   * @param {any} options
+   */
+  function twitterify(parentNode, childNode, options) {
+    var tries = 0;
+    function twttr_check() {
+      tries++;
+      if (tries > 100) {
+        return;
+      }
+      if (window.twttr) {
+        window.twttr.ready(function () {
+          window.twttr.widgets.load();
+        });
+
+        window.twttr.events.bind('loaded', function (event) {
+          automagic(childNode, childNode.firstChild, options);
+        });
+      } else {
+        setTimeout(twttr_check, 100);
+      }
+    }
+
+    twttr_check();
+  }
+
+  /**
+   *
+   *
+   * @param {any} parentNode
+   * @param {any} childNode
+   * @param {any} options
+   */
+  function instagramify(parentNode, childNode, options) {
+    var tries = 0;
+    function instgrm_check() {
+      tries++;
+      if (tries > 100) {
+        return;
+      }
+      if (window.instgrm) {
+        setTimeout(function () {
+          window.instgrm.Embeds.process();
+        }, 0);
+
+        var element = parentNode.querySelectorAll('.instagram-media')[0];
+        automagic(childNode, childNode.firstChild, options);
+      } else {
+        setTimeout(instgrm_check, 100);
+      }
+    }
+
+    instgrm_check();
+
+    parentNode.addEventListener('DOMSubtreeModified', function () {
+      instgrm_check();
+    }, false);
+  }
+
+  /**
+   *
+   *
+   * @param {any} embedNode
+   * @param {any} frameNode
+   * @param {any} options
+   */
+  function automagic(embedNode, frameNode, options) {
+    options = options || {};
+    var gutterX, gutterY, translate;
+
+    var embedNodeX = parseInt(computeDimension(embedNode, 'width'));
+    var embedNodeY = parseInt(computeDimension(embedNode, 'height'));
+
+    var frameNodeX = parseInt(computeDimension(frameNode, 'width'));
+    var frameNodeY = parseInt(computeDimension(frameNode, 'height'));
+
+    if (frameNodeX > 0 && embedNodeX > 0) {
+      gutterX = (embedNodeX - frameNodeX) / 2;
+      translate = 'translateX(' + gutterX + 'px)';
+    } else {
+      translate = 'none';
+    }
+
+    transform(embedNode, translate);
+  }
+
+  /**
+   *
+   *
+   * @param {any} element
+   * @param {any} props
+   */
+  function transform(element, props) {
+    element.style.webkitTransform = props;
+    element.style.MozTransform = props;
+    element.style.msTransform = props;
+    element.style.OTransform = props;
+    element.style.transform = props;
+  }
+
+  function computeDimension(element, prop) {
+    try {
+      return window.getComputedStyle(element, null).getPropertyValue(prop);
+    } catch (e) {
+      return element.getBoundingClientRect()[prop];
+    }
   }
 
   return Embedo;

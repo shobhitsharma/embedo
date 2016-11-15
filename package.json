@@ -29,6 +29,8 @@
   },
   "homepage": "https://github.com/shobhitsharma/embedo",
   "devDependencies": {
-    "uglify-js": "2.7.4"
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "uglify-js": "^2.7.4"
   }
 }

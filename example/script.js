@@ -1,5 +1,9 @@
-document.addEventListener('DOMContentLoaded', function () {
-  var embedo = new Embedo();
+window.onload = function () {
+  var embedo = new Embedo({
+    facebook: true,
+    twitter: true,
+    instagram: true
+  });
 
   // Loads facebook post
   embedo.load(
@@ -28,4 +32,4 @@ document.addEventListener('DOMContentLoaded', function () {
       height: 480
     }
   );
-});
+};

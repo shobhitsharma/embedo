@@ -25,7 +25,7 @@ Embdedder supports AMD and CommonJS modules. Also, an example can be [found here
 var Embedo = require('embedo'); // OR import Embedo from 'embedo';
 var embedo = new Embedo(); // OR const embedo = new Embedo();
 
-embedo.load(<element[HTMLObject]>, <URL[string]>, <options[object]>);
+embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]>);
 ```
 
 Embedo automatically injects third-part social media SDKs once you include this to your project.
