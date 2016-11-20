@@ -15,7 +15,7 @@
     "embed",
     "oemebed"
   ],
-  "homepage": "https://github.com/shobhitsharma/embedder",
+  "homepage": "https://embedo.github.io",
   "ignore": [
     "**/.*",
     "node_modules",
