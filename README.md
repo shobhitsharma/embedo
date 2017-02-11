@@ -30,26 +30,35 @@ embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]>);
 
 Embedo automatically injects third-part social media SDKs once you include this to your project.
 
-### Load Options
+### Initialize Options
 
 The following options can be set during library import is called:
 
-| Parameter       | Type     | Default    | Description                                     |
-| -------------   |----------|------------|-------------------------------------------------|
-| `facebook`      | number   | false      | Injects FB SDK                                  |
-| `twitter`       | number   | false      | Injects Twitter SDK                             |
-| `instagram`     | boolean  | false      | Injects Instagram SDK                           |
-| `youtube`       | boolean  | null       | Injects Youtube SDK                             |
+| Parameter       | Type     | Default    | Description                                    |
+| -------------   |----------|------------|------------------------------------------------|
+| `facebook`      | number   | true      | Injects FB SDK                                  |
+| `twitter`       | number   | true      | Injects Twitter SDK                             |
+| `instagram`     | boolean  | true      | Injects Instagram SDK                           |
+| `youtube`       | boolean  | n/a       | Injects Youtube iframe                          |
+
+### embedo.load() options
+
+The `embedo.load(<HTMLElement>, <URL|string>, <options|{}>)` function is all what you need to embed third party content.
+There is an **automagic** function which translates the embedded content to fit and centerize the parent container if `width` or `height` is provided. 
+If `strict: true` option is passed, then it will be ignored.
+
+| Parameter       | Type     | Default    | Description                                    |
+| -------------   |----------|------------|------------------------------------------------|
+| `width`      | number   | null      | Custom width of container                           |
+| `height`       | number   | null      | Custom height of container                        |
+| `strict`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
 
 ### Example
 
 ```js
 embedo.load(
   document.getElementById('twttr-tweet'),
-  'https://twitter.com/Sh0bhit/status/797584590214926340',
-  {
-    strict: true
-  }
+  'https://twitter.com/Sh0bhit/status/797584590214926340'
 );
 ```
 

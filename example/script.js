@@ -5,31 +5,43 @@ window.onload = function () {
     instagram: true
   });
 
+  document.getElementById('test-url').addEventListener('input', build);
+  document.getElementById('test-width').addEventListener('input', build);
+  document.getElementById('test-height').addEventListener('input', build);
+
+  function build(event) {
+    embedo.load(document.getElementById('test-container'),
+      document.getElementById('test-url').value, {
+        width: document.getElementById('test-width').value,
+        height: document.getElementById('test-height').value
+      });
+  }
+
   // Loads facebook post
   embedo.load(
-    document.getElementById('fb-post'),
-    'https://www.facebook.com/LaLiga/posts/1131604813542743'
+    document.getElementById('embedo-facebook'),
+    'https://www.facebook.com/LaLiga/posts/1131604813542743',
+    {
+      width: 600,
+      height: 400
+    }
   );
 
   // Loads tweet
   embedo.load(
-    document.getElementById('twttr-tweet'),
+    document.getElementById('embedo-twitter'),
     'https://twitter.com/Sh0bhit/status/797584590214926340'
   );
 
   // Loads instagram photo
   embedo.load(
-    document.getElementById('instgrm-photo'),
+    document.getElementById('embedo-instagram'),
     'https://www.instagram.com/p/BJA9BB-B46A'
   );
 
   // Loads youtube video
   embedo.load(
-    document.getElementById('yt-video'),
-    'https://www.youtube.com/embed/8pTEmbeENF4',
-    {
-      width: 640,
-      height: 480
-    }
+    document.getElementById('embedo-youtube'),
+    'https://www.youtube.com/watch?v=JGwWNGJdvx8'
   );
 };

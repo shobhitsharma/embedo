@@ -2,43 +2,49 @@
 <html lang="en">
 
 <head>
-	<base href="/">
-	<meta charset="utf-8">
-	<title>embedo - Sample</title>
-	<meta name="description" content="HowTo use embedo">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Karla:400,700">
-	<link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-	<style>
-		body, html {
-			font-family: 'Karla', sans-serif;
-			background-color: #F1F2F3;
-			color: #666;
-			width: 100%;
-			font-size: 13px;
-			line-height: 1.3;
-			overflow-x: hidden;
-			overflow-y: scroll;
-			color: #222;
-			font-weight: normal;
-			-webkit-overflow-scrolling: touch;
+  <base href="/">
+  <meta charset="utf-8">
+  <title>embedo</title>
+  <meta name="description" content="A simple, fast, lightweight and automagical social media content embedder plugin for web">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    body,
+    html {
+      font-family: 'Source Sans Pro', sans-serif;
+      color: #666;
+      width: 100%;
+      font-size: 13px;
+      line-height: 1.3;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      font-weight: normal;
+      -webkit-overflow-scrolling: touch;
       padding: 15px;
-		}
+    }
 
-		*, :after, :before {
-			zoom: 1;
-			margin: 0;
-			padding: 0;
-			outline: 0;
-			-moz-font-feature-settings: "liga", "kern";
-			-moz-font-smoothing: antialiased;
-			-webkit-font-smoothing: antialiased;
-			font-smoothing: antialiased;
-			-webkit-font-feature-settings: 'liga';
-			font-feature-settings: 'liga';
-			-ms-box-sizing: border-box;
-			box-sizing: border-box;
-		}
+    body {
+      color: white;
+      overflow-x: hidden;
+      background: #41bbbb;
+      background: -webkit-linear-gradient(135deg, #41bbbb 0%, #000000 100%);
+      background: linear-gradient(135deg, #41bbbb 0%, #000000 100%);
+    }
+
+    *,
+     :after,
+     :before {
+      zoom: 1;
+      margin: 0;
+      padding: 0;
+      outline: 0;
+      -moz-font-smoothing: antialiased;
+      -webkit-font-smoothing: antialiased;
+      font-smoothing: antialiased;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box;
+    }
 
     main {
       display: block;
@@ -46,21 +52,112 @@
       margin: 0 auto;
     }
 
-    main > div {
-      margin: 3% auto;
-      text-align: center;
-      max-width: 750px;
+    main>h1 {
+      margin: 7% 0;
+      font-size: 42px;
     }
-	</style>
+
+    main>h1>p {
+      font-size: 50%;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.43);
+      width: 100%;
+      margin: 15px auto;
+      max-width: 540px;
+    }
+
+    main>section {
+      max-width: 750px;
+      margin: 1% auto;
+    }
+
+    main form {
+      display: block;
+      position: relative;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    main input {
+      float: left;
+      color: rgb(0, 0, 0);
+      margin-bottom: 15px;
+      margin-top: 4px;
+      width: 100%;
+      max-width: 100%;
+      font-size: 16px;
+      font-family: inherit;
+      font-weight: 600;
+      background-color: rgb(243, 243, 243);
+      -webkit-appearance: none;
+      outline: 0px;
+      padding: 18px 25px;
+      border-width: initial;
+      border-style: none;
+      border-color: initial;
+      border-image: initial;
+    }
+
+    input#test-url {
+      width: 60%;
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+      border-right: 1px solid rgba(173, 173, 173, 0.32);
+    }
+
+    input#test-width {
+      width: 20%;
+      border-right: 1px solid rgba(173, 173, 173, 0.32);
+    }
+
+    input#test-height {
+      width: 20%;
+      border-top-right-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+
+    main>section>div {
+      margin: 40px auto;
+      text-align: center;
+      max-width: 720px;
+    }
+
+    section.samples {
+      margin-top: 15%;
+    }
+
+  </style>
 </head>
 
 <body>
   <main>
-    <h1>embedo Test</h1>
-    <div id="twttr-tweet"></div>
-    <div id="fb-post"></div>
-    <div id="instgrm-photo"></div>
-    <div id="yt-video"></div>
+    <h1>embedo
+      <p>A simple, fast, lightweight and automagical social media content embedder plugin for web</p>
+      <div>
+        <!-- Star Badge. -->
+        <a class="github-button" href="https://github.com/shobhitsharma/embedo" data-icon="octicon-star" data-style="mega" data-count-href="/shobhitsharma/embedo/stargazers"
+          data-count-api="/repos/shobhitsharma/embedo#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star shobhitsharma/embedo on GitHub">Star</a>
+        <!-- Downlaod Badge. -->
+        <a class="github-button" href="https://github.com/shobhitsharma/embedo/archive/master.zip" data-icon="octicon-cloud-download"
+          data-style="mega" aria-label="Download shobhitsharma/embedo on GitHub">Download</a>
+      </div>
+    </h1>
+    <section class="test-case">
+      <form>
+        <input id="test-url" placeholder="enter URL from facebook, twitter, instagram or youtube..." />
+        <input id="test-width" placeholder="enter width" />
+        <input id="test-height" placeholder="enter height" />
+      </form>
+      <div id="test-container"></div>
+    </section>
+    <section class="samples">
+      <h2 style="text-align: center;">Samples</h2>
+      <div id="embedo-twitter"></div>
+      <div id="embedo-facebook"></div>
+      <div id="embedo-instagram"></div>
+      <div id="embedo-youtube"></div>
+    </section>
   </main>
   <!--[if lt IE 7]>
   <script src="https://seancoyne.github.io/ie7-js/lib/IE7.js"></script>
@@ -72,10 +169,12 @@
   <script src="https://seancoyne.github.io/ie7-js/lib/IE9.js"></script>
   <![endif]-->
   <script src="./polyfill.min.js"></script>
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Here is how embedo.js get declared on top of your implementation -->
-	<script src="../embedo.min.js"></script>
+  <script src="../embedo.js"></script>
   <!-- Here your application or script is initialized -->
-	<script src="example/script.js"></script>
+  <script src="example/script.js"></script>
 </body>
 
 </html>
