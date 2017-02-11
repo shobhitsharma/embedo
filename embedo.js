@@ -23,6 +23,7 @@
    */
   function Embedo(options) {
     this.options = options || Embedo.defaults.OPTIONS;
+    this.requests = [];
 
     this.init(this.options);
 
@@ -74,7 +75,7 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    facebook: function (element, url, options) {
+    facebook: function (id, element, url, options) {
       var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
       var query = {
         url: encodeURI(url),
@@ -111,7 +112,7 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    twitter: function (element, url, options) {
+    twitter: function (id, element, url, options) {
       var embed_uri = Embedo.defaults.TWITTER.oEmbed;
       var query = {
         url: encodeURI(url)
@@ -147,7 +148,7 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    instagram: function (element, url, options) {
+    instagram: function (id, element, url, options) {
       var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
       var query = {
         url: encodeURI(url),
@@ -186,7 +187,7 @@
      * @param {object} options Optional parameters.
      * @return callback
      */
-    youtube: function (element, url, options) {
+    youtube: function (id, element, url, options) {
       if (!getYTVideoID(url)) {
         console.error('Unable to detect Youtube video id.');
         return;
@@ -269,9 +270,47 @@
       return;
     }
 
-    this[source](element, url, options);
+    if (!this[source]) {
+      console.error(new Error('Requested source is not implemented or missing.'));
+      return;
+    }
+
+    var request_id = Date.parse(new Date());
+
+    this.requests.push({
+      id: request_id,
+      el: element,
+      source: source,
+      url: url,
+      attributes: options
+    });
+
+    this[source](request_id, element, url, options);
   };
 
+  /**
+   * @method
+   * Refresh Embedded Container
+   *
+   * @param {any} url
+   * @returns
+   */
+  Embedo.prototype.refresh = function () {
+    this.requests.forEach(function (request) {
+      if (!request.el.firstChild) {
+        console.log('refresh', 'Too early to refresh, child is yet to be generated.');
+        return;
+      }
+      automagic(request.el, request.el.firstChild, request.attributes);
+    });
+  };
+
+  /**
+   * @function validateURL
+   *
+   * @param {string} url
+   * @returns
+   */
   function validateURL(url) {
     return /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(url);
   }
@@ -470,10 +509,13 @@
    * @param {object} options
    */
   function automagic(parentNode, childNode, options) {
+    console.log('automagic', parentNode, childNode, options);
     options = options || {};
+
     if (options.strict) {
       return;
     }
+
     var translate = '';
     var parent = {
       width: options.width || compute(parentNode, 'width', true),
@@ -484,7 +526,7 @@
       height: compute(childNode, 'height', true)
     };
 
-    if (childNode.firstChild) {
+    if (childNode && childNode.firstChild) {
       childNode.firstChild.style.margin = '0 !important';
       childNode.firstChild.style.padding = '0 !important';
 
@@ -493,15 +535,14 @@
     }
 
     var gutterX = (parent.width - child.width) / 2;
-    translate += 'translate('+ gutterX +'px, -50%)';
+    var gutterY = (parent.height - child.height) / 2;
+
+    translate += 'translate(' + gutterX + 'px, ' + gutterY + 'px)';
 
     if (child.height > parent.height) {
       translate += ' scale(' + (parent.height / child.height) + ')';
+      parentNode.style.height = parent.height + 'px';
     }
-
-    parentNode.style.height = parent.height + 'px';
-    childNode.style.position = 'relative';
-    childNode.style.top = '50%';
 
     transform(childNode, translate);
   }

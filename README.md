@@ -41,7 +41,9 @@ The following options can be set during library import is called:
 | `instagram`     | boolean  | true      | Injects Instagram SDK                           |
 | `youtube`       | boolean  | n/a       | Injects Youtube iframe                          |
 
-### embedo.load() options
+## Events
+
+### .load()
 
 The `embedo.load(<HTMLElement>, <URL|string>, <options|{}>)` function is all what you need to embed third party content.
 There is an **automagic** function which translates the embedded content to fit and centerize the parent container if `width` or `height` is provided. 
@@ -53,7 +55,11 @@ If `strict: true` option is passed, then it will be ignored.
 | `height`       | number   | null      | Custom height of container                        |
 | `strict`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
 
-### Example
+### .refresh()
+
+The `embedo.refresh()` method can be called explicitly when you have a `change` or `resize` event, which re-calculates the dimensions of generated content.
+
+## Example
 
 ```js
 embedo.load(

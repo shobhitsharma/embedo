@@ -44,4 +44,10 @@ window.onload = function () {
     document.getElementById('embedo-youtube'),
     'https://www.youtube.com/watch?v=JGwWNGJdvx8'
   );
+
+  embedo.refresh();
+
+  setTimeout(function () {
+    embedo.refresh();
+  }, 5000);
 };
