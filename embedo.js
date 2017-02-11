@@ -70,10 +70,10 @@
     /**
      * @method Facebook Embed
      *
-     * @name facebook
-     * @function
+     * @param {number} id
+     * @param {HTMLElement} element
+     * @param {string} url
      * @param {object} options Optional parameters.
-     * @return callback
      */
     facebook: function (id, element, url, options) {
       var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
@@ -107,10 +107,10 @@
     /**
      * @method Twitter Embed
      *
-     * @name twitter
-     * @function
+     * @param {number} id
+     * @param {HTMLElement} element
+     * @param {string} url
      * @param {object} options Optional parameters.
-     * @return callback
      */
     twitter: function (id, element, url, options) {
       var embed_uri = Embedo.defaults.TWITTER.oEmbed;
@@ -143,10 +143,10 @@
     /**
      * @method Instagram Embed
      *
-     * @name instagram
-     * @function
+     * @param {number} id
+     * @param {HTMLElement} element
+     * @param {string} url
      * @param {object} options Optional parameters.
-     * @return callback
      */
     instagram: function (id, element, url, options) {
       var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
@@ -182,10 +182,10 @@
     /**
      * @method YouTube Embed
      *
-     * @name youtube
-     * @function
+     * @param {number} id
+     * @param {HTMLElement} element
+     * @param {string} url
      * @param {object} options Optional parameters.
-     * @return callback
      */
     youtube: function (id, element, url, options) {
       if (!getYTVideoID(url)) {
@@ -224,7 +224,7 @@
    * @method Initialize auth component
    *
    * @name init
-   * @function
+   *
    * @param {object} options Optional parameters.
    * @return callback
    */
@@ -244,8 +244,9 @@
   /**
    * @method Initialize auth component
    *
-   * @name init
-   * @function
+   * @name load
+   * @param {HTMLElement} element
+   * @param {string} url
    * @param {object} options Optional parameters.
    * @return callback
    */
@@ -291,9 +292,6 @@
   /**
    * @method
    * Refresh Embedded Container
-   *
-   * @param {any} url
-   * @returns
    */
   Embedo.prototype.refresh = function () {
     this.requests.forEach(function (request) {

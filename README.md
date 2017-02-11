@@ -45,9 +45,13 @@ The following options can be set during library import is called:
 
 ### .load()
 
-The `embedo.load(<HTMLElement>, <URL|string>, <options|{}>)` function is all what you need to embed third party content.
+The `.load()` function is all what you need to embed third party content.
 There is an **automagic** function which translates the embedded content to fit and centerize the parent container if `width` or `height` is provided. 
 If `strict: true` option is passed, then it will be ignored.
+
+```
+embedo.load(<HTMLElement>, <URL|string>, <options|{}>)
+```
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
@@ -58,6 +62,10 @@ If `strict: true` option is passed, then it will be ignored.
 ### .refresh()
 
 The `embedo.refresh()` method can be called explicitly when you have a `change` or `resize` event, which re-calculates the dimensions of generated content.
+
+```
+embedo.refresh()
+```
 
 ## Example
 
