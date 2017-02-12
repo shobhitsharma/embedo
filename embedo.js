@@ -74,8 +74,9 @@
      * @param {HTMLElement} element
      * @param {string} url
      * @param {object} options Optional parameters.
+     * @return callback
      */
-    facebook: function (id, element, url, options) {
+    facebook: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
       var query = {
         url: encodeURI(url),
@@ -100,6 +101,16 @@
           strict: options.strict,
           width: options.width,
           height: options.height
+        }, function (err, result) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, {
+            id: id,
+            el: element,
+            width: result.width,
+            height: result.height
+          });
         });
       });
     },
@@ -111,8 +122,9 @@
      * @param {HTMLElement} element
      * @param {string} url
      * @param {object} options Optional parameters.
+     * @return callback
      */
-    twitter: function (id, element, url, options) {
+    twitter: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.TWITTER.oEmbed;
       var query = {
         url: encodeURI(url)
@@ -136,6 +148,16 @@
           strict: options.strict,
           width: options.width,
           height: options.height
+        }, function (err, result) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, {
+            id: id,
+            el: element,
+            width: result.width,
+            height: result.height
+          });
         });
       });
     },
@@ -147,8 +169,9 @@
      * @param {HTMLElement} element
      * @param {string} url
      * @param {object} options Optional parameters.
+     * @return callback
      */
-    instagram: function (id, element, url, options) {
+    instagram: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
       var query = {
         url: encodeURI(url),
@@ -175,6 +198,16 @@
           strict: options.strict,
           width: options.width,
           height: options.height
+        }, function (err, result) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, {
+            id: id,
+            el: element,
+            width: result.width,
+            height: result.height
+          });
         });
       });
     },
@@ -186,8 +219,9 @@
      * @param {HTMLElement} element
      * @param {string} url
      * @param {object} options Optional parameters.
+     * @return callback
      */
-    youtube: function (id, element, url, options) {
+    youtube: function (id, element, url, options, callback) {
       if (!getYTVideoID(url)) {
         console.error('Unable to detect Youtube video id.');
         return;
@@ -217,6 +251,13 @@
         var match = url.match(regExp);
         return (match && match[7].length == 11) ? match[7] : false;
       }
+
+      callback(null, {
+        id: id,
+        el: element,
+        width: width,
+        height: height
+      });
     }
   };
 
@@ -251,7 +292,7 @@
    * @return callback
    */
   Embedo.prototype.load = function (element, url, options) {
-    console.log('Embedo Loaded..', element, url, options);
+    console.log('Embedo Load:', element, url, options);
     options = options || {};
 
     if (!element || !validateElement(element)) {
@@ -286,7 +327,11 @@
       attributes: options
     });
 
-    this[source](request_id, element, url, options);
+    // Process Requests
+    this[source](
+      request_id, element, url, options,
+      this.events.bind(this)
+    );
   };
 
   /**
@@ -296,11 +341,53 @@
   Embedo.prototype.refresh = function () {
     this.requests.forEach(function (request) {
       if (!request.el.firstChild) {
-        console.log('refresh', 'Too early to refresh, child is yet to be generated.');
+        console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
         return;
       }
       automagic(request.el, request.el.firstChild, request.attributes);
     });
+  };
+
+  /**
+   * @method events
+   *
+   * @param {object} err
+   * @param {object} response
+   * @returns callback [Function{}]
+   */
+  Embedo.prototype.events = function (err, response) {
+    if (err) {
+      console.error('Embedo Event:', err);
+      return;
+    }
+
+    // Polyfill for CustomEvent
+    (function () {
+      if (typeof window.CustomEvent === "function") {
+        return false;
+      }
+
+      function CustomEvent(event, params) {
+        params = params || {
+          bubbles: false,
+          cancelable: false,
+          detail: undefined
+        };
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+        return evt;
+      }
+
+      CustomEvent.prototype = window.Event.prototype;
+      window.CustomEvent = CustomEvent;
+    })();
+
+    // Create watch event
+    var event = new window.CustomEvent('watch', {
+      detail: response
+    });
+
+    response.el.dispatchEvent(event);
   };
 
   /**
@@ -442,7 +529,7 @@
    * @param {HTMLElement} childNode
    * @param {object} options
    */
-  function facebookify(parentNode, childNode, options) {
+  function facebookify(parentNode, childNode, options, callback) {
     sdkReady('facebook', function (err) {
       if (err) {
         return;
@@ -450,7 +537,7 @@
       window.FB.XFBML.parse(parentNode);
       window.FB.Event.subscribe('xfbml.render', function () {
         setTimeout(function () {
-          automagic(parentNode, childNode, options);
+          automagic(parentNode, childNode, options, callback);
         }, 500);
       });
     });
@@ -463,14 +550,14 @@
    * @param {HTMLElement} childNode
    * @param {object} options
    */
-  function twitterify(parentNode, childNode, options) {
+  function twitterify(parentNode, childNode, options, callback) {
     sdkReady('twitter', function (err) {
       if (err) {
         return;
       }
       window.twttr.widgets.load(childNode);
       window.twttr.events.bind('rendered', function (event) {
-        automagic(parentNode, childNode, options);
+        automagic(parentNode, childNode, options, callback);
       });
     });
   }
@@ -482,7 +569,7 @@
    * @param {HTMLElement} childNode
    * @param {object} options
    */
-  function instagramify(parentNode, childNode, options) {
+  function instagramify(parentNode, childNode, options, callback) {
     sdkReady('instagram', function (err) {
       if (err) {
         return;
@@ -494,7 +581,7 @@
         window.instgrm.Embeds.process(childNode);
       }, 0);
       setTimeout(function () {
-        automagic(parentNode, childNode, options);
+        automagic(parentNode, childNode, options, callback);
       }, 750);
     });
   }
@@ -506,15 +593,11 @@
    * @param {HTMLElement} childNode
    * @param {object} options
    */
-  function automagic(parentNode, childNode, options) {
+  function automagic(parentNode, childNode, options, callback) {
     console.log('automagic', parentNode, childNode, options);
     options = options || {};
+    callback = callback || function () {};
 
-    if (options.strict) {
-      return;
-    }
-
-    var translate = '';
     var parent = {
       width: options.width || compute(parentNode, 'width', true),
       height: options.height || compute(parentNode, 'height', true)
@@ -523,6 +606,15 @@
       width: compute(childNode, 'width', true),
       height: compute(childNode, 'height', true)
     };
+
+    if (options.strict) {
+      return callback(null, {
+        width: parent.width,
+        height: parent.height
+      });
+    }
+
+    var translate = '';
 
     if (childNode && childNode.firstChild) {
       childNode.firstChild.style.margin = '0 !important';
@@ -543,6 +635,11 @@
     }
 
     transform(childNode, translate);
+
+    callback(null, {
+      width: parent.width,
+      height: parent.height
+    });
   }
 
   /**
@@ -615,24 +712,22 @@
       if (!isNaN(element.style.height)) {
         custom_dimension = element.style.height;
       }
-
       dimension = custom_dimension || element.clientHeight || element.offsetHeight || element.scrollHeight;
 
     } else if (prop === 'width') {
-
       if (!isNaN(element.style.width)) {
         custom_dimension = element.style.width;
       }
-
       if (!isNaN(element.getAttribute('data-width'))) {
         custom_dimension = element.getAttribute('data-width');
       }
-
       if (!isNaN(element.style.maxWidth)) {
         custom_dimension = element.style.maxWidth;
       }
-
       dimension = custom_dimension || element.clientWidth || element.offsetWidth || element.scrollWidth;
+
+    } else {
+      dimension = element.style[prop];
     }
 
     return raw ? parseInt(dimension) : parseInt(dimension) + 'px';

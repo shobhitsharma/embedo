@@ -1,4 +1,4 @@
-embedo [![Build Status](https://api.travis-ci.org/shobhitsharma/embedo.svg)](https://travis-ci.org/shobhitsharma/embedo) [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
+embedo [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
 =============
 
 <img align="right" width="100" height="100"
@@ -19,11 +19,11 @@ $ bower install embedo
 
 ## Usage
 
-Embdedder supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/example).
+Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/example).
 
 ```js
-var Embedo = require('embedo'); // OR import Embedo from 'embedo';
-var embedo = new Embedo(); // OR const embedo = new Embedo();
+const Embedo = require('embedo'); // OR import Embedo from 'embedo';
+const embedo = new Embedo(); // OR const embedo = new Embedo();
 
 embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]>);
 ```
@@ -49,7 +49,7 @@ The `.load()` function is all what you need to embed third party content.
 There is an **automagic** function which translates the embedded content to fit and centerize the parent container if `width` or `height` is provided. 
 If `strict: true` option is passed, then it will be ignored.
 
-```
+```js
 embedo.load(<HTMLElement>, <URL|string>, <options|{}>)
 ```
 
@@ -63,15 +63,32 @@ embedo.load(<HTMLElement>, <URL|string>, <options|{}>)
 
 The `embedo.refresh()` method can be called explicitly when you have a `change` or `resize` event, which re-calculates the dimensions of generated content.
 
-```
+```js
 embedo.refresh()
+```
+
+### Watch Element
+
+Embedo also adds a `watch` event to all requested DOM Elements so you can listen to them in case you need to adjust some changes to your use-case.
+
+```js
+// With Vanilla JS
+document.getElementById('element-identifier').addEventListener('watch',
+  function (event) {
+    console.log(event, event.detail);
+  });
+
+// With jQuery
+$('#element-identifier').on('watch', function (e) {
+  console.log(e, e.detail);
+});
 ```
 
 ## Example
 
 ```js
 embedo.load(
-  document.getElementById('twttr-tweet'),
+  document.getElementById('element-identifier'),
   'https://twitter.com/Sh0bhit/status/797584590214926340'
 );
 ```
