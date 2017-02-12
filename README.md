@@ -36,10 +36,11 @@ The following options can be set during library import is called:
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `facebook`      | number   | true      | Injects FB SDK                                  |
+| `facebook`      | number   | true      | Injects Facebook SDK                            |
 | `twitter`       | number   | true      | Injects Twitter SDK                             |
 | `instagram`     | boolean  | true      | Injects Instagram SDK                           |
-| `youtube`       | boolean  | n/a       | Injects Youtube iframe                          |
+| `youtube`       | boolean  | n/a       | Injects YouTube oEmbed                          |
+| `pinterest`     | boolean  | false     | Injects Pinterest SDK                           |
 
 ## Events
 

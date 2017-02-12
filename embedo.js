@@ -34,7 +34,8 @@
     OPTIONS: {
       facebook: true,
       twitter: true,
-      instagram: true
+      instagram: true,
+      pinterest: false
     },
     FACEBOOK: {
       SDK: 'https://connect.facebook.net/en_US/all.js#version=v2.8&appId‌​=269918776508696&coo‌​kie=true&xfbml=true',
@@ -55,6 +56,11 @@
       SDK: null,
       oEmbed: 'https://www.youtube.com/embed/',
       REGEX: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/
+    },
+    PINTEREST: {
+      SDK: 'https://assets.pinterest.com/js/pinit.js',
+      oEmbed: null,
+      REGEX: /(https?:\/\/(ww.)?)?pinterest\.com.*/i
     }
   };
 
@@ -230,8 +236,7 @@
       var embed_options = {
         modestbranding: 1,
         autohide: 1,
-        showinfo: 0,
-        controls: 0
+        showinfo: 0
       };
       var elementWidth = compute(element, 'width', true);
       var width = (options.width && parseInt(options.width || 0) > 10) ?
@@ -246,17 +251,54 @@
         'frameborder="0" allowtransparency="true"></iframe>'
       ));
 
-      function getYTVideoID(url) {
-        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-        var match = url.match(regExp);
-        return (match && match[7].length == 11) ? match[7] : false;
-      }
-
       callback(null, {
         id: id,
         el: element,
         width: width,
         height: height
+      });
+
+      function getYTVideoID(url) {
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (match && match[7].length == 11) ? match[7] : false;
+      }
+    },
+
+    /**
+     * @method Pinterest Embed
+     *
+     * @param {number} id
+     * @param {HTMLElement} element
+     * @param {string} url
+     * @param {object} options Optional parameters.
+     * @return callback
+     */
+    pinterest: function (id, element, url, options, callback) {
+      var elementWidth = compute(element, 'width', true);
+      var width = (options.width && parseInt(options.width || 0) > 10) ?
+        options.width : (elementWidth > 0 ? elementWidth : '100%');
+      var height = (options.height && parseInt(options.height || 0) > 10) ?
+        options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
+      var pinSize = (width > 600 ? 'large' : (width < 345 ? 'small' : 'medium'));
+      var container = '<a data-pin-do="embedPin" data-pin-width="' + pinSize + '" href="' + url + '"></a>';
+
+      element.appendChild(generateEmbed('pinterest', container));
+
+      pinterestify(element, container, {
+        strict: options.strict,
+        width: options.width,
+        height: options.height
+      }, function (err, result) {
+        if (err) {
+          return callback(err);
+        }
+        callback(null, {
+          id: id,
+          el: element,
+          width: result.width,
+          height: result.height
+        });
       });
     }
   };
@@ -279,6 +321,9 @@
     }
     if (options.instagram) {
       document.body.appendChild(generateScript(Embedo.defaults.INSTAGRAM.SDK));
+    }
+    if (options.pinterest) {
+      document.body.appendChild(generateScript(Embedo.defaults.PINTEREST.SDK));
     }
   };
 
@@ -460,6 +505,8 @@
       return 'instagram';
     } else if (url.match(Embedo.defaults.YOUTUBE.REGEX)) {
       return 'youtube';
+    } else if (url.match(Embedo.defaults.PINTEREST.REGEX)) {
+      return 'pinterest';
     }
   }
 
@@ -587,6 +634,30 @@
   }
 
   /**
+   * Parses Pinterest SDK
+   *
+   * @param {HTMLElement} parentNode
+   * @param {HTMLElement} childNode
+   * @param {object} options
+   */
+  function pinterestify(parentNode, childNode, options, callback) {
+    sdkReady('pinterest', function (err) {
+      if (err) {
+        return;
+      }
+      if (!window.PinUtils || !window.PinUtils) {
+        return;
+      }
+
+      window.PinUtils.build();
+
+      setTimeout(function () {
+        automagic(parentNode, parentNode.firstChild, options, callback);
+      }, 750);
+    });
+  }
+
+  /**
    * Automagic - Salces and Resizes embed container
    *
    * @param {HTMLElement} parentNode
@@ -606,6 +677,15 @@
       width: compute(childNode, 'width', true),
       height: compute(childNode, 'height', true)
     };
+    var type = childNode.getAttribute('data-embed');
+    var adjust = {
+      x: (type === 'twitter' || type === 'instagram'),
+      y: (type === 'facebook')
+    };
+
+    if ((parent.height <= 0) || (child.height <= 0)) {
+      return callback(null, {});
+    }
 
     if (options.strict) {
       return callback(null, {
@@ -613,8 +693,6 @@
         height: parent.height
       });
     }
-
-    var translate = '';
 
     if (childNode && childNode.firstChild) {
       childNode.firstChild.style.margin = '0 !important';
@@ -624,10 +702,9 @@
       child.height = compute(childNode.firstChild, 'height', true) || child.height;
     }
 
-    var gutterX = (parent.width - child.width) / 2;
-    var gutterY = (parent.height - child.height) / 2;
-
-    translate += 'translate(' + gutterX + 'px, ' + gutterY + 'px)';
+    var gutterX = adjust.x ? (parent.width - child.width) / 2 : 0;
+    var gutterY = adjust.y ? (parent.height - child.height) / 2 : 0;
+    var translate = 'translate(' + gutterX + 'px, ' + gutterY + 'px)';
 
     if (child.height > parent.height) {
       translate += ' scale(' + (parent.height / child.height) + ')';
@@ -649,6 +726,9 @@
    * @param {string} props
    */
   function transform(element, props) {
+    if (!validateElement(element)) {
+      return;
+    }
     element.style.webkitTransform = props;
     element.style.MozTransform = props;
     element.style.msTransform = props;
@@ -683,8 +763,8 @@
         if (window.instgrm) {
           return callback();
         }
-      } else if (type === 'trends') {
-        if (window.trends) {
+      } else if (type === 'pinterest') {
+        if (window.PinUtils) {
           return callback();
         }
       } else {
@@ -702,7 +782,7 @@
    * @returns
    */
   function compute(element, prop, raw) {
-    if (!element) {
+    if (!validateElement(element)) {
       return;
     }
     var dimension = 0;
