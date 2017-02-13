@@ -5,7 +5,7 @@ embedo [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.
      title="Embedo"
      src="https://s16.postimg.org/5aauaeih1/embed.png" style="margin-right: 20px;">
 
-Embedo is a lightweight JS library which lets you embed social media content without any setup or hassels. It has features like auto-resize or auto-adjustment with respect to your container or passed optional parameters.
+Embedo is a simple, fast, lightweight and standalone library which lets you embed third-party content without any setup for oembed or SDK's. It also automagically organise the embeded container at almost any size, which makes it responsive friendly as well.
 
 ## Install
 
@@ -15,6 +15,14 @@ $ npm install embedo --save
 
 # Bower
 $ bower install embedo
+```
+
+### Import
+
+Embedo CDN is also available under following link. The versions can be replaced according to your need, and ideally it should be hooked to `<body>` tag of your markup.
+
+```html
+<script src="https://cdn.jsdelivr.net/embedo/0.2.2/embedo.min.js"></script>
 ```
 
 ## Usage
@@ -92,6 +100,9 @@ embedo.load(
   document.getElementById('element-identifier'),
   'https://twitter.com/Sh0bhit/status/797584590214926340'
 );
+
+// jQuery
+embedo.load($('.my-unique-selector')[0], 'https://www.youtube.com/watch?v=Q6gYFO4iGlk');
 ```
 
 ## Development and Contribution
