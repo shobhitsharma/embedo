@@ -1,7 +1,7 @@
 embedo [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
 =============
 
-<img align="right" width="100" height="100"
+<img align="left" width="100" height="100"
      title="Embedo"
      src="https://s16.postimg.org/5aauaeih1/embed.png" style="margin-right: 20px;">
 
@@ -22,7 +22,7 @@ $ bower install embedo
 Embedo CDN is also available under following link. The versions can be replaced according to your need, and ideally it should be hooked to `<body>` tag of your markup.
 
 ```html
-<script src="https://cdn.jsdelivr.net/embedo/0.2.2/embedo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/embedo/0.3.0/embedo.min.js"></script>
 ```
 
 ## Usage
@@ -50,6 +50,22 @@ The following options can be set during library import is called:
 | `youtube`       | boolean  | n/a       | Injects YouTube oEmbed                          |
 | `pinterest`     | boolean  | false     | Injects Pinterest SDK                           |
 
+### Advance Options
+
+For facebook, if you need to use your own appId, or version, you can declate this instead of `boolean` with an `object` in snippet below. This will override Embedo's defaults.
+
+```js
+// Overriding Facebook
+new Embedo({
+  facebook: {
+    appId: 'my_app_id_here',
+    version: 'v2.8',
+    xfbml: false
+  }
+})
+
+```
+
 ## Events
 
 ### .load()
@@ -62,18 +78,44 @@ If `strict: true` option is passed, then it will be ignored.
 embedo.load(<HTMLElement>, <URL|string>, <options|{}>)
 ```
 
+**Native Options**
+
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
 | `width`      | number   | null      | Custom width of container                           |
 | `height`       | number   | null      | Custom height of container                        |
 | `strict`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
 
+**External Options**
+
+* Facebook - Supports `maxwidth`, `omitscript` ([API Reference](https://developers.facebook.com/docs/plugins/oembed-endpoints))
+* Twitter - See **Parameters** section [here](https://dev.twitter.com/rest/reference/get/statuses/oembed)
+* Instagram - Supports `hidecaption`, `maxwidth`, `omitscript` ([API Reference](https://www.instagram.com/developer/embedding/))
+* YouTube - See **Supported Parameters** section [here](https://developers.google.com/youtube/player_parameters)
+* Pinterest - See [API Reference](https://developers.pinterest.com/tools/widget-builder/)
+
 ### .refresh()
 
 The `embedo.refresh()` method can be called explicitly when you have a `change` or `resize` event, which re-calculates the dimensions of generated content.
 
 ```js
-embedo.refresh()
+// Refresh single container
+embedo.refresh(document.getElementById('my-element-id'));
+
+// Refresh all embedo instances
+embedo.refresh();
+```
+
+### .destroy()
+
+The `embedo.destroy()` method can be called explicitly when wish to remove and unbind embedo instance(s).
+
+```js
+// Destroy single container
+embedo.destroy(document.getElementById('my-element-id'));
+
+// Destroys all embedo instances
+embedo.destroy();
 ```
 
 ### Watch Element
@@ -82,13 +124,13 @@ Embedo also adds a `watch` event to all requested DOM Elements so you can listen
 
 ```js
 // With Vanilla JS
-document.getElementById('element-identifier').addEventListener('watch',
+document.getElementById('my-element-id').addEventListener('watch',
   function (event) {
     console.log(event, event.detail);
   });
 
 // With jQuery
-$('#element-identifier').on('watch', function (e) {
+$('#my-element-id').on('watch', function (e) {
   console.log(e, e.detail);
 });
 ```
@@ -97,7 +139,7 @@ $('#element-identifier').on('watch', function (e) {
 
 ```js
 embedo.load(
-  document.getElementById('element-identifier'),
+  document.getElementById('my-element-id'),
   'https://twitter.com/Sh0bhit/status/797584590214926340'
 );
 
