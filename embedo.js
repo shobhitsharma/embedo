@@ -751,18 +751,17 @@
     options = options || {};
     callback = callback || function () {};
 
+    if (!validateElement(parentNode) || !validateElement(childNode)) {
+      return callback(new Error('HTMLElement does not exist in DOM.'));
+    }
+
     // Remove Duplicates, if/any.
-    [].forEach.call(parentNode.querySelectorAll('[data-embed]'), function (element) {
-      if (element.children.length > 1) {
-        [].forEach.call(element.children, function (child, index) {
-          if (index > 0) {
-            child.remove();
-          }
-        });
+    [].forEach.call(parentNode.querySelectorAll('[data-embed]'), function (element, index) {
+      if (index > 1) {
+        element.remove();
       }
     });
 
-    var type = childNode.getAttribute('data-embed');
     var parent = {
       width: options.width || compute(parentNode, 'width', true),
       height: options.height || compute(parentNode, 'height', true)
@@ -772,15 +771,6 @@
       height: compute(childNode, 'height', true)
     };
 
-    var adjust = {
-      x: (type === 'twitter' || type === 'instagram'),
-      y: (type === 'youtube')
-    };
-
-    if ((parent.height <= 0) || (child.height <= 0)) {
-      return callback(null, {});
-    }
-
     if (options.strict) {
       return callback(null, {
         width: parent.width,
@@ -788,24 +778,32 @@
       });
     }
 
-    if (childNode && childNode.firstChild) {
-      childNode.firstChild.style.margin = '0 !important';
+    // Attach Flex mode to center container
+    childNode.style.display = 'flex';
+    childNode.style['justify-content'] = 'center';
+    childNode.style['align-items'] = 'center';
+
+    if (childNode.firstChild) {
+      // Normalize unecessary adding padding/margins/dimensions
+      childNode.firstChild.style.margin = '0 auto !important';
       childNode.firstChild.style.padding = '0 !important';
+      childNode.firstChild.style.minWidth = 'auto !important';
+      childNode.firstChild.style.maxWidth = 'auto !important';
+      childNode.firstChild.style.minHeight = 'auto !important';
+      childNode.firstChild.style.maxHeight = 'auto !important';
 
       child.width = compute(childNode.firstChild, 'width', true) || child.width;
       child.height = compute(childNode.firstChild, 'height', true) || child.height;
+
+      // Odd case when requested height is beyond limit of third party
+      if ((child.height > parent.height) && (parent.height > 0 && child.height > 0)) {
+        childNode.style.position = 'relative';
+        childNode.style.top = '50%';
+        transform(childNode, 'translateY(-50%) scale(' + (parent.height / child.height) + ')');
+      }
+
+      parentNode.style.height = childNode.getBoundingClientRect().height + 'px';
     }
-
-    var gutterX = adjust.x ? (parent.width - child.width) / 2 : 0;
-    var gutterY = adjust.y ? 0 : (parent.height - child.height) / 2;
-    var translate = 'translate(' + gutterX + 'px, ' + gutterY + 'px)';
-
-    if (child.height > parent.height) {
-      translate += ' scale(' + (parent.height / child.height) + ')';
-      parentNode.style.height = parent.height + 'px';
-    }
-
-    transform(childNode, translate);
 
     callback(null, {
       width: parent.width,
@@ -885,6 +883,12 @@
     if (prop === 'height') {
       if (!isNaN(element.style.height)) {
         custom_dimension = element.style.height;
+      }
+      if (!isNaN(element.getAttribute('data-height'))) {
+        custom_dimension = element.getAttribute('data-height');
+      }
+      if (!isNaN(element.style.maxHeight)) {
+        custom_dimension = element.style.maxHeight;
       }
       dimension = custom_dimension || element.clientHeight || element.offsetHeight || element.scrollHeight;
 
