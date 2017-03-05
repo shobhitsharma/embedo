@@ -105,7 +105,7 @@
       }, options, Embedo.defaults.FACEBOOK.RESTRICTED);
 
       if (options.width && parseInt(options.width) > 0) {
-        query.maxwidth = options.width;
+        query.maxwidth = options.maxwidth || options.width;
       }
 
       embed_uri += '?' + toQueryString(query);
@@ -150,10 +150,10 @@
       var query = extender({
         url: encodeURI(url),
         omit_script: 1
-      }, Embedo.defaults.TWITTER.RESTRICTED);
+      }, options, Embedo.defaults.TWITTER.RESTRICTED);
 
       if (options.width && parseInt(options.width) > 0) {
-        query.maxwidth = options.width;
+        query.maxwidth = options.maxwidth || options.width;
       }
 
       embed_uri += '?' + toQueryString(query);
@@ -195,11 +195,11 @@
      */
     instagram: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
-      var query = extender(options, {
+      var query = extender({
         url: encodeURI(url),
         omitscript: true,
         hidecaption: true
-      }, Embedo.defaults.INSTAGRAM.RESTRICTED);
+      }, options, Embedo.defaults.INSTAGRAM.RESTRICTED);
 
       if (options.width && parseInt(options.width) > 0) {
         query.maxwidth = options.width;
@@ -298,7 +298,13 @@
       var height = (options.height && parseInt(options.height || 0) > 10) ?
         options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
       var pinSize = (width > 600 ? 'large' : (width < 345 ? 'small' : 'medium'));
-      var container = '<a data-pin-do="embedPin" data-pin-width="' + pinSize + '" href="' + url + '"></a>';
+      var container = '<a data-pin-do="embedPin" ';
+
+      if (options.data_ping_lang) {
+        container += 'data-pin-lang="' + options.data_ping_lang + '"';
+      }
+
+      container += 'data-pin-width="' + pinSize + '" href="' + url + '"></a>';
 
       element.appendChild(generateEmbed('pinterest', container));
 
