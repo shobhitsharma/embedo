@@ -783,32 +783,39 @@
     childNode.style['justify-content'] = 'center';
     childNode.style['align-items'] = 'center';
 
-    if (childNode.firstChild) {
-      // Normalize unecessary adding padding/margins/dimensions
-      childNode.firstChild.style.margin = '0 auto !important';
-      childNode.firstChild.style.padding = '0 !important';
-      childNode.firstChild.style.minWidth = 'auto !important';
-      childNode.firstChild.style.maxWidth = 'auto !important';
-      childNode.firstChild.style.minHeight = 'auto !important';
-      childNode.firstChild.style.maxHeight = 'auto !important';
+    setTimeout(function () {
+      if (childNode.firstChild) {
+        // Normalize unecessary adding padding/margins/dimensions
+        childNode.firstChild.style.margin = '0 auto !important';
+        childNode.firstChild.style.padding = '0 !important';
+        childNode.firstChild.style.minWidth = 'auto !important';
+        childNode.firstChild.style.maxWidth = 'auto !important';
+        childNode.firstChild.style.minHeight = 'auto !important';
+        childNode.firstChild.style.maxHeight = 'auto !important';
 
-      child.width = compute(childNode.firstChild, 'width', true) || child.width;
-      child.height = compute(childNode.firstChild, 'height', true) || child.height;
+        child.width = compute(childNode.firstChild, 'width', true) || child.width;
+        child.height = compute(childNode.firstChild, 'height', true) || child.height;
 
-      // Odd case when requested height is beyond limit of third party
-      if ((child.height > parent.height) && (parent.height > 0 && child.height > 0)) {
-        childNode.style.position = 'relative';
-        childNode.style.top = '50%';
-        transform(childNode, 'translateY(-50%) scale(' + (parent.height / child.height) + ')');
+        // Odd case when requested height is beyond limit of third party
+        if ((child.width > parent.width || child.height > parent.height) &&
+          (parent.height > 0 && child.height > 0)) {
+          var scale = Math.min((parent.width / child.width), (parent.height / child.height));
+
+          childNode.style.position = 'relative';
+          childNode.style.top = '50%';
+          transform(childNode, 'translateY(-50%) scale(' + scale + ')');
+        }
+
+        if (parent.height > 0) {
+          childNode.style.height = parent.height + 'px';
+        }
       }
 
-      parentNode.style.height = childNode.getBoundingClientRect().height + 'px';
-    }
-
-    callback(null, {
-      width: parent.width,
-      height: parent.height
-    });
+      callback(null, {
+        width: parent.width,
+        height: parent.height
+      });
+    }, 750);
   }
 
   /**
@@ -877,38 +884,49 @@
     if (!validateElement(element)) {
       return;
     }
+
     var dimension = 0;
     var custom_dimension = null;
 
     if (prop === 'height') {
+      if (!isNaN(element.style.maxHeight)) {
+        custom_dimension = element.style.maxHeight;
+      }
       if (!isNaN(element.style.height)) {
         custom_dimension = element.style.height;
+      }
+      if (!isNaN(element.getAttribute('height'))) {
+        custom_dimension = element.getAttribute('height');
       }
       if (!isNaN(element.getAttribute('data-height'))) {
         custom_dimension = element.getAttribute('data-height');
       }
-      if (!isNaN(element.style.maxHeight)) {
-        custom_dimension = element.style.maxHeight;
-      }
-      dimension = custom_dimension || element.clientHeight || element.offsetHeight || element.scrollHeight;
+
+      dimension = custom_dimension > 0 ? custom_dimension :
+        element.clientHeight || element.offsetHeight || element.scrollHeight;
 
     } else if (prop === 'width') {
+      if (!isNaN(element.style.maxWidth)) {
+        custom_dimension = element.style.maxWidth;
+      }
       if (!isNaN(element.style.width)) {
         custom_dimension = element.style.width;
+      }
+      if (!isNaN(element.getAttribute('width'))) {
+        custom_dimension = element.getAttribute('width');
       }
       if (!isNaN(element.getAttribute('data-width'))) {
         custom_dimension = element.getAttribute('data-width');
       }
-      if (!isNaN(element.style.maxWidth)) {
-        custom_dimension = element.style.maxWidth;
-      }
-      dimension = custom_dimension || element.clientWidth || element.offsetWidth || element.scrollWidth;
+
+      dimension = custom_dimension > 0 ? custom_dimension :
+        element.clientWidth || element.offsetWidth || element.scrollWidth;
 
     } else {
       dimension = element.style[prop];
     }
 
-    return raw ? parseInt(dimension) : parseInt(dimension) + 'px';
+    return raw ? parseInt(dimension, 10) : parseInt(dimension, 10) + 'px';
   }
 
   /**
