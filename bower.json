@@ -1,21 +1,18 @@
 {
   "name": "embedo",
-  "description": "Social media posts embedder",
+  "description": "A simple, fast, lightweight and standalone social media content embedder plugin for web",
   "main": "embedo.js",
   "authors": [
     "Shobhit Sharma <hi@shobh.it>"
   ],
   "license": "MIT",
   "keywords": [
-    "embed",
     "embedo",
-    "twitter",
     "embed",
-    "facebook",
-    "embed",
-    "oemebed"
+    "oemebed",
+    "plugin"
   ],
-  "homepage": "https://embedo.github.io",
+  "homepage": "https://shobhitsharma.github.io/embedo",
   "ignore": [
     "**/.*",
     "node_modules",
