@@ -22,7 +22,7 @@ $ bower install embedo
 Embedo CDN is also available under following link. The versions can be replaced according to your need, and ideally it should be hooked to `<body>` tag of your markup.
 
 ```html
-<script src="https://cdn.jsdelivr.net/embedo/0.3.0/embedo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/embedo/0.3.3/embedo.min.js"></script>
 ```
 
 ## Usage
