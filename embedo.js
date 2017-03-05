@@ -38,29 +38,44 @@
       pinterest: false
     },
     FACEBOOK: {
-      SDK: 'https://connect.facebook.net/en_US/all.js#version=v2.8&appId‌​=269918776508696&coo‌​kie=true&xfbml=true',
+      SDK: 'https://connect.facebook.net/en_US/all.js#version=${version}&appId‌​=${appId}&coo‌​kie=${coo‌​kie}&xfbml=${xfbml}',
       oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
-      REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i
+      REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i,
+      PARAMS: {
+        version: 'v2.8',
+        cookie: true,
+        appId: '269918776508696',
+        xfbml: true
+      },
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     },
     TWITTER: {
       SDK: 'https://platform.twitter.com/widgets.js',
       oEmbed: 'https://publish.twitter.com/oembed',
-      REGEX: /^http[s]*:\/\/[www.]*twitter\.com.*/i
+      REGEX: /^http[s]*:\/\/[www.]*twitter\.com.*/i,
+      PARAMS: {},
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     },
     INSTAGRAM: {
       SDK: 'https://platform.instagram.com/en_US/embeds.js',
       oEmbed: 'https://api.instagram.com/oembed',
-      REGEX: /^http[s]*:\/\/[www.]*instagram\.com.*/i
+      REGEX: /^http[s]*:\/\/[www.]*instagram\.com.*/i,
+      PARAMS: {},
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     },
     YOUTUBE: {
       SDK: null,
       oEmbed: 'https://www.youtube.com/embed/',
-      REGEX: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/
+      REGEX: /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/,
+      PARAMS: null,
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     },
     PINTEREST: {
       SDK: 'https://assets.pinterest.com/js/pinit.js',
       oEmbed: null,
-      REGEX: /(https?:\/\/(ww.)?)?pinterest\.com.*/i
+      REGEX: /(https?:\/\/(ww.)?)?pinterest\.com.*/i,
+      PARAMS: {},
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     }
   };
 
@@ -84,10 +99,10 @@
      */
     facebook: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
-      var query = {
+      var query = extender({
         url: encodeURI(url),
         omitscript: true
-      };
+      }, options, Embedo.defaults.FACEBOOK.RESTRICTED);
 
       if (options.width && parseInt(options.width) > 0) {
         query.maxwidth = options.width;
@@ -132,9 +147,10 @@
      */
     twitter: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.TWITTER.oEmbed;
-      var query = {
-        url: encodeURI(url)
-      };
+      var query = extender({
+        url: encodeURI(url),
+        omit_script: 1
+      }, Embedo.defaults.TWITTER.RESTRICTED);
 
       if (options.width && parseInt(options.width) > 0) {
         query.maxwidth = options.width;
@@ -179,11 +195,11 @@
      */
     instagram: function (id, element, url, options, callback) {
       var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
-      var query = {
+      var query = extender(options, {
         url: encodeURI(url),
         omitscript: true,
         hidecaption: true
-      };
+      }, Embedo.defaults.INSTAGRAM.RESTRICTED);
 
       if (options.width && parseInt(options.width) > 0) {
         query.maxwidth = options.width;
@@ -233,11 +249,12 @@
         return;
       }
 
-      var embed_options = {
+      var embed_options = extender({
         modestbranding: 1,
         autohide: 1,
         showinfo: 0
-      };
+      }, options, Embedo.defaults.YOUTUBE.RESTRICTED);
+
       var elementWidth = compute(element, 'width', true);
       var width = (options.width && parseInt(options.width || 0) > 10) ?
         options.width : (elementWidth > 0 ? elementWidth : '100%');
@@ -313,17 +330,41 @@
    */
   Embedo.prototype.init = function (options) {
     console.log('Embedo Initialized..', options);
-    if (options.facebook) {
-      document.body.appendChild(generateScript(Embedo.defaults.FACEBOOK.SDK));
+    if (options.facebook && !handleScriptValidation(Embedo.defaults.FACEBOOK.SDK)) {
+      var facebook_sdk = Embedo.defaults.FACEBOOK.SDK;
+
+      if (typeof options.facebook === 'object') {
+        facebook_sdk = substitute(facebook_sdk, extender(Embedo.defaults.FACEBOOK.PARAMS, options.facebook));
+      }
+
+      document.body.appendChild(generateScript(facebook_sdk));
     }
-    if (options.twitter) {
-      document.body.appendChild(generateScript(Embedo.defaults.TWITTER.SDK));
+    if (options.twitter && !handleScriptValidation(Embedo.defaults.TWITTER.SDK)) {
+      var twitter_sdk = Embedo.defaults.TWITTER.SDK;
+
+      if (typeof options.twitter === 'object') {
+        twitter_sdk = substitute(twitter_sdk, extender(Embedo.defaults.TWITTER.PARAMS, options.twitter));
+      }
+
+      document.body.appendChild(generateScript(twitter_sdk));
     }
-    if (options.instagram) {
-      document.body.appendChild(generateScript(Embedo.defaults.INSTAGRAM.SDK));
+    if (options.instagram && !handleScriptValidation(Embedo.defaults.INSTAGRAM.SDK)) {
+      var instagram_sdk = Embedo.defaults.INSTAGRAM.SDK;
+
+      if (typeof options.instagram === 'object') {
+        instagram_sdk = substitute(instagram_sdk, extender(Embedo.defaults.INSTAGRAM.PARAMS, options.instagram));
+      }
+
+      document.body.appendChild(generateScript(instagram_sdk));
     }
-    if (options.pinterest) {
-      document.body.appendChild(generateScript(Embedo.defaults.PINTEREST.SDK));
+    if (options.pinterest && !handleScriptValidation(Embedo.defaults.PINTEREST.SDK)) {
+      var pinterest_sdk = Embedo.defaults.PINTEREST.SDK;
+
+      if (typeof options.pinterest === 'object') {
+        pinterest_sdk = substitute(pinterest_sdk, extender(Embedo.defaults.PINTEREST.PARAMS, options.pinterest));
+      }
+
+      document.body.appendChild(generateScript(pinterest_sdk));
     }
   };
 
@@ -380,17 +421,53 @@
   };
 
   /**
-   * @method
-   * Refresh Embedded Container
+   * @method refresh
+   * Refresh an/all instance(s) of embedo
+   *
+   * @param {object} element
    */
-  Embedo.prototype.refresh = function () {
+  Embedo.prototype.refresh = function (element) {
     this.requests.forEach(function (request) {
-      if (!request.el.firstChild) {
-        console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
-        return;
+      if (element && validateElement(element)) {
+        if (element === request.el && request.el.firstChild) {
+          automagic(request.el, request.el.firstChild, request.attributes);
+        }
+      } else {
+        if (!request.el.firstChild) {
+          console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
+          return;
+        }
+        automagic(request.el, request.el.firstChild, request.attributes);
       }
-      automagic(request.el, request.el.firstChild, request.attributes);
     });
+  };
+
+  /**
+   * @method destroy
+   * Destroy an/all instance(s) of embedo
+   *
+   * @param {object} element
+   */
+  Embedo.prototype.destroy = function (element) {
+    this.requests.forEach(function (request, index, requests) {
+      if (element && validateElement(element)) {
+        if (element === request.el) {
+          element.remove();
+          requests.splice(index, 1);
+        }
+      } else {
+        if (!request.el || !validateElement(request.el)) {
+          return;
+        }
+        request.el.remove();
+      }
+    });
+
+    if (!element) {
+      while (this.requests.length) {
+        this.requests.pop();
+      }
+    }
   };
 
   /**
@@ -568,7 +645,6 @@
     return container;
   }
 
-
   /**
    * Parses Facebook SDK
    *
@@ -669,6 +745,18 @@
     options = options || {};
     callback = callback || function () {};
 
+    // Remove Duplicates, if/any.
+    [].forEach.call(parentNode.querySelectorAll('[data-embed]'), function (element) {
+      if (element.children.length > 1) {
+        [].forEach.call(element.children, function (child, index) {
+          if (index > 0) {
+            child.remove();
+          }
+        });
+      }
+    });
+
+    var type = childNode.getAttribute('data-embed');
     var parent = {
       width: options.width || compute(parentNode, 'width', true),
       height: options.height || compute(parentNode, 'height', true)
@@ -677,10 +765,10 @@
       width: compute(childNode, 'width', true),
       height: compute(childNode, 'height', true)
     };
-    var type = childNode.getAttribute('data-embed');
+
     var adjust = {
       x: (type === 'twitter' || type === 'instagram'),
-      y: (type === 'facebook')
+      y: (type === 'youtube')
     };
 
     if ((parent.height <= 0) || (child.height <= 0)) {
@@ -703,7 +791,7 @@
     }
 
     var gutterX = adjust.x ? (parent.width - child.width) / 2 : 0;
-    var gutterY = adjust.y ? (parent.height - child.height) / 2 : 0;
+    var gutterY = adjust.y ? 0 : (parent.height - child.height) / 2;
     var translate = 'translate(' + gutterX + 'px, ' + gutterY + 'px)';
 
     if (child.height > parent.height) {
@@ -811,6 +899,64 @@
     }
 
     return raw ? parseInt(dimension) : parseInt(dimension) + 'px';
+  }
+
+  /**
+   * @function Object extender
+   *
+   * @param {object} destination
+   * @param {object} source
+   * @param {array} preserve
+   * @returns
+   */
+  function extender(destination, source, preserve) {
+    preserve = preserve || [];
+    for (var property in source) {
+      if (preserve.indexOf(property) === -1) {
+        destination[property] = source[property];
+      }
+    }
+    return destination;
+  }
+
+  /**
+   * @function subtitute
+   * Substitues character in string within ${*} scope
+   *
+   * @param {string} str
+   * @param {object} obj
+   * @returns
+   */
+  function substitute(str, obj) {
+    if (!str || !obj) {
+      return;
+    }
+    if (obj) {
+      for (var key in obj) {
+        if (str) {
+          str = str.split('${' + key + '}').join(obj[key]);
+        }
+      }
+    }
+    return str;
+  }
+
+  /**
+   * @function handleScriptValidation
+   *
+   * @param {string} url
+   */
+  function handleScriptValidation(url) {
+    if (!url) {
+      return;
+    }
+    var scripts = document.getElementsByTagName('script');
+    for (var i = scripts.length; i--;) {
+      if (scripts[i].src === url) {
+        return true;
+      }
+    }
+    return false;
   }
 
   return Embedo;

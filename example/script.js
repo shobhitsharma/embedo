@@ -1,6 +1,9 @@
 window.onload = function () {
   var embedo = new Embedo({
-    facebook: true,
+    facebook: {
+      version: 'v2.8',
+      appId: '269918776508696'
+    },
     twitter: true,
     instagram: true,
     pinterest: true
@@ -15,12 +18,12 @@ window.onload = function () {
     embedo.load(document.getElementById('test-container'),
       document.getElementById('test-url').value, {
         width: parseInt(document.getElementById('test-width').value) || null,
-        height: parseInt(document.getElementById('test-height').value)  || null
+        height: parseInt(document.getElementById('test-height').value) || null
       });
 
     // Test event on delay
     setTimeout(function () {
-      embedo.refresh();
+      embedo.refresh(document.getElementById('test-container'));
     }, 5000);
   }
 
@@ -48,7 +51,9 @@ window.onload = function () {
   // Loads instagram photo
   embedo.load(
     document.getElementById('embedo-instagram'),
-    'https://www.instagram.com/p/BJA9BB-B46A'
+    'https://www.instagram.com/p/BJA9BB-B46A', {
+      hidecaption: false
+    }
   );
 
   // Loads youtube video
@@ -57,10 +62,25 @@ window.onload = function () {
     'https://www.youtube.com/watch?v=JGwWNGJdvx8'
   );
 
-  // Test event on delay
+  // Refresh All Embedo instances
   setTimeout(function () {
     embedo.refresh();
   }, 5000);
+
+  // Refresh Single Embedo instance
+  setTimeout(function () {
+    embedo.refresh(document.getElementById('embedo-facebook'));
+  }, 5000);
+
+  // Destroy All Embdos Test
+  setTimeout(function () {
+    embedo.destroy();
+  }, 10000);
+
+  // Destroy Single Embdos Test
+  setTimeout(function () {
+    embedo.destroy(document.getElementById('embedo-instagram'));
+  }, 20000);
 
   // Test Element Watch Events
   document.getElementById('embedo-twitter').addEventListener('watch',
