@@ -201,8 +201,8 @@
         hidecaption: true
       }, options, Embedo.defaults.INSTAGRAM.RESTRICTED);
 
-      if (options.width && parseInt(options.width) > 0) {
-        query.maxwidth = options.width;
+      if (options.maxwidth > 320 || options.width && parseInt(options.width) > 320) {
+        query.maxwidth = options.maxwidth || options.width;
       }
 
       embed_uri += '?' + toQueryString(query);
@@ -386,12 +386,10 @@
   Embedo.prototype.load = function (element, url, options) {
     console.log('Embedo Load:', element, url, options);
     options = options || {};
-
     if (!element || !validateElement(element)) {
       console.error('`element` is either missing or invalid');
       return;
     }
-
     if (!url || !validateURL(url)) {
       console.error('`url` is either missing or invalid');
       return;
@@ -403,7 +401,6 @@
       console.error(new Error('Invalid or Unsupported URL'));
       return;
     }
-
     if (!this[source]) {
       console.error(new Error('Requested source is not implemented or missing.'));
       return;
@@ -665,9 +662,7 @@
       }
       window.FB.XFBML.parse(parentNode);
       window.FB.Event.subscribe('xfbml.render', function () {
-        setTimeout(function () {
-          automagic(parentNode, childNode, options, callback);
-        }, 500);
+        automagic(parentNode, childNode, options, callback);
       });
     });
   }
@@ -708,10 +703,8 @@
       }
       setTimeout(function () {
         window.instgrm.Embeds.process(childNode);
-      }, 0);
-      setTimeout(function () {
         automagic(parentNode, childNode, options, callback);
-      }, 750);
+      }, 0);
     });
   }
 
@@ -730,12 +723,8 @@
       if (!window.PinUtils || !window.PinUtils) {
         return;
       }
-
       window.PinUtils.build();
-
-      setTimeout(function () {
-        automagic(parentNode, parentNode.firstChild, options, callback);
-      }, 750);
+      automagic(parentNode, parentNode.firstChild, options, callback);
     });
   }
 
@@ -762,28 +751,28 @@
       }
     });
 
-    var parent = {
-      width: options.width || compute(parentNode, 'width', true),
-      height: options.height || compute(parentNode, 'height', true)
-    };
-    var child = {
-      width: compute(childNode, 'width', true),
-      height: compute(childNode, 'height', true)
-    };
-
-    if (options.strict) {
-      return callback(null, {
-        width: parent.width,
-        height: parent.height
-      });
-    }
-
     // Attach Flex mode to center container
     childNode.style.display = 'flex';
     childNode.style['justify-content'] = 'center';
     childNode.style['align-items'] = 'center';
 
     setTimeout(function () {
+      var parent = {
+        width: options.width || compute(parentNode, 'width', true),
+        height: options.height || compute(parentNode, 'height', true)
+      };
+      var child = {
+        width: compute(childNode, 'width', true),
+        height: compute(childNode, 'height', true)
+      };
+
+      if (options.strict) {
+        return callback(null, {
+          width: parent.width,
+          height: parent.height
+        });
+      }
+
       if (childNode.firstChild) {
         // Normalize unecessary adding padding/margins/dimensions
         childNode.firstChild.style.margin = '0 auto !important';
@@ -801,13 +790,11 @@
           (parent.height > 0 && child.height > 0)) {
           var scale = Math.min((parent.width / child.width), (parent.height / child.height));
 
-          childNode.style.position = 'relative';
-          childNode.style.top = '50%';
-          transform(childNode, 'translateY(-50%) scale(' + scale + ')');
+          transform(childNode, 'scale(' + scale + ')');
         }
 
-        if (parent.height > 0) {
-          childNode.style.height = parent.height + 'px';
+        if (options.height > 0) {
+          childNode.style.height = options.height + 'px';
         }
       }
 

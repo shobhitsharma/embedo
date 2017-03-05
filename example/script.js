@@ -15,11 +15,14 @@ window.onload = function () {
 
   function build(event) {
     document.getElementById('test-container').innerHTML = '';
-    embedo.load(document.getElementById('test-container'),
-      document.getElementById('test-url').value, {
-        width: parseInt(document.getElementById('test-width').value) || null,
-        height: parseInt(document.getElementById('test-height').value) || null
-      });
+
+    typewatch('embedo-test', function () {
+      embedo.load(document.getElementById('test-container'),
+        document.getElementById('test-url').value, {
+          width: parseInt(document.getElementById('test-width').value) || null,
+          height: parseInt(document.getElementById('test-height').value) || null
+        });
+    }, 750);
 
     // Test event on delay
     setTimeout(function () {
@@ -72,15 +75,15 @@ window.onload = function () {
     embedo.refresh(document.getElementById('embedo-facebook'));
   }, 5000);
 
-  // Destroy All Embdos Test
-  setTimeout(function () {
-    embedo.destroy();
-  }, 10000);
+  // // Destroy All Embdos Test
+  // setTimeout(function () {
+  //   embedo.destroy();
+  // }, 10000);
 
-  // Destroy Single Embdos Test
-  setTimeout(function () {
-    embedo.destroy(document.getElementById('embedo-instagram'));
-  }, 20000);
+  // // Destroy Single Embdos Test
+  // setTimeout(function () {
+  //   embedo.destroy(document.getElementById('embedo-instagram'));
+  // }, 20000);
 
   // Test Element Watch Events
   document.getElementById('embedo-twitter').addEventListener('watch',
@@ -108,3 +111,27 @@ window.onload = function () {
       console.log('pinterest watch', event, event.detail);
     });
 };
+
+function typewatch(id, fn, timer) {
+  window.typewatch_stack = window.typewatch_stack || {};
+  window.typewatch_stack[id] = window.typewatch_stack[id] || {
+    id: id,
+    count: 0,
+    request: null
+  };
+
+  if (window.typewatch_stack[id].count > 0 && window.typewatch_stack[id].request) {
+    window.typewatch_stack[id].count -= 1;
+    clearTimeout(window.typewatch_stack[id].request);
+  }
+
+  window.typewatch_stack[id].count += 1;
+  window.typewatch_stack[id].request = setTimeout(function (e) {
+    window.typewatch_stack[id].count -= 1;
+    if (window.typewatch_stack[id].count === 0) {
+      fn.call();
+    }
+  }, timer);
+
+  return null;
+}
