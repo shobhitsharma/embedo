@@ -1,7 +1,7 @@
 embedo [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
 =============
 
-<img align="left" width="75" height="75"
+<img align="left" height="72"
      title="Embedo"
      src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 20px;">
 
@@ -17,13 +17,7 @@ $ npm install embedo --save
 $ bower install embedo
 ```
 
-### Import
-
-Embedo CDN is also available under following link. The versions can be replaced according to your need, and ideally it should be hooked to `<body>` tag of your markup.
-
-```html
-<script src="https://cdn.jsdelivr.net/embedo/0.3.3/embedo.min.js"></script>
-```
+Alternatively, embedo's for simple import via CDN, [versions are available here](https://www.jsdelivr.com/projects/embedo).
 
 ## Usage
 
