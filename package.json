@@ -1,6 +1,6 @@
 {
   "name": "embedo",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Social media posts embedder",
   "main": "embedo.js",
   "scripts": {
