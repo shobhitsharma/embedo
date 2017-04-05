@@ -17,7 +17,7 @@ $ npm install embedo --save
 $ bower install embedo
 ```
 
-Alternatively, embedo's for simple import via CDN, [versions are available here](https://www.jsdelivr.com/projects/embedo).
+Alternatively, import using CDN [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo) links.
 
 ## Usage
 
