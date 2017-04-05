@@ -86,30 +86,21 @@ window.onload = function () {
   // }, 20000);
 
   // Test Element Watch Events
-  document.getElementById('embedo-twitter').addEventListener('watch',
-    function (event) {
-      console.log('twitter watch', event, event.detail);
-    });
+  embedo.on('watch', function (result) {
+    console.log('Embedo watch', result);
+  });
 
-  document.getElementById('embedo-facebook').addEventListener('watch',
-    function (event) {
-      console.log('facebook watch', event, event.detail);
-    });
+  embedo.on('refresh', function (request, data) {
+    console.log('Embedo refresh', request, result);
+  });
 
-  document.getElementById('embedo-instagram').addEventListener('watch',
-    function (event) {
-      console.log('instagram watch', event, event.detail);
-    });
+  embedo.on('destroy', function () {
+    console.log('Embedo destroy');
+  });
 
-  document.getElementById('embedo-youtube').addEventListener('watch',
-    function (event) {
-      console.log('youtube watch', event, event.detail);
-    });
-
-  document.getElementById('embedo-pinterest').addEventListener('watch',
-    function (event) {
-      console.log('pinterest watch', event, event.detail);
-    });
+  embedo.on('error', function (error) {
+    console.error('Embedo error', error);
+  });
 };
 
 function typewatch(id, fn, timer) {

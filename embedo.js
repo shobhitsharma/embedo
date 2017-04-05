@@ -24,6 +24,7 @@
   function Embedo(options) {
     this.options = options || Embedo.defaults.OPTIONS;
     this.requests = [];
+    this.events = [];
 
     this.init(this.options);
 
@@ -80,235 +81,85 @@
   };
 
   /**
-   * Embedo Methods
-   *
-   * @mixin
-   * @implements compile
-   * @implements transform
+   * Embedo Event Listeners
+   * @implements on
+   * @implements off
+   * @implements emit
    */
-  Embedo.prototype = {
+  Embedo.prototype = Object.create({
 
-    /**
-     * @method Facebook Embed
-     *
-     * @param {number} id
-     * @param {HTMLElement} element
-     * @param {string} url
-     * @param {object} options Optional parameters.
-     * @return callback
-     */
-    facebook: function (id, element, url, options, callback) {
-      var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
-      var query = extender({
-        url: encodeURI(url),
-        omitscript: true
-      }, options, Embedo.defaults.FACEBOOK.RESTRICTED);
-
-      if (options.width && parseInt(options.width) > 0) {
-        query.maxwidth = options.maxwidth || options.width;
+    on: function (event, listener) {
+      if (typeof this.events[event] !== 'object') {
+        this.events[event] = [];
       }
 
-      embed_uri += '?' + toQueryString(query);
-
-      fetch(embed_uri, function (error, content) {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        var container = generateEmbed('facebook', content.html);
-        element.appendChild(container);
-
-        facebookify(element, container, {
-          strict: options.strict,
-          width: options.width,
-          height: options.height
-        }, function (err, result) {
-          if (err) {
-            return callback(err);
-          }
-          callback(null, {
-            id: id,
-            el: element,
-            width: result.width,
-            height: result.height
-          });
-        });
-      });
+      this.events[event].push(listener);
     },
 
-    /**
-     * @method Twitter Embed
-     *
-     * @param {number} id
-     * @param {HTMLElement} element
-     * @param {string} url
-     * @param {object} options Optional parameters.
-     * @return callback
-     */
-    twitter: function (id, element, url, options, callback) {
-      var embed_uri = Embedo.defaults.TWITTER.oEmbed;
-      var query = extender({
-        url: encodeURI(url),
-        omit_script: 1
-      }, options, Embedo.defaults.TWITTER.RESTRICTED);
+    off: function (event, listener) {
+      var index;
 
-      if (options.width && parseInt(options.width) > 0) {
-        query.maxwidth = options.maxwidth || options.width;
+      if (typeof this.events[event] === 'object') {
+        index = this.events[event].indexOf(listener);
+
+        if (index > -1) {
+          this.events[event].splice(index, 1);
+        }
       }
-
-      embed_uri += '?' + toQueryString(query);
-
-      fetch(embed_uri, function (error, content) {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        var container = generateEmbed('twitter', content.html);
-        element.appendChild(container);
-
-        twitterify(element, container, {
-          strict: options.strict,
-          width: options.width,
-          height: options.height
-        }, function (err, result) {
-          if (err) {
-            return callback(err);
-          }
-          callback(null, {
-            id: id,
-            el: element,
-            width: result.width,
-            height: result.height
-          });
-        });
-      });
     },
 
-    /**
-     * @method Instagram Embed
-     *
-     * @param {number} id
-     * @param {HTMLElement} element
-     * @param {string} url
-     * @param {object} options Optional parameters.
-     * @return callback
-     */
-    instagram: function (id, element, url, options, callback) {
-      var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
-      var query = extender({
-        url: encodeURI(url),
-        omitscript: true,
-        hidecaption: true
-      }, options, Embedo.defaults.INSTAGRAM.RESTRICTED);
+    emit: function (event) {
+      var i, listeners, length, args = [].slice.call(arguments, 1);
 
-      if (options.maxwidth > 320 || options.width && parseInt(options.width) > 320) {
-        query.maxwidth = options.maxwidth || options.width;
+      if (typeof this.events[event] === 'object') {
+        listeners = this.events[event].slice();
+        length = listeners.length;
+
+        for (i = 0; i < length; i++) {
+          listeners[i].apply(this, args);
+        }
       }
-
-      embed_uri += '?' + toQueryString(query);
-
-      fetch(embed_uri, function (error, content) {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        var container = generateEmbed('instagram', content.html);
-
-        element.appendChild(container);
-
-        instagramify(element, container, {
-          strict: options.strict,
-          width: options.width,
-          height: options.height
-        }, function (err, result) {
-          if (err) {
-            return callback(err);
-          }
-          callback(null, {
-            id: id,
-            el: element,
-            width: result.width,
-            height: result.height
-          });
-        });
-      });
     },
 
-    /**
-     * @method YouTube Embed
-     *
-     * @param {number} id
-     * @param {HTMLElement} element
-     * @param {string} url
-     * @param {object} options Optional parameters.
-     * @return callback
-     */
-    youtube: function (id, element, url, options, callback) {
-      if (!getYTVideoID(url)) {
-        console.error('Unable to detect Youtube video id.');
+    once: function (event, listener) {
+      this.on(event, function g() {
+        this.off(event, g);
+        listener.apply(this, arguments);
+      });
+    }
+  });
+
+  /**
+   * @method Facebook Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.facebook = function (id, element, url, options, callback) {
+    var embed_uri = Embedo.defaults.FACEBOOK.oEmbed;
+    var query = extender({
+      url: encodeURI(url),
+      omitscript: true
+    }, options, Embedo.defaults.FACEBOOK.RESTRICTED);
+
+    if (options.width && parseInt(options.width) > 0) {
+      query.maxwidth = options.maxwidth || options.width;
+    }
+
+    embed_uri += '?' + toQueryString(query);
+
+    fetch(embed_uri, function (error, content) {
+      if (error) {
+        console.error(error);
         return;
       }
+      var container = generateEmbed('facebook', content.html);
+      element.appendChild(container);
 
-      var embed_options = extender({
-        modestbranding: 1,
-        autohide: 1,
-        showinfo: 0
-      }, options, Embedo.defaults.YOUTUBE.RESTRICTED);
-
-      var elementWidth = compute(element, 'width', true);
-      var width = (options.width && parseInt(options.width || 0) > 10) ?
-        options.width : (elementWidth > 0 ? elementWidth : '100%');
-      var height = (options.height && parseInt(options.height || 0) > 10) ?
-        options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
-
-      var embed_uri = Embedo.defaults.YOUTUBE.oEmbed + getYTVideoID(url) + '?' + toQueryString(embed_options);
-
-      element.appendChild(generateEmbed('youtube',
-        '<iframe src="' + embed_uri + '" ' + 'width="' + width + '" height="' + height + '"' +
-        'frameborder="0" allowtransparency="true"></iframe>'
-      ));
-
-      callback(null, {
-        id: id,
-        el: element,
-        width: width,
-        height: height
-      });
-
-      function getYTVideoID(url) {
-        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-        var match = url.match(regExp);
-        return (match && match[7].length == 11) ? match[7] : false;
-      }
-    },
-
-    /**
-     * @method Pinterest Embed
-     *
-     * @param {number} id
-     * @param {HTMLElement} element
-     * @param {string} url
-     * @param {object} options Optional parameters.
-     * @return callback
-     */
-    pinterest: function (id, element, url, options, callback) {
-      var elementWidth = compute(element, 'width', true);
-      var width = (options.width && parseInt(options.width || 0) > 10) ?
-        options.width : (elementWidth > 0 ? elementWidth : '100%');
-      var height = (options.height && parseInt(options.height || 0) > 10) ?
-        options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
-      var pinSize = (width > 600 ? 'large' : (width < 345 ? 'small' : 'medium'));
-      var container = '<a data-pin-do="embedPin" ';
-
-      if (options.data_ping_lang) {
-        container += 'data-pin-lang="' + options.data_ping_lang + '"';
-      }
-
-      container += 'data-pin-width="' + pinSize + '" href="' + url + '"></a>';
-
-      element.appendChild(generateEmbed('pinterest', container));
-
-      pinterestify(element, container, {
+      facebookify(element, container, {
         strict: options.strict,
         width: options.width,
         height: options.height
@@ -323,7 +174,195 @@
           height: result.height
         });
       });
+    });
+  };
+
+  /**
+   * @method Twitter Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.twitter = function (id, element, url, options, callback) {
+    var embed_uri = Embedo.defaults.TWITTER.oEmbed;
+    var query = extender({
+      url: encodeURI(url),
+      omit_script: 1
+    }, options, Embedo.defaults.TWITTER.RESTRICTED);
+
+    if (options.width && parseInt(options.width) > 0) {
+      query.maxwidth = options.maxwidth || options.width;
     }
+
+    embed_uri += '?' + toQueryString(query);
+
+    fetch(embed_uri, function (error, content) {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      var container = generateEmbed('twitter', content.html);
+      element.appendChild(container);
+
+      twitterify(element, container, {
+        strict: options.strict,
+        width: options.width,
+        height: options.height
+      }, function (err, result) {
+        if (err) {
+          return callback(err);
+        }
+        callback(null, {
+          id: id,
+          el: element,
+          width: result.width,
+          height: result.height
+        });
+      });
+    });
+  };
+
+  /**
+   * @method Instagram Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.instagram = function (id, element, url, options, callback) {
+    var embed_uri = Embedo.defaults.INSTAGRAM.oEmbed;
+    var query = extender({
+      url: encodeURI(url),
+      omitscript: true,
+      hidecaption: true
+    }, options, Embedo.defaults.INSTAGRAM.RESTRICTED);
+
+    if (options.maxwidth > 320 || options.width && parseInt(options.width) > 320) {
+      query.maxwidth = options.maxwidth || options.width;
+    }
+
+    embed_uri += '?' + toQueryString(query);
+
+    fetch(embed_uri, function (error, content) {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      var container = generateEmbed('instagram', content.html);
+
+      element.appendChild(container);
+
+      instagramify(element, container, {
+        strict: options.strict,
+        width: options.width,
+        height: options.height
+      }, function (err, result) {
+        if (err) {
+          return callback(err);
+        }
+        callback(null, {
+          id: id,
+          el: element,
+          width: result.width,
+          height: result.height
+        });
+      });
+    });
+  };
+
+  /**
+   * @method YouTube Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.youtube = function (id, element, url, options, callback) {
+    if (!getYTVideoID(url)) {
+      console.error('Unable to detect Youtube video id.');
+      return;
+    }
+
+    var embed_options = extender({
+      modestbranding: 1,
+      autohide: 1,
+      showinfo: 0
+    }, options, Embedo.defaults.YOUTUBE.RESTRICTED);
+
+    var elementWidth = compute(element, 'width', true);
+    var width = (options.width && parseInt(options.width || 0) > 10) ?
+      options.width : (elementWidth > 0 ? elementWidth : '100%');
+    var height = (options.height && parseInt(options.height || 0) > 10) ?
+      options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
+
+    var embed_uri = Embedo.defaults.YOUTUBE.oEmbed + getYTVideoID(url) + '?' + toQueryString(embed_options);
+
+    element.appendChild(generateEmbed('youtube',
+      '<iframe src="' + embed_uri + '" ' + 'width="' + width + '" height="' + height + '"' +
+      'frameborder="0" allowtransparency="true"></iframe>'
+    ));
+
+    callback(null, {
+      id: id,
+      el: element,
+      width: width,
+      height: height
+    });
+
+    function getYTVideoID(url) {
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+      var match = url.match(regExp);
+      return (match && match[7].length == 11) ? match[7] : false;
+    }
+  };
+
+  /**
+   * @method Pinterest Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.pinterest = function (id, element, url, options, callback) {
+    var elementWidth = compute(element, 'width', true);
+    var width = (options.width && parseInt(options.width || 0) > 10) ?
+      options.width : (elementWidth > 0 ? elementWidth : '100%');
+    var height = (options.height && parseInt(options.height || 0) > 10) ?
+      options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
+    var pinSize = (width > 600 ? 'large' : (width < 345 ? 'small' : 'medium'));
+    var pin_el = '<a data-pin-do="embedPin" ';
+    if (options.data_ping_lang) {
+      pin_el += 'data-pin-lang="' + options.data_ping_lang + '"';
+    }
+    pin_el += 'data-pin-width="' + pinSize + '" href="' + url + '"></a>';
+    var container = generateEmbed('pinterest', pin_el);
+
+    element.appendChild(container);
+
+    pinterestify(element, container, {
+      strict: options.strict,
+      width: options.width,
+      height: options.height
+    }, function (err, result) {
+      if (err) {
+        return callback(err);
+      }
+      callback(null, {
+        id: id,
+        el: element,
+        width: result.width,
+        height: result.height
+      });
+    });
   };
 
   /**
@@ -336,41 +375,22 @@
    */
   Embedo.prototype.init = function (options) {
     console.log('Embedo Initialized..', options);
-    if (options.facebook && !handleScriptValidation(Embedo.defaults.FACEBOOK.SDK)) {
-      var facebook_sdk = Embedo.defaults.FACEBOOK.SDK;
 
-      if (typeof options.facebook === 'object') {
-        facebook_sdk = substitute(facebook_sdk, extender(Embedo.defaults.FACEBOOK.PARAMS, options.facebook));
+    appendSDK('facebook', options.facebook);
+    appendSDK('twitter', options.twitter);
+    appendSDK('instagram', options.instagram);
+    appendSDK('pinterest', options.pinterest);
+
+    // Injects SDK's to body
+    function appendSDK(type, props) {
+      var sdk = Embedo.defaults[type.toUpperCase()].SDK;
+
+      if (!handleScriptValidation(sdk)) {
+        if (props && typeof props === 'object') {
+          sdk = substitute(sdk, extender(Embedo.defaults[type.toUpperCase()].PARAMS, props));
+        }
+        document.body.appendChild(generateScript(sdk));
       }
-
-      document.body.appendChild(generateScript(facebook_sdk));
-    }
-    if (options.twitter && !handleScriptValidation(Embedo.defaults.TWITTER.SDK)) {
-      var twitter_sdk = Embedo.defaults.TWITTER.SDK;
-
-      if (typeof options.twitter === 'object') {
-        twitter_sdk = substitute(twitter_sdk, extender(Embedo.defaults.TWITTER.PARAMS, options.twitter));
-      }
-
-      document.body.appendChild(generateScript(twitter_sdk));
-    }
-    if (options.instagram && !handleScriptValidation(Embedo.defaults.INSTAGRAM.SDK)) {
-      var instagram_sdk = Embedo.defaults.INSTAGRAM.SDK;
-
-      if (typeof options.instagram === 'object') {
-        instagram_sdk = substitute(instagram_sdk, extender(Embedo.defaults.INSTAGRAM.PARAMS, options.instagram));
-      }
-
-      document.body.appendChild(generateScript(instagram_sdk));
-    }
-    if (options.pinterest && !handleScriptValidation(Embedo.defaults.PINTEREST.SDK)) {
-      var pinterest_sdk = Embedo.defaults.PINTEREST.SDK;
-
-      if (typeof options.pinterest === 'object') {
-        pinterest_sdk = substitute(pinterest_sdk, extender(Embedo.defaults.PINTEREST.PARAMS, options.pinterest));
-      }
-
-      document.body.appendChild(generateScript(pinterest_sdk));
     }
   };
 
@@ -406,10 +426,10 @@
       return;
     }
 
-    var request_id = Date.parse(new Date());
+    var id = uuid();
 
     this.requests.push({
-      id: request_id,
+      id: id,
       el: element,
       source: source,
       url: url,
@@ -418,8 +438,13 @@
 
     // Process Requests
     this[source](
-      request_id, element, url, options,
-      this.events.bind(this)
+      id, element, url, options,
+      function (err, data) {
+        if (err) {
+          return this.emit('error', err);
+        }
+        this.emit('watch', data);
+      }.bind(this)
     );
   };
 
@@ -433,16 +458,24 @@
     this.requests.forEach(function (request) {
       if (element && validateElement(element)) {
         if (element === request.el && request.el.firstChild) {
-          automagic(request.el, request.el.firstChild, request.attributes);
+          automagic(request.el, request.el.firstChild, request.attributes, function (err, data) {
+            if (data) {
+              this.emit('refresh', request, data);
+            }
+          }.bind(this));
         }
       } else {
         if (!request.el.firstChild) {
           console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
           return;
         }
-        automagic(request.el, request.el.firstChild, request.attributes);
+        automagic(request.el, request.el.firstChild, request.attributes, function (err, data) {
+          if (data) {
+            this.emit('refresh', request, data);
+          }
+        }.bind(this));
       }
-    });
+    }.bind(this));
   };
 
   /**
@@ -464,56 +497,30 @@
         }
         request.el.remove();
       }
-    });
+    }).bind(this);
 
     if (!element) {
       while (this.requests.length) {
         this.requests.pop();
       }
+      this.emit('destroy');
     }
   };
 
   /**
-   * @method events
+   * @function uuid
    *
-   * @param {object} err
-   * @param {object} response
-   * @returns callback [Function{}]
+   * @returns {string}
    */
-  Embedo.prototype.events = function (err, response) {
-    if (err) {
-      console.error('Embedo Event:', err);
-      return;
-    }
-
-    // Polyfill for CustomEvent
-    (function () {
-      if (typeof window.CustomEvent === "function") {
-        return false;
-      }
-
-      function CustomEvent(event, params) {
-        params = params || {
-          bubbles: false,
-          cancelable: false,
-          detail: undefined
-        };
-        var evt = document.createEvent('CustomEvent');
-        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-        return evt;
-      }
-
-      CustomEvent.prototype = window.Event.prototype;
-      window.CustomEvent = CustomEvent;
-    })();
-
-    // Create watch event
-    var event = new window.CustomEvent('watch', {
-      detail: response
+  function uuid() {
+    var d = new Date().getTime();
+    var uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
-
-    response.el.dispatchEvent(event);
-  };
+    return uid;
+  }
 
   /**
    * @function validateURL
@@ -662,7 +669,12 @@
       }
       window.FB.XFBML.parse(parentNode);
       window.FB.Event.subscribe('xfbml.render', function () {
-        automagic(parentNode, childNode, options, callback);
+        if (!childNode.firstChild) {
+          return;
+        }
+        if (childNode.firstChild.getAttribute('fb-xfbml-state') === 'rendered') {
+          automagic(parentNode, childNode, options, callback);
+        }
       });
     });
   }
@@ -681,7 +693,9 @@
       }
       window.twttr.widgets.load(childNode);
       window.twttr.events.bind('rendered', function (event) {
-        automagic(parentNode, childNode, options, callback);
+        if (childNode.firstChild && childNode.firstChild.getAttribute('id') === event.target.getAttribute('id')) {
+          automagic(parentNode, childNode, options, callback);
+        }
       });
     });
   }
@@ -723,8 +737,12 @@
       if (!window.PinUtils || !window.PinUtils) {
         return;
       }
-      window.PinUtils.build();
-      automagic(parentNode, parentNode.firstChild, options, callback);
+      var pinned = childNode.querySelector('[data-pin-id]');
+
+      automagic(parentNode, parentNode, {
+        width: compute(childNode, 'width', true),
+        height: compute((pinned || childNode), 'height', true)
+      }, callback);
     });
   }
 
@@ -744,14 +762,11 @@
       return callback(new Error('HTMLElement does not exist in DOM.'));
     }
 
-    // Remove Duplicates, if/any.
-    [].forEach.call(parentNode.querySelectorAll('[data-embed]'), function (element, index) {
-      if (index > 1) {
-        element.remove();
-      }
-    });
-
     // Attach Flex mode to center container
+    childNode.style.display = '-webkit-box';
+    childNode.style.display = '-moz-box';
+    childNode.style.display = '-ms-flexbox';
+    childNode.style.display = '-webkit-flex';
     childNode.style.display = 'flex';
     childNode.style['justify-content'] = 'center';
     childNode.style['align-items'] = 'center';
@@ -856,7 +871,7 @@
       } else {
         return callback(new Error('unsupported_sdk_type'));
       }
-      setTimeout(check, 100);
+      setTimeout(check, 10 * counter);
     })(type);
   }
 
@@ -871,49 +886,32 @@
     if (!validateElement(element)) {
       return;
     }
-
     var dimension = 0;
     var custom_dimension = null;
 
     if (prop === 'height') {
-      if (!isNaN(element.style.maxHeight)) {
-        custom_dimension = element.style.maxHeight;
-      }
       if (!isNaN(element.style.height)) {
         custom_dimension = element.style.height;
       }
-      if (!isNaN(element.getAttribute('height'))) {
-        custom_dimension = element.getAttribute('height');
-      }
-      if (!isNaN(element.getAttribute('data-height'))) {
-        custom_dimension = element.getAttribute('data-height');
-      }
-
-      dimension = custom_dimension > 0 ? custom_dimension :
-        element.clientHeight || element.offsetHeight || element.scrollHeight;
+      dimension = custom_dimension || element.clientHeight || element.offsetHeight || element.scrollHeight;
 
     } else if (prop === 'width') {
-      if (!isNaN(element.style.maxWidth)) {
-        custom_dimension = element.style.maxWidth;
-      }
       if (!isNaN(element.style.width)) {
         custom_dimension = element.style.width;
-      }
-      if (!isNaN(element.getAttribute('width'))) {
-        custom_dimension = element.getAttribute('width');
       }
       if (!isNaN(element.getAttribute('data-width'))) {
         custom_dimension = element.getAttribute('data-width');
       }
-
-      dimension = custom_dimension > 0 ? custom_dimension :
-        element.clientWidth || element.offsetWidth || element.scrollWidth;
+      if (!isNaN(element.style.maxWidth)) {
+        custom_dimension = element.style.maxWidth;
+      }
+      dimension = custom_dimension || element.clientWidth || element.offsetWidth || element.scrollWidth;
 
     } else {
       dimension = element.style[prop];
     }
 
-    return raw ? parseInt(dimension, 10) : parseInt(dimension, 10) + 'px';
+    return raw ? parseInt(dimension) : parseInt(dimension) + 'px';
   }
 
   /**
@@ -965,6 +963,7 @@
     if (!url) {
       return;
     }
+    url = url.split('#')[0];
     var scripts = document.getElementsByTagName('script');
     for (var i = scripts.length; i--;) {
       if (scripts[i].src === url) {

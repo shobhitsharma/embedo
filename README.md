@@ -1,4 +1,4 @@
-embedo [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
+embedo [![CDNJS](https://img.shields.io/cdnjs/v/embedo.svg)](https://cdnjs.com/libraries/embedo) [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
 =============
 
 <img align="left" height="72"
@@ -17,7 +17,7 @@ $ npm install embedo --save
 $ bower install embedo
 ```
 
-Alternatively, embedo's for simple import via CDN, [versions are available here](https://www.jsdelivr.com/projects/embedo).
+Alternatively, import using CDN [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo) links.
 
 ## Usage
 
@@ -112,20 +112,29 @@ embedo.destroy(document.getElementById('my-element-id'));
 embedo.destroy();
 ```
 
-### Watch Element
+### Event Listeners
 
-Embedo also adds a `watch` event to all requested DOM Elements so you can listen to them in case you need to adjust some changes to your use-case.
+Embedo also has internal event listeners implemented which emits following events:
 
 ```js
-// With Vanilla JS
-document.getElementById('my-element-id').addEventListener('watch',
-  function (event) {
-    console.log(event, event.detail);
-  });
+// Watch Event
+embedo.on('watch', function (result) {
+  console.log(result); // Returns element and its dimensions
+});
 
-// With jQuery
-$('#my-element-id').on('watch', function (e) {
-  console.log(e, e.detail);
+// Refresh Event
+embedo.on('refresh', function (request, result) {
+  console.log(request, result); // Returns request meta and dimensions
+});
+
+// Error Handler
+embedo.on('error', function (error) {
+  console.error(error); // Emits in case of invalid request or an exception
+});
+
+// Destory Event
+embedo.on('destroy', function () {
+  // Do something when embedo destroys
 });
 ```
 
@@ -138,7 +147,7 @@ embedo.load(
 );
 
 // jQuery
-embedo.load($('.my-unique-selector')[0], 'https://www.youtube.com/watch?v=Q6gYFO4iGlk');
+embedo.load($('.my-unique-selector').get(0), 'https://www.youtube.com/watch?v=Q6gYFO4iGlk');
 ```
 
 ## Development and Contribution
