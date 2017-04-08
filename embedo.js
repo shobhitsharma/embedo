@@ -1,6 +1,12 @@
 /**
  * @file Embedo JS
  *
+ * Embedo is third party embed plugin with features having events and resizing.
+ * It provides a layer above popular social media sites native embed snippets
+ * making it easier to hook content without writing or touching many files in any
+ * website source.
+ *
+ * @license MIT
  * @author Shobhit Sharma <hi@shobh.it>
  */
 
@@ -31,6 +37,9 @@
     return this;
   }
 
+  /**
+   * @desc Embedo defaults contains basic configuration and values required to build internal engine.
+   */
   Embedo.defaults = {
     OPTIONS: {
       facebook: true,
@@ -92,16 +101,13 @@
       if (typeof this.events[event] !== 'object') {
         this.events[event] = [];
       }
-
       this.events[event].push(listener);
     },
 
     off: function (event, listener) {
       var index;
-
       if (typeof this.events[event] === 'object') {
         index = this.events[event].indexOf(listener);
-
         if (index > -1) {
           this.events[event].splice(index, 1);
         }
@@ -110,7 +116,6 @@
 
     emit: function (event) {
       var i, listeners, length, args = [].slice.call(arguments, 1);
-
       if (typeof this.events[event] === 'object') {
         listeners = this.events[event].slice();
         length = listeners.length;
@@ -128,6 +133,35 @@
       });
     }
   });
+
+  /**
+   * @method Initialize auth component
+   *
+   * @name init
+   *
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.init = function (options) {
+    console.log('Embedo Initialized..', options);
+
+    appendSDK('facebook', options.facebook);
+    appendSDK('twitter', options.twitter);
+    appendSDK('instagram', options.instagram);
+    appendSDK('pinterest', options.pinterest);
+
+    // Injects SDK's to body
+    function appendSDK(type, props) {
+      var sdk = Embedo.defaults[type.toUpperCase()].SDK;
+
+      if (!handleScriptValidation(sdk)) {
+        if (props && typeof props === 'object') {
+          sdk = substitute(sdk, extender(Embedo.defaults[type.toUpperCase()].PARAMS, props));
+        }
+        document.body.appendChild(generateScript(sdk));
+      }
+    }
+  };
 
   /**
    * @method Facebook Embed
@@ -154,12 +188,13 @@
     fetch(embed_uri, function (error, content) {
       if (error) {
         console.error(error);
-        return;
+        return callback(error);
       }
       var container = generateEmbed('facebook', content.html);
       element.appendChild(container);
 
       facebookify(element, container, {
+        id: id,
         strict: options.strict,
         width: options.width,
         height: options.height
@@ -202,12 +237,13 @@
     fetch(embed_uri, function (error, content) {
       if (error) {
         console.error(error);
-        return;
+        return callback(error);
       }
       var container = generateEmbed('twitter', content.html);
       element.appendChild(container);
 
       twitterify(element, container, {
+        id: id,
         strict: options.strict,
         width: options.width,
         height: options.height
@@ -251,13 +287,14 @@
     fetch(embed_uri, function (error, content) {
       if (error) {
         console.error(error);
-        return;
+        return callback(error);
       }
       var container = generateEmbed('instagram', content.html);
 
       element.appendChild(container);
 
       instagramify(element, container, {
+        id: id,
         strict: options.strict,
         width: options.width,
         height: options.height
@@ -287,7 +324,7 @@
   Embedo.prototype.youtube = function (id, element, url, options, callback) {
     if (!getYTVideoID(url)) {
       console.error('Unable to detect Youtube video id.');
-      return;
+      return callback('Unable to detect Youtube video id.');
     }
 
     var embed_options = extender({
@@ -339,16 +376,17 @@
     var height = (options.height && parseInt(options.height || 0) > 10) ?
       options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
     var pinSize = (width > 600 ? 'large' : (width < 345 ? 'small' : 'medium'));
-    var pin_el = '<a data-pin-do="embedPin" ';
+    var pin_el = '<a data-pin-do="embedPin"';
     if (options.data_ping_lang) {
-      pin_el += 'data-pin-lang="' + options.data_ping_lang + '"';
+      pin_el += ' data-pin-lang="' + options.data_ping_lang + '"';
     }
-    pin_el += 'data-pin-width="' + pinSize + '" href="' + url + '"></a>';
+    pin_el += ' data-pin-width="' + pinSize + '" href="' + url + '"></a>';
     var container = generateEmbed('pinterest', pin_el);
 
     element.appendChild(container);
 
     pinterestify(element, container, {
+      id: id,
       strict: options.strict,
       width: options.width,
       height: options.height
@@ -366,32 +404,42 @@
   };
 
   /**
-   * @method Initialize auth component
+   * @method Website Embed
    *
-   * @name init
-   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.init = function (options) {
-    console.log('Embedo Initialized..', options);
+  Embedo.prototype.website = function (id, element, url, options, callback) {
+    var elementWidth = compute(element, 'width', true);
+    var width = (options.width && parseInt(options.width || 0) > 10) ?
+      options.width : (elementWidth > 0 ? elementWidth : '100%');
+    var height = (options.height && parseInt(options.height || 0) > 10) ?
+      options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
+    var request = new XMLHttpRequest();
 
-    appendSDK('facebook', options.facebook);
-    appendSDK('twitter', options.twitter);
-    appendSDK('instagram', options.instagram);
-    appendSDK('pinterest', options.pinterest);
-
-    // Injects SDK's to body
-    function appendSDK(type, props) {
-      var sdk = Embedo.defaults[type.toUpperCase()].SDK;
-
-      if (!handleScriptValidation(sdk)) {
-        if (props && typeof props === 'object') {
-          sdk = substitute(sdk, extender(Embedo.defaults[type.toUpperCase()].PARAMS, props));
+    request.open('GET', url);
+    request.onreadystatechange = function () {
+      if (request.readyState === 4) {
+        if (request.status === 200) {
+          element.appendChild(generateEmbed('website',
+            '<iframe src="' + url + '" ' + 'width="' + width + '" height="' + height + '"' +
+            'frameborder="0" allowtransparency="true"></iframe>'
+          ));
+          callback(null, {
+            id: id,
+            el: element,
+            width: width,
+            height: height
+          });
+        } else {
+          callback(new Error('Unable to embed URL due to Cross Origin security policy.'));
         }
-        document.body.appendChild(generateScript(sdk));
       }
-    }
+    };
+    request.send();
   };
 
   /**
@@ -406,24 +454,27 @@
   Embedo.prototype.load = function (element, url, options) {
     console.log('Embedo Load:', element, url, options);
     options = options || {};
+
     if (!element || !validateElement(element)) {
       console.error('`element` is either missing or invalid');
-      return;
+      return this.emit('error', 'It seems the target element is missing.');
     }
+
     if (!url || !validateURL(url)) {
       console.error('`url` is either missing or invalid');
-      return;
+      return this.emit('error', 'The URL is invalid or missing.');
     }
 
     var source = getURLSource(url);
 
     if (!source) {
       console.error(new Error('Invalid or Unsupported URL'));
-      return;
+      return this.emit('error', 'URL Requested Not Supported');
     }
+
     if (!this[source]) {
       console.error(new Error('Requested source is not implemented or missing.'));
-      return;
+      return this.emit('error', 'The requested URL source is not recognised or supported.');
     }
 
     var id = uuid();
@@ -456,6 +507,12 @@
    */
   Embedo.prototype.refresh = function (element) {
     this.requests.forEach(function (request) {
+      if (request.source === 'website' || request.source === 'youtube') {
+        return this.emit('refresh', request, {
+          width: compute(request.el, 'width', true),
+          height: compute(request.el, 'height', true)
+        });
+      }
       if (element && validateElement(element)) {
         if (element === request.el && request.el.firstChild) {
           automagic(request.el, request.el.firstChild, request.attributes, function (err, data) {
@@ -467,7 +524,7 @@
       } else {
         if (!request.el.firstChild) {
           console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
-          return;
+          return this.emit('error', 'Cannot refresh at the moment, DOM Node is not available yet.');
         }
         automagic(request.el, request.el.firstChild, request.attributes, function (err, data) {
           if (data) {
@@ -547,6 +604,12 @@
     return script;
   }
 
+  /**
+   * Generates DOM element
+   *
+   * @param {string} source
+   * @returns HTMLElement
+   */
   function generateElement(type, id, className) {
     var elm = document.createElement(type);
     elm.setAttribute('id', id);
@@ -561,13 +624,10 @@
    * @returns HTMLElement
    */
   function validateElement(obj) {
-    try {
-      return obj instanceof HTMLElement;
-    } catch (e) {
-      return (typeof obj === "object") &&
-        (obj.nodeType === 1) && (typeof obj.style === "object") &&
-        (typeof obj.ownerDocument === "object");
-    }
+    return (
+      typeof HTMLElement === 'object' ? obj instanceof window.HTMLElement :
+      obj && typeof obj === 'object' && obj !== null && obj.nodeType === 1 && typeof obj.nodeName === 'string'
+    );
   }
 
   /**
@@ -594,6 +654,8 @@
       return 'youtube';
     } else if (url.match(Embedo.defaults.PINTEREST.REGEX)) {
       return 'pinterest';
+    } else {
+      return 'website';
     }
   }
 
@@ -734,15 +796,19 @@
       if (err) {
         return;
       }
-      if (!window.PinUtils || !window.PinUtils) {
+      if (!window.PinUtils || !window.PinUtils || !childNode || !childNode.firstChild) {
         return;
       }
-      var pinned = childNode.querySelector('[data-pin-id]');
-
-      automagic(parentNode, parentNode, {
-        width: compute(childNode, 'width', true),
-        height: compute((pinned || childNode), 'height', true)
-      }, callback);
+      setTimeout(function () {
+        var pinned = childNode.firstChild.hasAttribute('data-pin-id');
+        if (!pinned) {
+          window.PinUtils.build();
+        }
+        automagic(parentNode, childNode, {
+          width: compute(childNode, 'width', true),
+          height: compute(childNode, 'height', true)
+        }, callback);
+      }, 1);
     });
   }
 
@@ -771,7 +837,7 @@
     childNode.style['justify-content'] = 'center';
     childNode.style['align-items'] = 'center';
 
-    setTimeout(function () {
+    watcher(options.id || 'random', function () {
       var parent = {
         width: options.width || compute(parentNode, 'width', true),
         height: options.height || compute(parentNode, 'height', true)
@@ -971,6 +1037,39 @@
       }
     }
     return false;
+  }
+
+  /**
+   * @function watcher
+   *
+   * @param {string} Identifer
+   * @param {Function} Function to Trigger
+   * @param {integer} timer
+   *
+   * @returns {Function}
+   */
+  function watcher(id, fn, timer) {
+    window.watcher_stack = window.watcher_stack || {};
+    window.watcher_stack[id] = window.watcher_stack[id] || {
+      id: id,
+      count: 0,
+      request: null
+    };
+
+    if (window.watcher_stack[id].count > 0 && window.watcher_stack[id].request) {
+      window.watcher_stack[id].count -= 1;
+      clearTimeout(window.watcher_stack[id].request);
+    }
+
+    window.watcher_stack[id].count += 1;
+    window.watcher_stack[id].request = setTimeout(function (e) {
+      window.watcher_stack[id].count -= 1;
+      if (window.watcher_stack[id].count === 0) {
+        fn.call();
+      }
+    }, timer);
+
+    return null;
   }
 
   return Embedo;

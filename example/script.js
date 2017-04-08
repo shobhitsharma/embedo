@@ -91,7 +91,7 @@ window.onload = function () {
   });
 
   embedo.on('refresh', function (request, data) {
-    console.log('Embedo refresh', request, result);
+    console.log('Embedo refresh', request, data);
   });
 
   embedo.on('destroy', function () {
