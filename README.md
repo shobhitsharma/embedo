@@ -5,7 +5,9 @@ embedo [![CDNJS](https://img.shields.io/cdnjs/v/embedo.svg)](https://cdnjs.com/l
      title="Embedo"
      src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 20px;">
 
-Embedo is a simple, fast, lightweight and standalone library which lets you embed third-party content without any setup for oembed or SDK's. It also automagically organise the embeded container at almost any size, which makes it responsive friendly as well.
+Embedo is a simple, fast, lightweight and standalone library which lets you embed third-party content without any setup for oembed or SDK's. It handles resizing and emit necessary events which eases the implementation. 
+
+Since there are lot of complications when it comes to embed external content, and developers usually endup in writing bits and pieces of code which usually doesnt work or future-proof; to overcome this hassle, Embedo creates a layer on top of embed libraries by implementing the necessary guidelines and verfiying schmea to embed a content. There are even paid services and really more advanced embed libaries available but its the matter of simplicity, trust, script size and speed of code to be included in your beloved web component.
 
 ## Install
 
@@ -43,6 +45,8 @@ The following options can be set during library import is called:
 | `instagram`     | boolean  | true      | Injects Instagram SDK                           |
 | `youtube`       | boolean  | n/a       | Injects YouTube oEmbed                          |
 | `pinterest`     | boolean  | false     | Injects Pinterest SDK                           |
+
+If any other website URL is added, then it will simply create an iframe and append to the container while checking cross origin policies and provided parameters.
 
 ### Advance Options
 
@@ -132,7 +136,7 @@ embedo.on('error', function (error) {
   console.error(error); // Emits in case of invalid request or an exception
 });
 
-// Destory Event
+// Destroy Event
 embedo.on('destroy', function () {
   // Do something when embedo destroys
 });
