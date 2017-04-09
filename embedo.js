@@ -86,6 +86,13 @@
       REGEX: /(https?:\/\/(ww.)?)?pinterest\.com.*/i,
       PARAMS: {},
       RESTRICTED: ['url', 'strict', 'height', 'width']
+    },
+    VIMEO: {
+      SDK: null,
+      oEmbed: 'https://vimeo.com/api/oembed.json',
+      REGEX: /(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
+      PARAMS: {},
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     }
   };
 
@@ -333,24 +340,19 @@
       showinfo: 0
     }, options, Embedo.defaults.YOUTUBE.RESTRICTED);
 
-    var elementWidth = compute(element, 'width', true);
-    var width = (options.width && parseInt(options.width || 0) > 10) ?
-      options.width : (elementWidth > 0 ? elementWidth : '100%');
-    var height = (options.height && parseInt(options.height || 0) > 10) ?
-      options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
-
+    var size = getDimensions(element, options.width, options.height);
     var embed_uri = Embedo.defaults.YOUTUBE.oEmbed + getYTVideoID(url) + '?' + toQueryString(embed_options);
 
     element.appendChild(generateEmbed('youtube',
-      '<iframe src="' + embed_uri + '" ' + 'width="' + width + '" height="' + height + '"' +
+      '<iframe src="' + embed_uri + '" ' + 'width="' + size.width + '" height="' + size.height + '"' +
       'frameborder="0" allowtransparency="true"></iframe>'
     ));
 
     callback(null, {
       id: id,
       el: element,
-      width: width,
-      height: height
+      width: size.width,
+      height: size.height
     });
 
     function getYTVideoID(url) {
@@ -358,6 +360,42 @@
       var match = url.match(regExp);
       return (match && match[7].length == 11) ? match[7] : false;
     }
+  };
+
+  /**
+   * @method Vimeo Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.vimeo = function (id, element, url, options, callback) {
+    var size = getDimensions(element, options.width, options.height);
+    var embed_options = extender({
+      url: url,
+      width: size.width,
+      height: size.height,
+      autohide: 1,
+    }, options, Embedo.defaults.VIMEO.RESTRICTED);
+    var embed_uri = Embedo.defaults.VIMEO.oEmbed + '?' + toQueryString(embed_options);
+
+    fetch(embed_uri, function (error, content) {
+      if (error) {
+        console.error(error);
+        return callback(error);
+      }
+      var container = generateEmbed('vimeo', content.html);
+      element.appendChild(container);
+
+      callback(null, {
+        id: id,
+        el: element,
+        width: size.width,
+        height: size.height
+      });
+    });
   };
 
   /**
@@ -370,17 +408,13 @@
    * @return callback
    */
   Embedo.prototype.pinterest = function (id, element, url, options, callback) {
-    var elementWidth = compute(element, 'width', true);
-    var width = (options.width && parseInt(options.width || 0) > 10) ?
-      options.width : (elementWidth > 0 ? elementWidth : '100%');
-    var height = (options.height && parseInt(options.height || 0) > 10) ?
-      options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
-    var pinSize = (width > 600 ? 'large' : (width < 345 ? 'small' : 'medium'));
+    var size = getDimensions(element, options.width, options.height);
+    var pin_size = (size.width > 600 ? 'large' : (size.width < 345 ? 'small' : 'medium'));
     var pin_el = '<a data-pin-do="embedPin"';
     if (options.data_ping_lang) {
       pin_el += ' data-pin-lang="' + options.data_ping_lang + '"';
     }
-    pin_el += ' data-pin-width="' + pinSize + '" href="' + url + '"></a>';
+    pin_el += ' data-pin-width="' + pin_size + '" href="' + url + '"></a>';
     var container = generateEmbed('pinterest', pin_el);
 
     element.appendChild(container);
@@ -388,8 +422,8 @@
     pinterestify(element, container, {
       id: id,
       strict: options.strict,
-      width: options.width,
-      height: options.height
+      width: size.width,
+      height: size.height
     }, function (err, result) {
       if (err) {
         return callback(err);
@@ -413,33 +447,16 @@
    * @return callback
    */
   Embedo.prototype.website = function (id, element, url, options, callback) {
-    var elementWidth = compute(element, 'width', true);
-    var width = (options.width && parseInt(options.width || 0) > 10) ?
-      options.width : (elementWidth > 0 ? elementWidth : '100%');
-    var height = (options.height && parseInt(options.height || 0) > 10) ?
-      options.height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
-    var request = new XMLHttpRequest();
-
-    request.open('GET', url);
-    request.onreadystatechange = function () {
-      if (request.readyState === 4) {
-        if (request.status === 200) {
-          element.appendChild(generateEmbed('website',
-            '<iframe src="' + url + '" ' + 'width="' + width + '" height="' + height + '"' +
-            'frameborder="0" allowtransparency="true"></iframe>'
-          ));
-          callback(null, {
-            id: id,
-            el: element,
-            width: width,
-            height: height
-          });
-        } else {
-          callback(new Error('Unable to embed URL due to Cross Origin security policy.'));
-        }
-      }
-    };
-    request.send();
+    var size = getDimensions(element, options.width, options.height);
+    element.appendChild(generateEmbed('website',
+      '<object type="text/html" data="' + url + '" width="' + size.width + '" height="' + size.height + '"></object>'
+    ));
+    callback(null, {
+      id: id,
+      el: element,
+      width: size.width,
+      height: size.height
+    });
   };
 
   /**
@@ -654,6 +671,8 @@
       return 'youtube';
     } else if (url.match(Embedo.defaults.PINTEREST.REGEX)) {
       return 'pinterest';
+    } else if (url.match(Embedo.defaults.VIMEO.REGEX)) {
+      return 'vimeo';
     } else {
       return 'website';
     }
@@ -802,7 +821,7 @@
       setTimeout(function () {
         var pinned = childNode.firstChild.hasAttribute('data-pin-id');
         if (!pinned) {
-          window.PinUtils.build();
+          window.PinUtils.build(childNode);
         }
         automagic(parentNode, childNode, {
           width: compute(childNode, 'width', true),
@@ -1018,6 +1037,25 @@
       }
     }
     return str;
+  }
+
+  /**
+   * @function getDimensions
+   *
+   * @param {HTMLElement} element
+   * @param {string} width
+   * @param {string} height
+   * @returns
+   */
+  function getDimensions(element, width, height) {
+    var elementWidth = compute(element, 'width', true);
+    width = (width && parseInt(width || 0) > 10) ? width : (elementWidth > 0 ? elementWidth : '100%');
+    height = (height && parseInt(height || 0) > 10) ? height : (elementWidth > 0 ? elementWidth / 1.5 : '100%');
+
+    return {
+      width: width,
+      height: height
+    };
   }
 
   /**

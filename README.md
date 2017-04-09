@@ -5,14 +5,12 @@ embedo [![CDNJS](https://img.shields.io/cdnjs/v/embedo.svg)](https://cdnjs.com/l
      title="Embedo"
      src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 20px;">
 
-Embedo is a simple, fast, lightweight and standalone library which lets you embed third-party content without any setup for oembed or SDK's. It handles resizing and emit necessary events which eases the implementation. 
-
-Since there are lot of complications when it comes to embed external content, and developers usually endup in writing bits and pieces of code which usually doesnt work or future-proof; to overcome this hassle, Embedo creates a layer on top of embed libraries by implementing the necessary guidelines and verfiying schmea to embed a content. There are even paid services and really more advanced embed libaries available but its the matter of simplicity, trust, script size and speed of code to be included in your beloved web component.
+Embedo is simple, lightweight and standalone javascript library which adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It also handles resizing of container, emitting events and supports external options to be passed along in advanced mode.
 
 ## Install
 
 ```sh
-# npm Module
+# npm
 $ npm install embedo --save
 
 # Bower
@@ -61,7 +59,6 @@ new Embedo({
     xfbml: false
   }
 })
-
 ```
 
 ## Events
