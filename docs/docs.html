@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>embedo - Social Media Embed Plugin</title>
+  <meta content="A simple, fast, lightweight and standalone social media content embedder plugin for web" name="description">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="https://github.com/favicon.ico" rel="icon" type="image/ico">
+  <!-- Global OG Tags -->
+  <meta content="embedo - Social Media Embed Plugin" property="og:site_name">
+  <meta content="website" property="og:type">
+  <meta content="https://i.imgur.com/xEa2XL4.png" property="og:image">
+  <meta content="A simple, fast, lightweight and standalone social media content embedder plugin for web" property="og:description">
+  <meta content="embedo - Social Media Embed Plugin" property="og:title">
+  <meta content="https://shobhitsharma.github.io/embedo" property="og:url">
+  <!-- Twitter OG Tags -->
+  <meta content="summary_large_image" name="twitter:card">
+  <meta content="@Sh0bhit" name="twitter:site">
+  <meta content="@Sh0bhit" name="twitter:creator">
+  <meta content="embedo - Social Media Embed Plugin" name="twitter:title">
+  <meta content="A simple, fast, lightweight and standalone social media content embedder plugin for web." name="twitter:description">
+  <meta content="https://shobhitsharma.github.io/embedo" name="twitter:url">
+  <meta content="https://i.imgur.com/xEa2XL4.png" property="og:image">
+  <meta content="https://i.imgur.com/xEa2XL4.png" name="twitter:image">
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <main>
+    <div id="embedo-app">
+      <header class="header">
+        <a href="https://shobhitsharma.github.io/embedo">Example</a>
+        <a class="github-link" href="https://github.com/shobhitsharma/embedo" target="_blank"><i class="fa fa-github"></i></a>
+      </header>
+      <section class="teaser">
+        <h1>embedo</h1>
+        <p>A simple, lightweight and standalone social media content embed plugin for web</p>
+        <div class="buttons">
+          <a href="https://github.com/shobhitsharma/embedo"><i class="fa fa-star"></i> Star</a>
+          <a href="https://github.com/shobhitsharma/embedo/archive/master.zip"><i class="fa fa-cloud-download"></i> Download</a>
+        </div>
+      </section>
+      <section class="embedo-documentation markdown-body">
+        <h4 id="install">Install</h4>
+        <pre><code class="sh language-sh"># npm
+$ npm install embedo --save
+
+# Bower
+$ bower install embedo</code></pre>
+        <p>Alternatively, import using CDN <a href="https://www.jsdelivr.com/projects/embedo">jsDelivr</a>, <a href="https://cdnjs.com/libraries/embedo">cdnjs</a>          or <a href="https://unpkg.com/embedo">latest unpkg</a> links.</p>
+        <h4 id="usage">Usage</h4>
+        <p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/example">found here</a>.</p>
+        <pre><code class="js language-js">const Embedo = require('embedo'); // OR import Embedo from 'embedo';
+const embedo = new Embedo(); // OR const embedo = new Embedo();
+
+embedo.load(&lt;HTMLElement[object]&gt;, &lt;URL[string]&gt;, &lt;options[object]&gt;);</code></pre>
+        <p>Embedo automatically injects third-part social media SDKs once you include this to your project.</p>
+        <h5 id="initialize-options">Initialize Options</h5>
+        <p>The following options can be set during library import is called:</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>facebook</code></td>
+              <td>number</td>
+              <td>true</td>
+              <td>Injects Facebook SDK</td>
+            </tr>
+            <tr>
+              <td><code>twitter</code></td>
+              <td>number</td>
+              <td>true</td>
+              <td>Injects Twitter SDK</td>
+            </tr>
+            <tr>
+              <td><code>instagram</code></td>
+              <td>boolean</td>
+              <td>true</td>
+              <td>Injects Instagram SDK</td>
+            </tr>
+            <tr>
+              <td><code>youtube</code></td>
+              <td>boolean</td>
+              <td>n/a</td>
+              <td>Injects YouTube oEmbed</td>
+            </tr>
+            <tr>
+              <td><code>pinterest</code></td>
+              <td>boolean</td>
+              <td>false</td>
+              <td>Injects Pinterest SDK</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>If any other website URL is added, then it will simply create an iframe and append to the container while checking
+          cross origin policies and provided parameters.</p>
+        <h5 id="advance-options">Advance Options</h5>
+        <p>For facebook, if you need to use your own appId, or version, you can declate this instead of <code>boolean</code>          with an <code>object</code> in snippet below. This will override Embedo's defaults.</p>
+        <pre><code class="js language-js">// Overriding Facebook
+new Embedo({
+  facebook: {
+    appId: 'my_app_id_here',
+    version: 'v2.8',
+    xfbml: false
+  }
+})</code></pre>
+        <h4 id="events">Events</h4>
+        <h5 id="load">.load()</h5>
+        <p>The <code>.load()</code> function is all what you need to embed third party content. There is an <strong>automagic</strong>          function which translates the embedded content to fit and centerize the parent container if <code>width</code>          or <code>height</code> is provided. If <code>strict: true</code> option is passed, then it will be ignored.</p>
+        <pre><code class="js language-js">embedo.load(&lt;HTMLElement&gt;, &lt;URL|string&gt;, &lt;options|{}&gt;)</code></pre>
+        <p><strong>Native Options</strong></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>width</code></td>
+              <td>number</td>
+              <td>null</td>
+              <td>Custom width of container</td>
+            </tr>
+            <tr>
+              <td><code>height</code></td>
+              <td>number</td>
+              <td>null</td>
+              <td>Custom height of container</td>
+            </tr>
+            <tr>
+              <td><code>strict</code></td>
+              <td>boolean</td>
+              <td>true</td>
+              <td>Enables/Disbaled Automagic feature</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>External Options</strong></p>
+        <ul>
+          <li>Facebook - Supports <code>maxwidth</code>, <code>omitscript</code> (<a href="https://developers.facebook.com/docs/plugins/oembed-endpoints">API Reference</a>)</li>
+          <li>Twitter - See <strong>Parameters</strong> section <a href="https://dev.twitter.com/rest/reference/get/statuses/oembed">here</a></li>
+          <li>Instagram - Supports <code>hidecaption</code>, <code>maxwidth</code>, <code>omitscript</code> (<a href="https://www.instagram.com/developer/embedding/">API Reference</a>)</li>
+          <li>YouTube - See <strong>Supported Parameters</strong> section <a href="https://developers.google.com/youtube/player_parameters">here</a></li>
+          <li>Pinterest - See <a href="https://developers.pinterest.com/tools/widget-builder/">API Reference</a></li>
+        </ul>
+        <h5 id="refresh">.refresh()</h5>
+        <p>The <code>embedo.refresh()</code> method can be called explicitly when you have a <code>change</code> or <code>resize</code>          event, which re-calculates the dimensions of generated content.</p>
+        <pre><code class="js language-js">// Refresh single container
+embedo.refresh(document.getElementById('my-element-id'));
+
+// Refresh all embedo instances
+embedo.refresh();</code></pre>
+        <h5 id="destroy">.destroy()</h5>
+        <p>The <code>embedo.destroy()</code> method can be called explicitly when wish to remove and unbind embedo instance(s).</p>
+        <pre><code class="js language-js">// Destroy single container
+embedo.destroy(document.getElementById('my-element-id'));
+
+// Destroys all embedo instances
+embedo.destroy();</code></pre>
+        <h5 id="event-listeners">Event Listeners</h5>
+        <p>Embedo also has internal event listeners implemented which emits following events:</p>
+        <pre><code class="js language-js">// Watches container and mutates changes with dimensions
+embedo.on('watch', function (result) {
+  console.log(result); // Returns element and its dimensions
+});
+
+// Refresh Event
+embedo.on('refresh', function (request, result) {
+  console.log(request, result); // Returns request meta and dimensions
+});
+
+// Error Handler
+embedo.on('error', function (error) {
+  console.error(error); // Emits in case of invalid request or an exception
+});
+
+// Destroy Event
+embedo.on('destroy', function () {
+  // Do something when embedo destroys
+});</code></pre>
+        <h4 id="example">Example</h4>
+        <pre><code class="js language-js">embedo.load(
+  document.getElementById('my-element-id'),
+  'https://twitter.com/Sh0bhit/status/797584590214926340'
+);
+
+// jQuery
+embedo.load($('.my-unique-selector').get(0), 'https://www.youtube.com/watch?v=Q6gYFO4iGlk');</code></pre>
+        <h4 id="development-and-contribution">Development and Contribution</h4>
+        <p>If you'd like to fix some issues or add new features, feel free to create an issue for that. To setup environment,
+          tests and build, use following commands:</p>
+        <pre><code class="bash language-bash">$ npm start
+$ npm run build</code></pre>
+      </section>
+
+      <footer>
+        <div class="supported-sites">
+          <h4>Who's currently supported?</h4>
+          <div class="site fa fa-facebook"></div>
+          <div class="site fa fa-twitter"></div>
+          <div class="site fa fa-youtube"></div>
+          <div class="site fa fa-instagram"></div>
+          <div class="site fa fa-pinterest"></div>
+          <div class="site fa fa-vimeo"></div>
+        </div>
+        <div class="copyrights">
+          <a href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md" target="_blank">
+            <i class="fa fa-copyright"></i> Distributed under MIT License
+          </a>
+        </div>
+      </footer>
+    </div>
+    <div class="sky">
+      <div class="cloud-1 cloud">
+        <div class="cloud--inner"></div>
+      </div>
+      <div class="cloud-2 cloud">
+        <div class="cloud--inner"></div>
+      </div>
+      <div class="cloud-3 cloud">
+        <div class="cloud--inner"></div>
+      </div>
+    </div>
+    <section id="action-hero">
+      <div id='superman'>
+        <div class='cape'>
+          <div class='inner'></div>
+        </div>
+        <div class='head'></div>
+        <div class='arm'></div>
+        <div class='neck'></div>
+        <div class='collar'></div>
+        <div class='pants'></div>
+        <div class='belt'></div>
+        <div class='leg'></div>
+        <div class='leg three'></div>
+        <div class='leg two'></div>
+        <div class='leg back'></div>
+        <div class='leg back two'></div>
+        <div class='shoe'></div>
+        <div class='shoe rear'></div>
+      </div>
+    </section>
+  </main>
+  <!--[if (gte IE 5.5)&(lt IE 10)]>
+  <script src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/selectivizr/1.0.3b/selectivizr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/g/html5shiv@3.7.3(html5shiv-printshiv.min.js),ie7.js@2.1b4"></script>
+  <script src="https://cdn.jsdelivr.net/css3polyfill/1.0.0/css3polyfill.min.js"></script>
+  <script src="https://cdn01.onzu.com/assets/polyfills.ie.js"></script>
+  <script src="https://cdn01.onzu.com/assets/polyfills.min.js"></script>
+  <![endif]-->
+  <script>
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'UA-80234662-2', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+  <!-- Here is how embedo.js get declared on top of your implementation -->
+  <script src="https://unpkg.com/embedo@0.5.1/embedo.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+
+</html>
