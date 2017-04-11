@@ -161,10 +161,3 @@ $ npm start
 $ npm run build
 ```
 
-## Supports
-
-- Facebook SDK and oEmbed
-- Twitter SDK and oEmbed
-- Instagram SDK and oEmbed
-- YouTube Embed
-

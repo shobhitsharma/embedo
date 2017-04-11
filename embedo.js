@@ -22,9 +22,8 @@
   'use strict';
 
   /**
-   * Embedo Prototype
+   * @class Embedo Prototype
    *
-   * @class
    * @param {object} options Initialize options.
    */
   function Embedo(options) {
@@ -38,7 +37,8 @@
   }
 
   /**
-   * @desc Embedo defaults contains basic configuration and values required to build internal engine.
+   * @default Embedo defaults
+   * @description Embedo defaults contains basic configuration and values required to build internal engine.
    */
   Embedo.defaults = {
     OPTIONS: {
@@ -97,7 +97,8 @@
   };
 
   /**
-   * Embedo Event Listeners
+   * @private Embedo Event Listeners
+   *
    * @implements on
    * @implements off
    * @implements emit
@@ -159,6 +160,9 @@
 
     // Injects SDK's to body
     function appendSDK(type, props) {
+      if (!props) {
+        return;
+      }
       var sdk = Embedo.defaults[type.toUpperCase()].SDK;
 
       if (!handleScriptValidation(sdk)) {
@@ -448,14 +452,27 @@
    */
   Embedo.prototype.website = function (id, element, url, options, callback) {
     var size = getDimensions(element, options.width, options.height);
-    element.appendChild(generateEmbed('website',
-      '<object type="text/html" data="' + url + '" width="' + size.width + '" height="' + size.height + '"></object>'
-    ));
-    callback(null, {
-      id: id,
-      el: element,
-      width: size.width,
-      height: size.height
+
+    fetch(url, function (error, content) {
+      if (error) {
+        console.error(error);
+        return callback(error);
+      }
+
+      if (content && typeof content === 'object' && content.html) {
+        element.appendChild(generateEmbed('website', content.html));
+      } else {
+        element.appendChild(generateEmbed('website',
+          '<object type="text/html" data="' + url + '" width="' + size.width + '" height="' + size.height + '"></object>'
+        ));
+      }
+
+      callback(null, {
+        id: id,
+        el: element,
+        width: size.width,
+        height: size.height
+      });
     });
   };
 
@@ -474,24 +491,24 @@
 
     if (!element || !validateElement(element)) {
       console.error('`element` is either missing or invalid');
-      return this.emit('error', 'It seems the target element is missing.');
+      return this.emit('error', 'element_is_missing');
     }
 
     if (!url || !validateURL(url)) {
       console.error('`url` is either missing or invalid');
-      return this.emit('error', 'The URL is invalid or missing.');
+      return this.emit('error', 'invalid_or_missin_url');
     }
 
     var source = getURLSource(url);
 
     if (!source) {
       console.error(new Error('Invalid or Unsupported URL'));
-      return this.emit('error', 'URL Requested Not Supported');
+      return this.emit('error', 'url_not_supported');
     }
 
     if (!this[source]) {
       console.error(new Error('Requested source is not implemented or missing.'));
-      return this.emit('error', 'The requested URL source is not recognised or supported.');
+      return this.emit('error', 'unrecognised_url');
     }
 
     var id = uuid();
@@ -541,7 +558,7 @@
       } else {
         if (!request.el.firstChild) {
           console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
-          return this.emit('error', 'Cannot refresh at the moment, DOM Node is not available yet.');
+          return this.emit('error', 'dom_not_ready');
         }
         automagic(request.el, request.el.firstChild, request.attributes, function (err, data) {
           if (data) {
@@ -571,7 +588,7 @@
         }
         request.el.remove();
       }
-    }).bind(this);
+    }.bind(this));
 
     if (!element) {
       while (this.requests.length) {
@@ -607,7 +624,7 @@
   }
 
   /**
-   * Generates script tag element
+   * @function Generates script tag element
    *
    * @param {string} source
    * @returns HTMLElement
@@ -622,7 +639,7 @@
   }
 
   /**
-   * Generates DOM element
+   * @function Generates DOM element
    *
    * @param {string} source
    * @returns HTMLElement
@@ -635,7 +652,7 @@
   }
 
   /**
-   * Validates if passed argument is valid DOM element
+   * @function Validates if passed argument is valid DOM element
    *
    * @param {object} obj
    * @returns HTMLElement
@@ -648,10 +665,10 @@
   }
 
   /**
-   * Checks Source from URI
+   * @function Checks Source from URI
    *
    * @param {string} url
-   * @returns
+   * @returns {string}
    */
   function getURLSource(url) {
     var type;
@@ -679,10 +696,10 @@
   }
 
   /**
-   * Object to Query String
+   * @function Object to Query String
    *
    * @param {object} obj
-   * @returns
+   * @returns {string}
    */
   function toQueryString(obj) {
     var parts = [];
@@ -695,7 +712,7 @@
   }
 
   /**
-   * JSONP XHR fetch
+   * @function JSONP XHR fetch
    *
    * @param {string} url
    * @param {object} options
@@ -723,7 +740,7 @@
   }
 
   /**
-   * Generates Embed Container
+   * @function Generates Embed Container
    *
    * @param {string} source
    * @param {string} html
@@ -737,7 +754,7 @@
   }
 
   /**
-   * Parses Facebook SDK
+   * @function Parses Facebook SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -761,7 +778,7 @@
   }
 
   /**
-   * Parses Twitter SDK
+   * @function Parses Twitter SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -782,7 +799,7 @@
   }
 
   /**
-   * Parses Instagram SDK
+   * @function Parses Instagram SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -804,7 +821,7 @@
   }
 
   /**
-   * Parses Pinterest SDK
+   * @function Parses Pinterest SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -832,7 +849,7 @@
   }
 
   /**
-   * Automagic - Salces and Resizes embed container
+   * @function Automagic - Scales and resizes embed container
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -856,7 +873,7 @@
     childNode.style['justify-content'] = 'center';
     childNode.style['align-items'] = 'center';
 
-    watcher(options.id || 'random', function () {
+    watcher(options.id || uuid(), function () {
       var parent = {
         width: options.width || compute(parentNode, 'width', true),
         height: options.height || compute(parentNode, 'height', true)
@@ -906,7 +923,7 @@
   }
 
   /**
-   * Cross Browser CSS Transformation
+   * @function Cross Browser CSS Transformation
    *
    * @param {HTMLElement} element
    * @param {string} props
@@ -923,7 +940,7 @@
   }
 
   /**
-   * Checks when SDK global object is ready
+   * @function Checks when SDK global object is ready
    *
    * @param {string} type
    * @param {function} callback
@@ -961,11 +978,11 @@
   }
 
   /**
-   * Computes property value of HTMLElement
+   * @function Computes property value of HTMLElement
    *
    * @param {HTMLElement} element
    * @param {string} prop
-   * @returns
+   * @returns {integer|string}
    */
   function compute(element, prop, raw) {
     if (!validateElement(element)) {
@@ -1045,7 +1062,8 @@
    * @param {HTMLElement} element
    * @param {string} width
    * @param {string} height
-   * @returns
+   *
+   * @returns {object{width,height}}
    */
   function getDimensions(element, width, height) {
     var elementWidth = compute(element, 'width', true);

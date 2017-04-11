@@ -7,7 +7,7 @@
     "prestart": "npm install",
     "start": "python -m SimpleHTTPServer",
     "test": "mocha",
-    "build": "uglifyjs embedo.js --compress drop_console=true --mangle --screw-ie8 --stats --o=embedo.min.js"
+    "build": "uglifyjs embedo.js --compress sequences=true,dead_code=true,conditionals=true,comparisons=true,evaluate=true,booleans=true,loops=true,unused=true,if_return=true,join_vars=true,drop_console=true,cascade=true --mangle --screw-ie8 --stats --o=embedo.min.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,6 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.1.2",
-    "uglify-js": "^2.7.4"
+    "uglify-js": "^2.8.22"
   }
 }

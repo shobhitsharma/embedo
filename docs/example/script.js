@@ -78,7 +78,7 @@ window.onload = function () {
   // // Destroy All Embdos Test
   // setTimeout(function () {
   //   embedo.destroy();
-  // }, 10000);
+  // }, 5000);
 
   // // Destroy Single Embdos Test
   // setTimeout(function () {
