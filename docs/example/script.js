@@ -62,7 +62,16 @@ window.onload = function () {
   // Loads youtube video
   embedo.load(
     document.getElementById('embedo-youtube'),
-    'https://www.youtube.com/watch?v=JGwWNGJdvx8'
+    'https://www.youtube.com/watch?v=JGwWNGJdvx8', {
+      width: 640,
+      height: 480
+    }
+  );
+
+  // Loads vimeo video
+  embedo.load(
+    document.getElementById('embedo-vimeo'),
+    'https://vimeo.com/212603149'
   );
 
   // Refresh All Embedo instances

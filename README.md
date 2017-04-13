@@ -1,11 +1,13 @@
 embedo [![CDNJS](https://img.shields.io/cdnjs/v/embedo.svg)](https://cdnjs.com/libraries/embedo) [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
 =============
 
-<img align="left" height="72"
+<img align="left" height="85"
      title="Embedo"
-     src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 20px;">
+     src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 25px;">
 
-Embedo is simple, lightweight and standalone javascript library which adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It also handles resizing of container, emitting events and supports external options to be passed along in advanced mode.
+**Embedo** adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It takes cares of resizing the container, emitting events and supports external options to be passed along. 
+
+It handles external SDK code, jsonp fetching, adds responsivness and is intended to make easier integrations with less hassels.
 
 ## Install
 
@@ -17,7 +19,7 @@ $ npm install embedo --save
 $ bower install embedo
 ```
 
-Alternatively, import using CDN [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo) links.
+Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo). It takes care of adding external scripts and necessary requirements to embed, and does check if you've already added some resources.
 
 ## Usage
 
@@ -27,10 +29,8 @@ Embedo supports AMD and CommonJS modules. Also, an example can be [found here](h
 const Embedo = require('embedo'); // OR import Embedo from 'embedo';
 const embedo = new Embedo(); // OR const embedo = new Embedo();
 
-embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]>);
+embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]*optional>);
 ```
-
-Embedo automatically injects third-part social media SDKs once you include this to your project.
 
 ### Initialize Options
 
@@ -38,13 +38,13 @@ The following options can be set during library import is called:
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `facebook`      | number   | true      | Injects Facebook SDK                            |
-| `twitter`       | number   | true      | Injects Twitter SDK                             |
-| `instagram`     | boolean  | true      | Injects Instagram SDK                           |
-| `youtube`       | boolean  | n/a       | Injects YouTube oEmbed                          |
-| `pinterest`     | boolean  | false     | Injects Pinterest SDK                           |
+| `facebook`      | boolean/object | true | Injects Facebook SDK                            |
+| `twitter`       | boolean  | true       | Injects Twitter SDK                             |
+| `instagram`     | boolean  | true       | Injects Instagram SDK                           |
+| `youtube`       | boolean  | n/a        | Injects YouTube oEmbed                          |
+| `pinterest`     | boolean  | false      | Injects Pinterest SDK                           |
 
-If any other website URL is added, then it will simply create an iframe and append to the container while checking cross origin policies and provided parameters.
+For YouTube and Vimeo, no setup is required. If you were to hose any external URL (for example GoogleMaps URL) or API, then it will fallback to jsonp fetch, and if found `{DATA}.html` attribute from URI, it will load accordingly, or it will just load it in an object frame as HTML while checking cross origin support.
 
 ### Advance Options
 
@@ -65,12 +65,10 @@ new Embedo({
 
 ### .load()
 
-The `.load()` function is all what you need to embed third party content.
-There is an **automagic** function which translates the embedded content to fit and centerize the parent container if `width` or `height` is provided. 
-If `strict: true` option is passed, then it will be ignored.
+The `.load()` function is all what you need to embed third party content. Since there are restrictions for sizes, that you can't bypass, an additonal functionality is added as **automagic** function which basically scales and add flex support to adjust content with assigned or detected size.
 
 ```js
-embedo.load(<HTMLElement>, <URL|string>, <options|{}>)
+embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)
 ```
 
 **Native Options**
@@ -117,26 +115,20 @@ embedo.destroy();
 
 Embedo also has internal event listeners implemented which emits following events:
 
+| Listeners   | Methods  | Parameters    | Description                                |
+| ------------|----------|------------|-----------------------------------------------|
+| `watch`     | on/off   | result      | Updated element's properties and dimensions  |
+| `refresh`   | on/off   | request, result | Triggers after an element refreshes      |
+| `destroy`   | on/off   | null      | Triggers after emo destorys                    |
+| `error`     | on/off   | error      | Returns exception that occurs during load     |
+
+They can be instantiated like this:
+
 ```js
-// Watch Event
-embedo.on('watch', function (result) {
-  console.log(result); // Returns element and its dimensions
-});
-
-// Refresh Event
-embedo.on('refresh', function (request, result) {
-  console.log(request, result); // Returns request meta and dimensions
-});
-
-// Error Handler
-embedo.on('error', function (error) {
-  console.error(error); // Emits in case of invalid request or an exception
-});
-
-// Destroy Event
-embedo.on('destroy', function () {
-  // Do something when embedo destroys
-});
+embedo.on('watch', function (result) {});
+embedo.on('refresh', function (request, result) {});
+embedo.on('error', function (error) {});
+embedo.on('destroy', function () {});
 ```
 
 ## Example
@@ -153,8 +145,7 @@ embedo.load($('.my-unique-selector').get(0), 'https://www.youtube.com/watch?v=Q6
 
 ## Development and Contribution
 
-If you'd like to fix some issues or add new features, feel free to create an issue for that.
-To setup environment, tests and build, use following commands:
+If you'd like to report issue or suggest some features, feel free to create an issue and that shall be gladly taken care of. Since it has been used in few procution apps/websites, regular maintenance is expected.
 
 ```bash
 $ npm start
