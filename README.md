@@ -5,9 +5,9 @@ embedo [![CDNJS](https://img.shields.io/cdnjs/v/embedo.svg)](https://cdnjs.com/l
      title="Embedo"
      src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 25px;">
 
-**Embedo** adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It takes cares of resizing the container, emitting events and supports external options to be passed along. 
+**Embedo** adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It takes cares of resizing the container, emitting necessary events and with support for native and external options to be pass along.
 
-It handles external SDK code, jsonp fetching, adds responsivness and is intended to make easier integrations with less hassels.
+It handles external SDKs, oEmbeds, adds responsivness and is intended to make easier integrations with less hassels or any setup.
 
 ## Install
 
@@ -44,7 +44,7 @@ The following options can be set during library import is called:
 | `youtube`       | boolean  | n/a        | Injects YouTube oEmbed                          |
 | `pinterest`     | boolean  | false      | Injects Pinterest SDK                           |
 
-For YouTube and Vimeo, no setup is required. If you were to hose any external URL (for example GoogleMaps URL) or API, then it will fallback to jsonp fetch, and if found `{DATA}.html` attribute from URI, it will load accordingly, or it will just load it in an object frame as HTML while checking cross origin support.
+For YouTube and Vimeo, no setup is required. If you were to host any external URL (for example GoogleMaps URL) or any file such as PDF, Video or other format, it will try to render after checking cross browser policies and other validations.
 
 ### Advance Options
 
