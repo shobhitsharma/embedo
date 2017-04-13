@@ -49,8 +49,8 @@
       </div>
       <section class="embedo-documentation markdown-body">
         <p><strong style="color:white;">Embedo</strong> adds a layer on top of third party embed APIs while ensuring best practices
-          and native guidelines for each component. It takes cares of resizing the container, emitting events and supports
-          external options to be passed along.</p>
+          and native guidelines for each component. It takes cares of resizing the container, emitting necessary events and
+          with support for native and external options to be pass along.</p>
         <p>It handles external SDK code, jsonp fetching, adds responsivness and is intended to make easier integrations with
           less hassels.</p>
         <h2>
@@ -118,9 +118,9 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
             </tr>
           </tbody>
         </table>
-        <p>For YouTube and Vimeo, no setup is required. If you were to hose any external URL (for example GoogleMaps URL) or
-          API, then it will fallback to jsonp fetch, and if found <code>{DATA}.html</code> attribute from URI, it will load
-          accordingly, or it will just load it in an object frame as HTML while checking cross origin support.</p>
+        <p>For YouTube and Vimeo, no setup is required. If you were to host any external URL (for example GoogleMaps URL) or
+          any file such as PDF, Video or other format, it will try to render after checking cross browser policies and other
+          validations.</p>
         <h3>
           <a id="Advance_Options_48"></a>Advance Options</h3>
         <p>For facebook, if you need to use your own appId, or version, you can declate this instead of <code>boolean</code>          with an <code>object</code> in snippet below. This will override Embedo’s defaults.</p>
@@ -304,6 +304,7 @@ $ npm run build
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
     ga('create', 'UA-80234662-2', 'auto');
     ga('send', 'pageview');
+
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
 </body>
