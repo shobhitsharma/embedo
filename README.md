@@ -78,6 +78,7 @@ embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)
 | `width`      | number   | null      | Custom width of container                           |
 | `height`       | number   | null      | Custom height of container                        |
 | `strict`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
+| `utility`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
 
 **External Options**
 

@@ -460,26 +460,21 @@
   Embedo.prototype.website = function (id, element, url, options, callback) {
     var size = getDimensions(element, options.width, options.height);
 
-    fetch(url, function (error, content) {
-      if (error) {
-        console.error(error);
-        return callback(error);
-      }
+    if (url.match(/\w+\.[A-Za-z]{3,4}(?=\?|$)/)) {
+      element.appendChild(generateEmbed('website',
+        '<object type="text/html" data="' + url + '" width="' + size.width + '" height="' + size.height + '"></object>'
+      ));
+    } else {
+      element.appendChild(generateEmbed('website',
+        '<iframe src="' + url + '" width="' + size.width + '" height="' + size.height + '" frameborder="0"></iframe>'
+      ));
+    }
 
-      if (content && typeof content === 'object' && content.html) {
-        element.appendChild(generateEmbed('website', content.html));
-      } else {
-        element.appendChild(generateEmbed('website',
-          '<object type="text/html" data="' + url + '" width="' + size.width + '" height="' + size.height + '"></object>'
-        ));
-      }
-
-      callback(null, {
-        id: id,
-        el: element,
-        width: size.width,
-        height: size.height
-      });
+    callback(null, {
+      id: id,
+      el: element,
+      width: size.width,
+      height: size.height
     });
   };
 
