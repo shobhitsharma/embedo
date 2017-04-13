@@ -7,7 +7,7 @@
     "prestart": "npm install",
     "start": "python -m SimpleHTTPServer",
     "test": "mocha",
-    "build": "uglifyjs embedo.js --compress sequences=true,dead_code=true,conditionals=true,comparisons=true,evaluate=true,booleans=true,loops=true,unused=true,if_return=true,join_vars=true,drop_console=true,cascade=true --mangle --screw-ie8 --stats --o=embedo.min.js"
+    "build": "uglifyjs embedo.js --compress dead_code=true,conditionals=true,comparisons=true,evaluate=true,booleans=true,loops=true,unused=true,if_return=true,join_vars=true,drop_console=true,cascade=true --mangle --screw-ie8 --stats --o=embedo.min.js"
   },
   "repository": {
     "type": "git",

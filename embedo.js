@@ -158,6 +158,13 @@
     appendSDK('instagram', options.instagram);
     appendSDK('pinterest', options.pinterest);
 
+    window.addEventListener('resize', this.emit('watch', 'window-resize', {
+      resize: {
+        width: window.innerWidth,
+        height: window.inn
+      }
+    }), false);
+
     // Injects SDK's to body
     function appendSDK(type, props) {
       if (!props) {
@@ -512,23 +519,23 @@
     }
 
     var id = uuid();
-
-    this.requests.push({
+    var request = {
       id: id,
       el: element,
       source: source,
       url: url,
       attributes: options
-    });
+    };
 
-    // Process Requests
+    this.requests.push(request);
+    this.emit('watch', 'load', request);
     this[source](
       id, element, url, options,
       function (err, data) {
         if (err) {
           return this.emit('error', err);
         }
-        this.emit('watch', data);
+        this.emit('watch', 'loaded', data);
       }.bind(this)
     );
   };
@@ -576,25 +583,27 @@
    * @param {object} element
    */
   Embedo.prototype.destroy = function (element) {
-    this.requests.forEach(function (request, index, requests) {
-      if (element && validateElement(element)) {
-        if (element === request.el) {
-          element.remove();
-          requests.splice(index, 1);
-        }
-      } else {
-        if (!request.el || !validateElement(request.el)) {
-          return;
-        }
-        request.el.remove();
-      }
-    }.bind(this));
-
     if (!element) {
       while (this.requests.length) {
         this.requests.pop();
       }
       this.emit('destroy');
+    } else {
+      this.requests.forEach(function (request, index, requests) {
+        if (element && validateElement(element)) {
+          if (element === request.el) {
+            element.remove();
+            requests.splice(index, 1);
+            this.emit('destroy', request);
+          }
+        } else {
+          if (!request.el || !validateElement(request.el)) {
+            return;
+          }
+          request.el.remove();
+          this.emit('destroy', request);
+        }
+      }.bind(this));
     }
   };
 
