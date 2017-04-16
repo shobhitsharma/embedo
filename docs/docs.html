@@ -48,12 +48,13 @@
         <h2>embedo.js</h2>
       </div>
       <section class="embedo-documentation markdown-body">
-        <p><strong style="color:white;">Embedo</strong> adds a layer on top of third party embed APIs while ensuring best practices
+        <p><strong style="color:white">Embedo</strong> adds a layer on top of third party embed APIs while ensuring best practices
           and native guidelines for each component. It takes cares of resizing the container, emitting necessary events and
           with support for native and external options to be pass along.</p>
-        <p>It handles external SDKs, oEmbeds, adds responsivness and is intended to make easier integrations with less hassels or any setup.</p>
+        <p>It handles external SDKs, oEmbeds, adds responsivness and is intended to make easier integrations with less hassels
+          or any setup.</p>
         <h2>
-          <a id="Install_11"></a>Install</h2>
+          <a id="Install_4"></a>Install</h2>
         <pre><code class="language-sh"><span class="hljs-comment"># npm</span>
 $ npm install embedo --save
 
@@ -65,7 +66,7 @@ $ bower install embedo
           It takes care of adding external scripts and necessary requirements to embed, and does check if you’ve already
           added some resources.</p>
         <h2>
-          <a id="Usage_23"></a>Usage</h2>
+          <a id="Usage_16"></a>Usage</h2>
         <p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/example">found here</a>.</p>
         <pre><code class="language-js"><span class="hljs-keyword">const</span> Embedo = <span class="hljs-built_in">require</span>(<span class="hljs-string">'embedo'</span>); <span class="hljs-comment">// OR import Embedo from 'embedo';</span>
 <span class="hljs-keyword">const</span> embedo = <span class="hljs-keyword">new</span> Embedo(); <span class="hljs-comment">// OR const embedo = new Embedo();</span>
@@ -73,7 +74,7 @@ $ bower install embedo
 embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement[object]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL[string]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options[object]*optional</span>&gt;</span>)</span>;
 </code></pre>
         <h3>
-          <a id="Initialize_Options_34"></a>Initialize Options</h3>
+          <a id="Initialize_Options_27"></a>Initialize Options</h3>
         <p>The following options can be set during library import is called:</p>
         <table class="table table-striped table-bordered">
           <thead>
@@ -87,8 +88,8 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
           <tbody>
             <tr>
               <td><code>facebook</code></td>
-              <td>boolean/object</td>
-              <td>true</td>
+              <td>object</td>
+              <td>null</td>
               <td>Injects Facebook SDK</td>
             </tr>
             <tr>
@@ -104,38 +105,40 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
               <td>Injects Instagram SDK</td>
             </tr>
             <tr>
-              <td><code>youtube</code></td>
-              <td>boolean</td>
-              <td>n/a</td>
-              <td>Injects YouTube oEmbed</td>
-            </tr>
-            <tr>
               <td><code>pinterest</code></td>
               <td>boolean</td>
               <td>false</td>
               <td>Injects Pinterest SDK</td>
             </tr>
+            <tr>
+              <td><code>googlemaps</code></td>
+              <td>object</td>
+              <td>null</td>
+              <td>Injects Google Maps SDK</td>
+            </tr>
           </tbody>
         </table>
-        <p>For YouTube and Vimeo, no setup is required. If you were to host any external URL (for example GoogleMaps URL) or
-          any file such as PDF, Video or other format, it will try to render after checking cross browser policies and other
-          validations.</p>
+        <p>For YouTube and Vimeo, no sdk is required. If you were to host any external URL or any file such as PDF, Video or
+          other format, it will try to render after checking cross browser policies and other validations to an <code>&lt;iframe&gt;</code>          or <code>&lt;object&gt;</code> tag.</p>
         <h3>
-          <a id="Advance_Options_48"></a>Advance Options</h3>
+          <a id="Advance_Options_41"></a>Advance Options</h3>
         <p>For facebook, if you need to use your own appId, or version, you can declate this instead of <code>boolean</code>          with an <code>object</code> in snippet below. This will override Embedo’s defaults.</p>
-        <pre><code class="language-js"><span class="hljs-comment">// Overriding Facebook</span>
+        <pre><code class="language-js"><span class="hljs-comment">// Custom options for Facebook and Google Maps</span>
 <span class="hljs-keyword">new</span> Embedo({
   facebook: {
     appId: <span class="hljs-string">'my_app_id_here'</span>,
     version: <span class="hljs-string">'v2.8'</span>,
     xfbml: <span class="hljs-literal">false</span>
+  },
+  googlemaps: {
+    key: <span class="hljs-string">'your_api_key'</span>
   }
 })
 </code></pre>
         <h2>
-          <a id="Events_63"></a>Events</h2>
+          <a id="Events_59"></a>Events</h2>
         <h3>
-          <a id="load_65"></a>.load()</h3>
+          <a id="load_61"></a>.load()</h3>
         <p>The <code>.load()</code> function is all what you need to embed third party content. Since there are restrictions
           for sizes, that you can’t bypass, an additonal functionality is added as <strong>automagic</strong> function which
           basically scales and add flex support to adjust content with assigned or detected size.</p>
@@ -179,9 +182,10 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
           <li>Instagram - Supports <code>hidecaption</code>, <code>maxwidth</code>, <code>omitscript</code> (<a href="https://www.instagram.com/developer/embedding/">API Reference</a>)</li>
           <li>YouTube - See <strong>Supported Parameters</strong> section <a href="https://developers.google.com/youtube/player_parameters">here</a></li>
           <li>Pinterest - See <a href="https://developers.pinterest.com/tools/widget-builder/">API Reference</a></li>
+          <li>Google Maps - Supports <code>zoom</code> as integer and <code>mapTypeId</code> as enum as <code>roadmap|satellite|hybrid|terrain</code>            (<a href="https://developers.google.com/maps/documentation/javascript/reference">API Reference</a>)</li>
         </ul>
         <h3>
-          <a id="refresh_89"></a>.refresh()</h3>
+          <a id="refresh_86"></a>.refresh()</h3>
         <p>The <code>embedo.refresh()</code> method can be called explicitly when you have a <code>change</code> or <code>resize</code>          event, which re-calculates the dimensions of generated content.</p>
         <pre><code class="language-js"><span class="hljs-comment">// Refresh single container</span>
 embedo.refresh(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>));
@@ -190,7 +194,7 @@ embedo.refresh(<span class="hljs-built_in">document</span>.getElementById(<span 
 embedo.refresh();
 </code></pre>
         <h3>
-          <a id="destroy_101"></a>.destroy()</h3>
+          <a id="destroy_98"></a>.destroy()</h3>
         <p>The <code>embedo.destroy()</code> method can be called explicitly when wish to remove and unbind embedo instance(s).</p>
         <pre><code class="language-js"><span class="hljs-comment">// Destroy single container</span>
 embedo.destroy(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>));
@@ -199,7 +203,7 @@ embedo.destroy(<span class="hljs-built_in">document</span>.getElementById(<span 
 embedo.destroy();
 </code></pre>
         <h3>
-          <a id="Event_Listeners_113"></a>Event Listeners</h3>
+          <a id="Event_Listeners_110"></a>Event Listeners</h3>
         <p>Embedo also has internal event listeners implemented which emits following events:</p>
         <table class="table table-striped table-bordered">
           <thead>
@@ -213,25 +217,25 @@ embedo.destroy();
           <tbody>
             <tr>
               <td><code>watch</code></td>
-              <td>on/off</td>
+              <td>on/once/off</td>
               <td>result</td>
               <td>Updated element’s properties and dimensions</td>
             </tr>
             <tr>
               <td><code>refresh</code></td>
-              <td>on/off</td>
+              <td>on/once/off</td>
               <td>request, result</td>
               <td>Triggers after an element refreshes</td>
             </tr>
             <tr>
               <td><code>destroy</code></td>
-              <td>on/off</td>
+              <td>on/once/off</td>
               <td>null</td>
               <td>Triggers after emo destorys</td>
             </tr>
             <tr>
               <td><code>error</code></td>
-              <td>on/off</td>
+              <td>on/once/off</td>
               <td>error</td>
               <td>Returns exception that occurs during load</td>
             </tr>
@@ -244,7 +248,7 @@ embedo.on(<span class="hljs-string">'error'</span>, <span class="hljs-function">
 embedo.on(<span class="hljs-string">'destroy'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{});
 </code></pre>
         <h2>
-          <a id="Example_133"></a>Example</h2>
+          <a id="Example_130"></a>Example</h2>
         <pre><code class="language-js">embedo.load(
   <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>),
   <span class="hljs-string">'https://twitter.com/Sh0bhit/status/797584590214926340'</span>
@@ -254,7 +258,7 @@ embedo.on(<span class="hljs-string">'destroy'</span>, <span class="hljs-function
 embedo.load($(<span class="hljs-string">'.my-unique-selector'</span>).get(<span class="hljs-number">0</span>), <span class="hljs-string">'https://www.youtube.com/watch?v=Q6gYFO4iGlk'</span>);
 </code></pre>
         <h2>
-          <a id="Development_and_Contribution_145"></a>Development and Contribution</h2>
+          <a id="Development_and_Contribution_142"></a>Development and Contribution</h2>
         <p>If you’d like to report issue or suggest some features, feel free to create an issue and that shall be gladly taken
           care of. Since it has been used in few procution apps/websites, regular maintenance is expected.</p>
         <pre><code class="language-bash">$ npm start
@@ -271,6 +275,7 @@ $ npm run build
           <div class="site fa fa-instagram"></div>
           <div class="site fa fa-pinterest"></div>
           <div class="site fa fa-vimeo"></div>
+          <div class="site fa fa-google"></div>
         </div>
         <div class="copyrights">
           <a href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md" target="_blank">

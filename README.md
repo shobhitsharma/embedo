@@ -38,25 +38,28 @@ The following options can be set during library import is called:
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `facebook`      | boolean/object | true | Injects Facebook SDK                            |
-| `twitter`       | boolean  | true       | Injects Twitter SDK                             |
-| `instagram`     | boolean  | true       | Injects Instagram SDK                           |
-| `youtube`       | boolean  | n/a        | Injects YouTube oEmbed                          |
-| `pinterest`     | boolean  | false      | Injects Pinterest SDK                           |
+| `facebook`      | object | null | Injects Facebook SDK                           |
+| `twitter`       | boolean  | true       | Injects Twitter SDK                            |
+| `instagram`     | boolean  | true       | Injects Instagram SDK                          |
+| `pinterest`     | boolean  | false      | Injects Pinterest SDK                          |
+| `googlemaps`    | object  | null      | Injects Google Maps SDK                        |
 
-For YouTube and Vimeo, no setup is required. If you were to host any external URL (for example GoogleMaps URL) or any file such as PDF, Video or other format, it will try to render after checking cross browser policies and other validations.
+For YouTube and Vimeo, no sdk is required. If you were to host any external URL or any file such as PDF, Video or other format, it will try to render after checking cross browser policies and other validations to an `<iframe>` or `<object>` tag.
 
 ### Advance Options
 
 For facebook, if you need to use your own appId, or version, you can declate this instead of `boolean` with an `object` in snippet below. This will override Embedo's defaults.
 
 ```js
-// Overriding Facebook
+// Custom options for Facebook and Google Maps
 new Embedo({
   facebook: {
     appId: 'my_app_id_here',
     version: 'v2.8',
     xfbml: false
+  },
+  googlemaps: {
+    key: 'your_api_key'
   }
 })
 ```
@@ -78,7 +81,6 @@ embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)
 | `width`      | number   | null      | Custom width of container                           |
 | `height`       | number   | null      | Custom height of container                        |
 | `strict`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
-| `utility`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
 
 **External Options**
 
@@ -87,6 +89,7 @@ embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)
 * Instagram - Supports `hidecaption`, `maxwidth`, `omitscript` ([API Reference](https://www.instagram.com/developer/embedding/))
 * YouTube - See **Supported Parameters** section [here](https://developers.google.com/youtube/player_parameters)
 * Pinterest - See [API Reference](https://developers.pinterest.com/tools/widget-builder/)
+* Google Maps - Supports `zoom` as integer and `mapTypeId` as enum as `roadmap|satellite|hybrid|terrain` ([API Reference](https://developers.google.com/maps/documentation/javascript/reference))
 
 ### .refresh()
 
@@ -118,10 +121,10 @@ Embedo also has internal event listeners implemented which emits following event
 
 | Listeners   | Methods  | Parameters    | Description                                |
 | ------------|----------|------------|-----------------------------------------------|
-| `watch`     | on/off   | result      | Updated element's properties and dimensions  |
-| `refresh`   | on/off   | request, result | Triggers after an element refreshes      |
-| `destroy`   | on/off   | null      | Triggers after emo destorys                    |
-| `error`     | on/off   | error      | Returns exception that occurs during load     |
+| `watch`     | on/once/off   | result      | Updated element's properties and dimensions  |
+| `refresh`   | on/once/off   | request, result | Triggers after an element refreshes      |
+| `destroy`   | on/once/off   | null      | Triggers after emo destorys                    |
+| `error`     | on/once/off   | error      | Returns exception that occurs during load     |
 
 They can be instantiated like this:
 
