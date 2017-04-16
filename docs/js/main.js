@@ -1,9 +1,16 @@
 window.onload = function () {
   var embedo = new Embedo({
-    facebook: true,
+    facebook: {
+      version: 'v2.8',
+      appId: '269918776508696',
+      xfbml: true
+    },
     twitter: true,
     instagram: true,
-    pinterest: true
+    pinterest: true,
+    googlemaps: {
+      key: 'AIzaSyDDmeVWuW86QT0JPikPas0BeWxbpVBlFy8'
+    }
   });
 
   if (document.getElementById('test-case')) {

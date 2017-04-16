@@ -48,7 +48,7 @@
       pinterest: false
     },
     FACEBOOK: {
-      SDK: 'https://connect.facebook.net/en_US/all.js#version=${version}&appId‌​=${appId}&coo‌​kie=${coo‌​kie}&xfbml=${xfbml}',
+      SDK: 'https://connect.facebook.net/en_US/all.js',
       oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
       REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i,
       PARAMS: {
@@ -93,6 +93,13 @@
       REGEX: /(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
       PARAMS: {},
       RESTRICTED: ['url', 'strict', 'height', 'width']
+    },
+    GOOGLEMAPS: {
+      SDK: 'https://maps.googleapis.com/maps/api/js',
+      oEmbed: null,
+      REGEX: /(http|https)?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*/i,
+      PARAMS: {},
+      RESTRICTED: ['url', 'strict', 'height', 'width']
     }
   };
 
@@ -104,14 +111,12 @@
    * @implements emit
    */
   Embedo.prototype = Object.create({
-
     on: function (event, listener) {
       if (typeof this.events[event] !== 'object') {
         this.events[event] = [];
       }
       this.events[event].push(listener);
     },
-
     off: function (event, listener) {
       var index;
       if (typeof this.events[event] === 'object') {
@@ -121,7 +126,6 @@
         }
       }
     },
-
     emit: function (event) {
       var i, listeners, length, args = [].slice.call(arguments, 1);
       if (typeof this.events[event] === 'object') {
@@ -133,7 +137,6 @@
         }
       }
     },
-
     once: function (event, listener) {
       this.on(event, function g() {
         this.off(event, g);
@@ -157,11 +160,13 @@
     appendSDK('twitter', options.twitter);
     appendSDK('instagram', options.instagram);
     appendSDK('pinterest', options.pinterest);
+    appendSDK('googlemaps', options.googlemaps);
 
+    // Adds window resize event
     window.addEventListener('resize', this.emit('watch', 'window-resize', {
       resize: {
         width: window.innerWidth,
-        height: window.inn
+        height: window.innerHeight
       }
     }), false);
 
@@ -174,7 +179,7 @@
 
       if (!handleScriptValidation(sdk)) {
         if (props && typeof props === 'object') {
-          sdk = substitute(sdk, extender(Embedo.defaults[type.toUpperCase()].PARAMS, props));
+          sdk += (type === 'facebook' ? '#' : '?') + toQueryString(props);
         }
         document.body.appendChild(generateScript(sdk));
       }
@@ -367,8 +372,8 @@
     });
 
     function getYTVideoID(url) {
-      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-      var match = url.match(regExp);
+      var regexp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+      var match = url.match(regexp);
       return (match && match[7].length == 11) ? match[7] : false;
     }
   };
@@ -449,6 +454,68 @@
   };
 
   /**
+   * @method Google Maps Embed
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.googlemaps = function (id, element, url, options, callback) {
+    var size = getDimensions(element, options.width, options.height);
+    var cordinates = getCordinates(url);
+
+    if (!cordinates) {
+      return callback(new Error('unable_to_find_cordinates'));
+    }
+
+    var container = generateEmbed('googlemaps');
+    element.appendChild(container);
+
+    gmapsify(element, container, {
+      width: size.width,
+      height: size.height
+    }, function (err) {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      }
+
+      var location = new window.google.maps.LatLng(cordinates.lat, cordinates.lng);
+      var map = new window.google.maps.Map(container, {
+        zoom: options.zoom || 12,
+        center: location,
+        mapTypeId: options.MapTypeId || window.google.maps.MapTypeId.ROADMAP
+      });
+      var marker = new window.google.maps.Marker({
+        map: map,
+        draggable: true,
+        animation: window.google.maps.Animation.DROP,
+        position: location
+      });
+
+      callback(null, {
+        id: id,
+        el: element,
+        width: size.width,
+        height: size.height,
+        marker: marker
+      });
+    });
+
+    function getCordinates(url) {
+      var regex = /@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/;
+      var match = url.match(regex);
+
+      return (match && match.length && match[1] && match[2]) ? {
+        lat: parseFloat(match[1], 0),
+        lng: parseFloat(match[2], 0)
+      } : null;
+    }
+  };
+
+  /**
    * @method Website Embed
    *
    * @param {number} id
@@ -493,24 +560,24 @@
 
     if (!element || !validateElement(element)) {
       console.error('`element` is either missing or invalid');
-      return this.emit('error', 'element_is_missing');
+      return this.emit('error', new Error('element_is_missing'));
     }
 
     if (!url || !validateURL(url)) {
       console.error('`url` is either missing or invalid');
-      return this.emit('error', 'invalid_or_missin_url');
+      return this.emit('error', new Error('invalid_or_missing_url'));
     }
 
     var source = getURLSource(url);
 
     if (!source) {
       console.error(new Error('Invalid or Unsupported URL'));
-      return this.emit('error', 'url_not_supported');
+      return this.emit('error', new Error('url_not_supported'));
     }
 
     if (!this[source]) {
       console.error(new Error('Requested source is not implemented or missing.'));
-      return this.emit('error', 'unrecognised_url');
+      return this.emit('error', new Error('unrecognised_url'));
     }
 
     var id = uuid();
@@ -523,7 +590,9 @@
     };
 
     this.requests.push(request);
+
     this.emit('watch', 'load', request);
+
     this[source](
       id, element, url, options,
       function (err, data) {
@@ -543,7 +612,7 @@
    */
   Embedo.prototype.refresh = function (element) {
     this.requests.forEach(function (request) {
-      if (request.source === 'website' || request.source === 'youtube') {
+      if (request.source === 'website' || request.source === 'youtube' || request.source === 'googlemaps') {
         return this.emit('refresh', request, {
           width: compute(request.el, 'width', true),
           height: compute(request.el, 'height', true)
@@ -560,7 +629,7 @@
       } else {
         if (!request.el.firstChild) {
           console.log('Embedo Refresh:', 'Too early to refresh, child is yet to be generated.');
-          return this.emit('error', 'dom_not_ready');
+          return this.emit('error', new Error('dom_not_ready'));
         }
         automagic(request.el, request.el.firstChild, request.attributes, function (err, data) {
           if (data) {
@@ -694,6 +763,8 @@
       return 'pinterest';
     } else if (url.match(Embedo.defaults.VIMEO.REGEX)) {
       return 'vimeo';
+    } else if (url.match(Embedo.defaults.GOOGLEMAPS.REGEX)) {
+      return 'googlemaps';
     } else {
       return 'website';
     }
@@ -753,7 +824,7 @@
   function generateEmbed(source, html) {
     var container = document.createElement('div');
     container.setAttribute('data-embed', source);
-    container.innerHTML = html;
+    container.innerHTML = html || '';
     return container;
   }
 
@@ -853,6 +924,27 @@
   }
 
   /**
+   * @function Parses Google Maps SDK
+   *
+   * @param {HTMLElement} parentNode
+   * @param {HTMLElement} childNode
+   * @param {object} options
+   */
+  function gmapsify(parentNode, childNode, options, callback) {
+    sdkReady('googlemaps', function (err) {
+      if (err) {
+        return;
+      }
+
+      centerize(childNode);
+      childNode.style.width = options.width ? options.width + 'px' : '100%';
+      childNode.style.height = options.height ? options.height + 'px' : '100%';
+
+      callback(null, {});
+    });
+  }
+
+  /**
    * @function Automagic - Scales and resizes embed container
    *
    * @param {HTMLElement} parentNode
@@ -868,14 +960,7 @@
       return callback(new Error('HTMLElement does not exist in DOM.'));
     }
 
-    // Attach Flex mode to center container
-    childNode.style.display = '-webkit-box';
-    childNode.style.display = '-moz-box';
-    childNode.style.display = '-ms-flexbox';
-    childNode.style.display = '-webkit-flex';
-    childNode.style.display = 'flex';
-    childNode.style['justify-content'] = 'center';
-    childNode.style['align-items'] = 'center';
+    centerize(childNode);
 
     watcher(options.id || uuid(), function () {
       var parent = {
@@ -974,6 +1059,10 @@
         if (window.PinUtils) {
           return callback();
         }
+      } else if (type === 'googlemaps') {
+        if (window.google && window.google.maps) {
+          return callback();
+        }
       } else {
         return callback(new Error('unsupported_sdk_type'));
       }
@@ -1039,28 +1128,6 @@
   }
 
   /**
-   * @function subtitute
-   * Substitues character in string within ${*} scope
-   *
-   * @param {string} str
-   * @param {object} obj
-   * @returns
-   */
-  function substitute(str, obj) {
-    if (!str || !obj) {
-      return;
-    }
-    if (obj) {
-      for (var key in obj) {
-        if (str) {
-          str = str.split('${' + key + '}').join(obj[key]);
-        }
-      }
-    }
-    return str;
-  }
-
-  /**
    * @function getDimensions
    *
    * @param {HTMLElement} element
@@ -1078,6 +1145,27 @@
       width: width,
       height: height
     };
+  }
+
+  /**
+   * @function centerize
+   * Align an element center in relation to parent div
+   *
+   * @param {HTMLElement} element
+   * @returns
+   */
+  function centerize(element) {
+    if (!validateElement(element)) {
+      return;
+    }
+    element.style.display = '-webkit-box';
+    element.style.display = '-moz-box';
+    element.style.display = '-ms-flexbox';
+    element.style.display = '-webkit-flex';
+    element.style.display = 'flex';
+    element.style['justify-content'] = 'center';
+    element.style['align-items'] = 'center';
+    element.style.margin = '0 auto';
   }
 
   /**
