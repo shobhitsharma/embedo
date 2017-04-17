@@ -149,9 +149,12 @@ embedo.load($('.my-unique-selector').get(0), 'https://www.youtube.com/watch?v=Q6
 
 ## Development and Contribution
 
-If you'd like to add some features or report bugs, pleaase feel free to fork, pull or createing issues. Locally project can be run or tested at:
+If you'd like to add some features or report bugs, pleaase feel free to fork, pull or create an issue for that concern.
 
 ```bash
+# Local testing/development
 $ npm start
+
+# Build source
 $ npm run build
 ```
