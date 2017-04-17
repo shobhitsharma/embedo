@@ -38,17 +38,17 @@ The following options can be set during library import is called:
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `facebook`      | object | null | Injects Facebook SDK                           |
+| `facebook`      | object   | null       | Injects Facebook SDK                           |
 | `twitter`       | boolean  | true       | Injects Twitter SDK                            |
 | `instagram`     | boolean  | true       | Injects Instagram SDK                          |
 | `pinterest`     | boolean  | false      | Injects Pinterest SDK                          |
-| `googlemaps`    | object  | null      | Injects Google Maps SDK                        |
+| `googlemaps`    | object   | null       | Injects Google Maps SDK                        |
 
-For YouTube and Vimeo, no sdk is required. If you were to host any external URL or any file such as PDF, Video or other format, it will try to render after checking cross browser policies and other validations to an `<iframe>` or `<object>` tag.
+For **YouTube** and **Vimeo**, no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<iframe>` or `<object>` tag.
 
 ### Advance Options
 
-For facebook, if you need to use your own appId, or version, you can declate this instead of `boolean` with an `object` in snippet below. This will override Embedo's defaults.
+For facebook, if you need to use your own appId, or version, you can declare this instead of `boolean` with an `object` in snippet below. This will override Embedo's defaults.
 
 ```js
 // Custom options for Facebook and Google Maps
@@ -155,4 +155,3 @@ If you'd like to report issue or suggest some features, feel free to create an i
 $ npm start
 $ npm run build
 ```
-
