@@ -1864,7 +1864,13 @@ pre[class*="language-"] {
     display: none;
   }
   div#embedo-app {
+    padding: 0;
+  }
+  div#embedo-app>section.teaser {
     padding: 25px;
+  }
+  div#embedo-app>section.teaser>p {
+    font-size: 13px;
   }
   div#embedo-app form>input {
     font-size: 11px;
@@ -1878,5 +1884,11 @@ pre[class*="language-"] {
   footer div span {
     display: block;
     width: 100%;
+  }
+  footer .supported-sites {
+    padding: 25px;
+  }
+  footer .supported-sites .supports {
+    width: 98%;
   }
 }
