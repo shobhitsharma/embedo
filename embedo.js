@@ -50,7 +50,7 @@
     FACEBOOK: {
       SDK: 'https://connect.facebook.net/en_US/all.js',
       oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
-      REGEX: /^http[s]*:\/\/[www.]*facebook\.com.*/i,
+      REGEX: /^http[s]*:\/\/[www.]*facebook(\.[a-z]+).*/i,
       PARAMS: {
         version: 'v2.8',
         cookie: true,
@@ -62,14 +62,14 @@
     TWITTER: {
       SDK: 'https://platform.twitter.com/widgets.js',
       oEmbed: 'https://publish.twitter.com/oembed',
-      REGEX: /^http[s]*:\/\/[www.]*twitter\.com.*/i,
+      REGEX: /^http[s]*:\/\/[www.]*twitter(\.[a-z]+).*/i,
       PARAMS: {},
       RESTRICTED: ['url', 'strict', 'height', 'width']
     },
     INSTAGRAM: {
       SDK: 'https://platform.instagram.com/en_US/embeds.js',
       oEmbed: 'https://api.instagram.com/oembed',
-      REGEX: /^http[s]*:\/\/[www.]*instagram\.com.*/i,
+      REGEX: /^http[s]*:\/\/[www.]*instagram(\.[a-z]+).*/i,
       PARAMS: {},
       RESTRICTED: ['url', 'strict', 'height', 'width']
     },
@@ -83,14 +83,14 @@
     PINTEREST: {
       SDK: 'https://assets.pinterest.com/js/pinit.js',
       oEmbed: null,
-      REGEX: /(https?:\/\/(ww.)?)?pinterest\.com.*/i,
+      REGEX: /(https?:\/\/(ww.)?)?pinterest(\.[a-z]+).*/i,
       PARAMS: {},
       RESTRICTED: ['url', 'strict', 'height', 'width']
     },
     VIMEO: {
       SDK: null,
       oEmbed: 'https://vimeo.com/api/oembed.json',
-      REGEX: /(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
+      REGEX: /(http|https)?:\/\/(www\.)?vimeo(\.[a-z]+)\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
       PARAMS: {},
       RESTRICTED: ['url', 'strict', 'height', 'width']
     },
@@ -301,8 +301,10 @@
       hidecaption: true
     }, options, Embedo.defaults.INSTAGRAM.RESTRICTED);
 
-    if (options.maxwidth > 320 || options.width && parseInt(options.width) > 320) {
-      query.maxwidth = options.maxwidth || options.width;
+    options.width = parseInt((options.maxwidth ? options.maxwidth : options.width), 10);
+
+    if (options.width > 320 && options.width < 750) {
+      query.maxwidth = options.width;
     }
 
     embed_uri += '?' + toQueryString(query);
