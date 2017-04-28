@@ -19,7 +19,7 @@ $ npm install embedo --save
 $ bower install embedo
 ```
 
-Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo). It takes care of adding external scripts and necessary requirements to embed, and does check if you've already added some resources.
+Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo). It takes care of adding external scripts and necessary requirements to embed, and does checks if you've already added them already.
 
 ## Usage
 
@@ -38,17 +38,17 @@ The following options can be set during library import is called:
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `facebook`      | object   | null       | Injects Facebook SDK                           |
-| `twitter`       | boolean  | true       | Injects Twitter SDK                            |
-| `instagram`     | boolean  | true       | Injects Instagram SDK                          |
-| `pinterest`     | boolean  | false      | Injects Pinterest SDK                          |
-| `googlemaps`    | object   | null       | Injects Google Maps SDK                        |
+| `facebook`      | object/boolean   | null       | Injects Facebook SDK                           |
+| `twitter`       | object/boolean  | true       | Injects Twitter SDK                            |
+| `instagram`     | object/boolean  | true       | Injects Instagram SDK                          |
+| `pinterest`     | object/boolean  | false      | Injects Pinterest SDK                          |
+| `googlemaps`    | object/boolean   | null       | Injects Google Maps SDK                        |
 
 For **YouTube** and **Vimeo**, no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<iframe>` or `<object>` tag.
 
 ### Advance Options
 
-For facebook, if you need to use your own appId, or version, you can declare this instead of `boolean` with an `object` in snippet below. This will override Embedo's defaults.
+Since facebook and googlemaps require `appId` and `api_key` attributes to make enable oEmbed, they can be passed along as:
 
 ```js
 // Custom options for Facebook and Google Maps
@@ -78,9 +78,9 @@ embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `width`      | number   | null      | Custom width of container                           |
-| `height`       | number   | null      | Custom height of container                        |
-| `strict`     | boolean  | true      | Enables/Disbaled Automagic feature                  |
+| `width`      | number   | null      | Custom width of container (gets ignored if not supported via native embed API)    |
+| `height`       | number   | null      | Custom height of container                       |
+| `strict`     | boolean  | true      | Enabled/Disabled auto-resizing container                |
 
 **External Options**
 
@@ -119,12 +119,12 @@ embedo.destroy();
 
 Embedo also has internal event listeners implemented which emits following events:
 
-| Listeners   | Methods  | Parameters    | Description                                |
-| ------------|----------|------------|-----------------------------------------------|
-| `watch`     | on/once/off   | result      | Updated element's properties and dimensions  |
-| `refresh`   | on/once/off   | request, result | Triggers after an element refreshes      |
-| `destroy`   | on/once/off   | null      | Triggers after emo destorys                    |
-| `error`     | on/once/off   | error      | Returns exception that occurs during load     |
+| Listeners   | Methods  |  Description                                |
+| ------------|----------|---------------------------------------------|
+| `watch`     | on/once/off   |  Updated element's properties and dimensions|
+| `refresh`   | on/once/off   |  Triggers after an element refreshes      |
+| `destroy`   | on/once/off   |  Triggers after emo destorys              |
+| `error`     | on/once/off   |  Returns exception that occurs during load|
 
 They can be instantiated like this:
 
