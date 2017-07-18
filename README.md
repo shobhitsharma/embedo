@@ -23,7 +23,7 @@ Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://www.
 
 ## Usage
 
-Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/example).
+Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/docs/example).
 
 ```js
 const Embedo = require('embedo'); // OR import Embedo from 'embedo';
@@ -48,7 +48,7 @@ For **YouTube** and **Vimeo**, no sdk is required. If you were to host any exter
 
 ### Advance Options
 
-Since facebook and googlemaps require `appId` and `api_key` attributes to make enable oEmbed, they can be passed along as:
+Since facebook and googlemaps require `appId` and `api_key` attributes for authorization, they can be passed along as:
 
 ```js
 // Custom options for Facebook and Google Maps
@@ -68,7 +68,7 @@ new Embedo({
 
 ### .load()
 
-The `.load()` function is all what you need to embed third party content. Since there are restrictions for sizes, that you can't bypass, an additonal functionality is added as **automagic** function which basically scales and add flex support to adjust content with assigned or detected size.
+The `.load()` function is all what you need to embed third party content. Since there are restrictions for sizes, that you can't bypass, an additonal functionality is added as **automagic** function which basically scales and add flex support to adjust content with assigned or detected size. It can be ignored by passing `{strict: true}` as option.
 
 ```js
 embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)

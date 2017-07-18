@@ -67,7 +67,7 @@ $ bower install embedo
           added them already.</p>
         <h2>
           <a id="Usage_12"></a>Usage</h2>
-        <p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/example">found here</a>.</p>
+        <p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/example">found here</a>.</p>
         <pre><code class="language-js"><span class="hljs-keyword">const</span> Embedo = <span class="hljs-built_in">require</span>(<span class="hljs-string">'embedo'</span>); <span class="hljs-comment">// OR import Embedo from 'embedo';</span>
 <span class="hljs-keyword">const</span> embedo = <span class="hljs-keyword">new</span> Embedo(); <span class="hljs-comment">// OR const embedo = new Embedo();</span>
 
@@ -123,8 +123,8 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
           to an <code>&lt;iframe&gt;</code> or <code>&lt;object&gt;</code> tag.</p>
         <h3>
           <a id="Advance_Options_37"></a>Advance Options</h3>
-        <p>Since facebook and googlemaps require <code>appId</code> and <code>api_key</code> attributes to make enable oEmbed,
-          they can be passed along as:</p>
+        <p>Since facebook and googlemaps requires <code>appId</code> and <code>api_key</code> attributes to authorize,
+          they must be passed along as:</p>
         <pre><code class="language-js"><span class="hljs-comment">// Custom options for Facebook and Google Maps</span>
 <span class="hljs-keyword">new</span> Embedo({
   facebook: {
@@ -141,9 +141,9 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
           <a id="Events_55"></a>Events</h2>
         <h3>
           <a id="load_57"></a>.load()</h3>
-        <p>The <code>.load()</code> function is all what you need to embed third party content. Since there are restrictions
+        <p>The <code>.load()</code> function is basically all what you need to embed third party content. Since, there are restrictions
           for sizes, that you can’t bypass, an additonal functionality is added as <strong>automagic</strong> function which
-          basically scales and add flex support to adjust content with assigned or detected size.</p>
+          basically scales and add flex support to adjust content with assigned or detected size. It can be ignored by sending `{strict: true}` as options.</p>
         <pre><code class="language-js">embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL|string</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options|{}*optional</span>&gt;</span>)</span>
 </code></pre>
         <p><strong>Native Options</strong></p>
