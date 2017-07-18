@@ -82,6 +82,15 @@ window.onload = function () {
     }
   );
 
+  // Loads youtube embed video
+  embedo.load(
+    document.getElementById('embedo-youtube-embed'),
+    'https://www.youtube.com/embed/vn2qXpcon-s', {
+      width: 640,
+      height: 480
+    }
+  );
+
   // Loads vimeo video
   embedo.load(
     document.getElementById('embedo-vimeo'),

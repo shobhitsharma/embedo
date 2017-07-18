@@ -338,7 +338,8 @@
   };
 
   /**
-   * @method YouTube Embed
+   * @method youtube
+   * YouTube Embed
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -374,14 +375,15 @@
     });
 
     function getYTVideoID(url) {
-      var regexp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+      var regexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
       var match = url.match(regexp);
-      return (match && match[7].length == 11) ? match[7] : false;
+      return (match && match.length === 2) ? match[1] : false;
     }
   };
 
   /**
-   * @method Vimeo Embed
+   * @method vimeo
+   * Vimeo Embed
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -417,7 +419,8 @@
   };
 
   /**
-   * @method Pinterest Embed
+   * @method pinterest
+   * Pinterest Embed
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -456,7 +459,8 @@
   };
 
   /**
-   * @method Google Maps Embed
+   * @method googlemaps
+   * Google Maps Embed
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -518,7 +522,8 @@
   };
 
   /**
-   * @method Website Embed
+   * @method website
+   * Website Embed
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -548,7 +553,8 @@
   };
 
   /**
-   * @method Initialize auth component
+   * @method load
+   * Initialize auth component
    *
    * @name load
    * @param {HTMLElement} element
@@ -658,7 +664,7 @@
       this.requests.forEach(function (request, index, requests) {
         if (element && validateElement(element)) {
           if (element === request.el) {
-            element.remove();
+            element.innerHTML = '';
             requests.splice(index, 1);
             this.emit('destroy', request);
           }
@@ -666,7 +672,7 @@
           if (!request.el || !validateElement(request.el)) {
             return;
           }
-          request.el.remove();
+          request.el.innerHTML = '';
           this.emit('destroy', request);
         }
       }.bind(this));
@@ -699,7 +705,8 @@
   }
 
   /**
-   * @function Generates script tag element
+   * @function generateScript
+   * Generates script tag element
    *
    * @param {string} source
    * @returns HTMLElement
@@ -714,7 +721,8 @@
   }
 
   /**
-   * @function Generates DOM element
+   * @function generateElement
+   * Generates DOM element
    *
    * @param {string} source
    * @returns HTMLElement
@@ -727,7 +735,8 @@
   }
 
   /**
-   * @function Validates if passed argument is valid DOM element
+   * @function validateElement
+   * Validates if passed argument is valid DOM element
    *
    * @param {object} obj
    * @returns HTMLElement
@@ -740,7 +749,8 @@
   }
 
   /**
-   * @function Checks Source from URI
+   * @function getURLSource
+   * Checks Source from URI
    *
    * @param {string} url
    * @returns {string}
@@ -773,7 +783,8 @@
   }
 
   /**
-   * @function Object to Query String
+   * @function toQueryString
+   * Object to Query String
    *
    * @param {object} obj
    * @returns {string}
@@ -789,7 +800,8 @@
   }
 
   /**
-   * @function JSONP XHR fetch
+   * @function fetch
+   * JSONP XHR fetch
    *
    * @param {string} url
    * @param {object} options
@@ -817,7 +829,8 @@
   }
 
   /**
-   * @function Generates Embed Container
+   * @function generateEmbed
+   * Generates Embed Container
    *
    * @param {string} source
    * @param {string} html
@@ -831,7 +844,8 @@
   }
 
   /**
-   * @function Parses Facebook SDK
+   * @function facebookify
+   * Parses Facebook SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -876,7 +890,8 @@
   }
 
   /**
-   * @function Parses Instagram SDK
+   * @function instagramify
+   * Parses Instagram SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -898,7 +913,8 @@
   }
 
   /**
-   * @function Parses Pinterest SDK
+   * @function pinterestify
+   * Parses Pinterest SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -926,7 +942,8 @@
   }
 
   /**
-   * @function Parses Google Maps SDK
+   * @function gmapsify
+   * Parses Google Maps SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -947,7 +964,8 @@
   }
 
   /**
-   * @function Automagic - Scales and resizes embed container
+   * @function automagic
+   * Automagic - Scales and resizes embed container
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
@@ -1014,7 +1032,8 @@
   }
 
   /**
-   * @function Cross Browser CSS Transformation
+   * @function transform
+   * Cross Browser CSS Transformation
    *
    * @param {HTMLElement} element
    * @param {string} props
@@ -1031,7 +1050,8 @@
   }
 
   /**
-   * @function Checks when SDK global object is ready
+   * @function sdkReady
+   * Checks when SDK global object is ready
    *
    * @param {string} type
    * @param {function} callback
@@ -1073,7 +1093,8 @@
   }
 
   /**
-   * @function Computes property value of HTMLElement
+   * @function compute
+   * Computes property value of HTMLElement
    *
    * @param {HTMLElement} element
    * @param {string} prop
@@ -1112,7 +1133,7 @@
   }
 
   /**
-   * @function Object extender
+   * @function extender
    *
    * @param {object} destination
    * @param {object} source
