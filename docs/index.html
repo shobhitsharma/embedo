@@ -32,7 +32,7 @@
   <main>
     <div id="embedo-app">
       <header class="header">
-        <a href="https://shobhitsharma.github.io/embedo/docs.html">Docs</a>
+        <a href="https://shobhitsharma.github.io/embedo/docs">Docs</a>
         <a class="github-link" href="https://github.com/shobhitsharma/embedo" target="_blank"><i class="fa fa-github"></i></a>
       </header>
       <section class="teaser">
@@ -87,7 +87,7 @@
     } // Enables google maps API
   });
 
-  // Calling .load() event [HTMLElement, url|string, options|object{}]
+  // Calling .load() event [HTMLElement, url[String|Array], options[Object]]
   embedo.load(
     document.getElementById('my-awesome-container'),
     'https://twitter.com/Twitter/status/849866660882206721'
@@ -103,6 +103,16 @@
       hidecaption: true
     }
   );
+
+  // Calling .load() event with multiple urls [HTMLElement, url[String|Array], options[Object]]
+  embedo.load(
+    document.getElementById('my-awesome-container'), [
+    'https://www.instagram.com/p/BXQyu8Zh0dR',
+    'https://www.instagram.com/p/BXOasjpBllf',
+    'https://www.instagram.com/p/BXNRCkAhn-0'
+  ], {
+    hidecaption: false
+  });
 
   // Also, the jQuery way
   embedo.load($('my-awesome-container').get(0), 'my://url');
@@ -222,7 +232,7 @@
 
   </script>
   <!-- Here is how embedo.js get declared on top of your implementation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/embedo/1.2.0/embedo.min.js"></script>
+  <script src="https://unpkg.com/embedo/embedo.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
   <script src="./js/main.js"></script>
 </body>

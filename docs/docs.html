@@ -53,28 +53,25 @@
           with support for native and external options to be pass along.</p>
         <p>It handles external SDKs, oEmbeds, adds responsivness and is intended to make easier integrations with less hassels
           or any setup.</p>
-        <h2>
-          <a id="Install_0"></a>Install</h2>
+        <h2><a id="Install_11"></a>Install</h2>
         <pre><code class="language-sh"><span class="hljs-comment"># npm</span>
 $ npm install embedo --save
 
 <span class="hljs-comment"># Bower</span>
 $ bower install embedo
 </code></pre>
-        <p>Alternatively, import latest versions hosted on CDNs via <a href="https://www.jsdelivr.com/projects/embedo">jsDelivr</a>,
+        <p>Alternatively, import latest versions hosted on CDNs via <a href="https://cdn.jsdelivr.net/gh/shobhitsharma/embedo/embedo.min.js">jsDelivr</a>,
           <a href="https://cdnjs.com/libraries/embedo">cdnjs</a> or <a href="https://unpkg.com/embedo">latest unpkg</a>.
           It takes care of adding external scripts and necessary requirements to embed, and does checks if you’ve already
           added them already.</p>
-        <h2>
-          <a id="Usage_12"></a>Usage</h2>
+        <h2><a id="Usage_23"></a>Usage</h2>
         <p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/example">found here</a>.</p>
         <pre><code class="language-js"><span class="hljs-keyword">const</span> Embedo = <span class="hljs-built_in">require</span>(<span class="hljs-string">'embedo'</span>); <span class="hljs-comment">// OR import Embedo from 'embedo';</span>
 <span class="hljs-keyword">const</span> embedo = <span class="hljs-keyword">new</span> Embedo(); <span class="hljs-comment">// OR const embedo = new Embedo();</span>
 
 embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement[object]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL[string]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options[object]*optional</span>&gt;</span>)</span>;
 </code></pre>
-        <h3>
-          <a id="Initialize_Options_23"></a>Initialize Options</h3>
+        <h3><a id="Initialize_Options_34"></a>Initialize Options</h3>
         <p>The following options can be set during library import is called:</p>
         <table class="table table-striped table-bordered">
           <thead>
@@ -95,13 +92,13 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
             <tr>
               <td><code>twitter</code></td>
               <td>object/boolean</td>
-              <td>true</td>
+              <td>false</td>
               <td>Injects Twitter SDK</td>
             </tr>
             <tr>
               <td><code>instagram</code></td>
               <td>object/boolean</td>
-              <td>true</td>
+              <td>false</td>
               <td>Injects Instagram SDK</td>
             </tr>
             <tr>
@@ -121,10 +118,10 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
         <p>For <strong>YouTube</strong> and <strong>Vimeo</strong>, no sdk is required. If you were to host any external URL
           with HTML or any other file, it will try to render after checking cross browser policies and other validations
           to an <code>&lt;iframe&gt;</code> or <code>&lt;object&gt;</code> tag.</p>
-        <h3>
-          <a id="Advance_Options_37"></a>Advance Options</h3>
-        <p>Since facebook and googlemaps requires <code>appId</code> and <code>api_key</code> attributes to authorize,
-          they must be passed along as:</p>
+        <p>See an example <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/js/main.js">here</a>.</p>
+        <h3><a id="Advance_Options_50"></a>Advance Options</h3>
+        <p>Since facebook and googlemaps require <code>appId</code> and <code>api_key</code> attributes for authorization, they
+          can be passed along as:</p>
         <pre><code class="language-js"><span class="hljs-comment">// Custom options for Facebook and Google Maps</span>
 <span class="hljs-keyword">new</span> Embedo({
   facebook: {
@@ -137,15 +134,13 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
   }
 })
 </code></pre>
-        <h2>
-          <a id="Events_55"></a>Events</h2>
-        <h3>
-          <a id="load_57"></a>.load()</h3>
-        <p>The <code>.load()</code> function is basically all what you need to embed third party content. Since, there are restrictions
-          for sizes, that you can’t bypass, an additonal functionality is added as <strong>automagic</strong> function which
-          basically scales and add flex support to adjust content with assigned or detected size. It can be ignored by sending `{strict: true}` as options.</p>
-        <pre><code class="language-js">embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL|string</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options|{}*optional</span>&gt;</span>)</span>
+        <h2><a id="Events_68"></a>Events</h2>
+        <h3><a id="load_70"></a>.load()</h3>
+        <p>The <code>.load()</code> function is all what you need to embed third party content given under following arguments.</p>
+        <pre><code class="language-js">embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement{}</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL[string|Array]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options[{}*optional]</span>&gt;</span>)</span>
 </code></pre>
+        <p>Since there are restrictions for sizes, that you can’t bypass, an additonal functionality is added as <strong>automagic</strong>          function which basically scales and add flex support to adjust content with assigned or detected size.</p>
+        <p>If you dont want any scaling, and require only simple or native layer; it can be ignored by passing <code>{strict: true}</code>          as option.</p>
         <p><strong>Native Options</strong></p>
         <table class="table table-striped table-bordered">
           <thead>
@@ -186,8 +181,7 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
           <li>Pinterest - See <a href="https://developers.pinterest.com/tools/widget-builder/">API Reference</a></li>
           <li>Google Maps - Supports <code>zoom</code> as integer and <code>mapTypeId</code> as enum as <code>roadmap|satellite|hybrid|terrain</code>            (<a href="https://developers.google.com/maps/documentation/javascript/reference">API Reference</a>)</li>
         </ul>
-        <h3>
-          <a id="refresh_82"></a>.refresh()</h3>
+        <h3><a id="refresh_99"></a>.refresh()</h3>
         <p>The <code>embedo.refresh()</code> method can be called explicitly when you have a <code>change</code> or <code>resize</code>          event, which re-calculates the dimensions of generated content.</p>
         <pre><code class="language-js"><span class="hljs-comment">// Refresh single container</span>
 embedo.refresh(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>));
@@ -195,8 +189,7 @@ embedo.refresh(<span class="hljs-built_in">document</span>.getElementById(<span 
 <span class="hljs-comment">// Refresh all embedo instances</span>
 embedo.refresh();
 </code></pre>
-        <h3>
-          <a id="destroy_94"></a>.destroy()</h3>
+        <h3><a id="destroy_111"></a>.destroy()</h3>
         <p>The <code>embedo.destroy()</code> method can be called explicitly when wish to remove and unbind embedo instance(s).</p>
         <pre><code class="language-js"><span class="hljs-comment">// Destroy single container</span>
 embedo.destroy(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>));
@@ -204,8 +197,7 @@ embedo.destroy(<span class="hljs-built_in">document</span>.getElementById(<span 
 <span class="hljs-comment">// Destroys all embedo instances</span>
 embedo.destroy();
 </code></pre>
-        <h3>
-          <a id="Event_Listeners_106"></a>Event Listeners</h3>
+        <h3><a id="Event_Listeners_123"></a>Event Listeners</h3>
         <p>Embedo also has internal event listeners implemented which emits following events:</p>
         <table class="table table-striped table-bordered">
           <thead>
@@ -244,8 +236,7 @@ embedo.on(<span class="hljs-string">'refresh'</span>, <span class="hljs-function
 embedo.on(<span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">error</span>) </span>{});
 embedo.on(<span class="hljs-string">'destroy'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{});
 </code></pre>
-        <h2>
-          <a id="Example_126"></a>Example</h2>
+        <h2><a id="Example_143"></a>Example</h2>
         <pre><code class="language-js">embedo.load(
   <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>),
   <span class="hljs-string">'https://twitter.com/Sh0bhit/status/797584590214926340'</span>
@@ -254,6 +245,15 @@ embedo.on(<span class="hljs-string">'destroy'</span>, <span class="hljs-function
 <span class="hljs-comment">// jQuery</span>
 embedo.load($(<span class="hljs-string">'.my-unique-selector'</span>).get(<span class="hljs-number">0</span>), <span class="hljs-string">'https://www.youtube.com/watch?v=Q6gYFO4iGlk'</span>);
 </code></pre>
+        <h2><a id="Development_and_Contribution_155"></a>Development and Contribution</h2>
+        <p>If you’d like to add some features or report bugs, pleaase feel free to fork, pull or create an issue for that concern.</p>
+        <pre><code class="language-bash"><span class="hljs-comment"># Local testing/development</span>
+$ npm start
+
+<span class="hljs-comment"># Build source</span>
+$ npm run build
+</code></pre>
+
       </section>
 
       <footer>

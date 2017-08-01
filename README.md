@@ -19,7 +19,7 @@ $ npm install embedo --save
 $ bower install embedo
 ```
 
-Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://www.jsdelivr.com/projects/embedo), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo). It takes care of adding external scripts and necessary requirements to embed, and does checks if you've already added them already.
+Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://cdn.jsdelivr.net/gh/shobhitsharma/embedo/embedo.min.js), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo). It takes care of adding external scripts and necessary requirements to embed, and does checks if you've already added them already.
 
 ## Usage
 
@@ -39,12 +39,14 @@ The following options can be set during library import is called:
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
 | `facebook`      | object/boolean   | null       | Injects Facebook SDK                           |
-| `twitter`       | object/boolean  | true       | Injects Twitter SDK                            |
-| `instagram`     | object/boolean  | true       | Injects Instagram SDK                          |
+| `twitter`       | object/boolean  | false       | Injects Twitter SDK                            |
+| `instagram`     | object/boolean  | false       | Injects Instagram SDK                          |
 | `pinterest`     | object/boolean  | false      | Injects Pinterest SDK                          |
 | `googlemaps`    | object/boolean   | null       | Injects Google Maps SDK                        |
 
 For **YouTube** and **Vimeo**, no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<iframe>` or `<object>` tag.
+
+See an example [here](https://github.com/shobhitsharma/embedo/tree/master/docs/js/main.js).
 
 ### Advance Options
 
@@ -68,11 +70,15 @@ new Embedo({
 
 ### .load()
 
-The `.load()` function is all what you need to embed third party content. Since there are restrictions for sizes, that you can't bypass, an additonal functionality is added as **automagic** function which basically scales and add flex support to adjust content with assigned or detected size. It can be ignored by passing `{strict: true}` as option.
+The `.load()` function is all what you need to embed third party content given under following arguments. 
 
 ```js
-embedo.load(<HTMLElement>, <URL|string>, <options|{}*optional>)
+embedo.load(<HTMLElement{}>, <URL[string|Array]>, <options[{}*optional]>)
 ```
+
+Since there are restrictions for sizes, that you can't bypass, an additonal functionality is added as **automagic** function which basically scales and add flex support to adjust content with assigned or detected size. 
+
+If you dont want any scaling, and require only simple or native layer; it can be ignored by passing `{strict: true}` as option.
 
 **Native Options**
 
