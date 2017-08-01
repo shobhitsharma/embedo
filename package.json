@@ -7,7 +7,7 @@
     "prestart": "npm install",
     "start": "python -m SimpleHTTPServer",
     "test": "mocha",
-    "build": "uglifyjs embedo.js --compress dead_code=true,conditionals=true,comparisons=true,evaluate=true,booleans=true,loops=true,unused=true,if_return=true,join_vars=true,drop_console=true,cascade=true --mangle --screw-ie8 --stats --o=embedo.min.js"
+    "build": "uglifyjs embedo.js --compress --mangle --output=embedo.min.js"
   },
   "repository": {
     "type": "git",
@@ -16,10 +16,8 @@
   "keywords": [
     "embed",
     "embedo",
-    "twitter",
-    "embed",
-    "facebook",
-    "embed",
+    "social-media-plugin",
+    "content-embed",
     "oemebed"
   ],
   "author": "Shobhit Sharma <hi@shobh.it>",
@@ -29,8 +27,8 @@
   },
   "homepage": "https://github.com/shobhitsharma/embedo",
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.1.2",
-    "uglify-js": "^2.8.22"
+    "chai": "^4.1.0",
+    "mocha": "^3.5.0",
+    "uglify-js": "^3.0.27"
   }
 }

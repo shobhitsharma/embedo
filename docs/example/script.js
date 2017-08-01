@@ -34,15 +34,30 @@ window.onload = function () {
     }, 5000);
   }
 
+  // Multiple URLs
+  embedo.load(document.getElementById('embedo-multiple'), [
+    'https://www.instagram.com/p/BXQyu8Zh0dR',
+    'https://www.instagram.com/p/BXOasjpBllf',
+    'https://www.instagram.com/p/BXNRCkAhn-0'
+  ], {
+    hidecaption: false
+  });
+
+  // // Website load test
+  // embedo.load(document.getElementById('embedo-website'), 'https://news.ycombinator.com');
+
+  // // Feed URL Test (JSON)
+  // embedo.load(document.getElementById('embedo-feed'), 'https://news.ycombinator.com/rss');
+
   // Loads google maps URL
-  embedo.load(
-    document.getElementById('embedo-googlemaps'),
-    'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
-      width: 640,
-      height: 480,
-      zoom: 10
-    }
-  );
+  // embedo.load(
+  //   document.getElementById('embedo-googlemaps'),
+  //   'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
+  //     width: 640,
+  //     height: 480,
+  //     zoom: 10
+  //   }
+  // );
 
   // Loads pinterest post
   embedo.load(
@@ -97,20 +112,20 @@ window.onload = function () {
     'https://vimeo.com/212603149'
   );
 
-  // Refresh All Embedo instances
-  setTimeout(function () {
-    embedo.refresh();
-  }, 5000);
+  // // Refresh All Embedo instances
+  // setTimeout(function () {
+  //   embedo.refresh(document.getElementById('embedo-multiple'));
+  // }, 5000);
 
   // Refresh Single Embedo instance
-  setTimeout(function () {
-    embedo.refresh(document.getElementById('embedo-facebook'));
-  }, 5000);
-
-  // // Destroy All Embdos Test
   // setTimeout(function () {
-  //   embedo.destroy();
+  //   embedo.refresh(document.getElementById('embedo-facebook'));
   // }, 5000);
+
+  // Destroy All Embdos Test
+  setTimeout(function () {
+    embedo.destroy(document.getElementById('embedo-multiple'));
+  }, 5000);
 
   // // Destroy Single Embdos Test
   // setTimeout(function () {
