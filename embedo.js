@@ -545,7 +545,7 @@
 
   /**
    * @method website
-   * Website Embed
+   * Website Embed prototype
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -559,60 +559,20 @@
       '<iframe src="' + url + '" width="' + size.width + '" height="' + size.height + '" frameborder="0"></iframe>'
     ));
 
-    loadContentURI(id, url, function (err) {
-      if (err) {
-        return callback(err);
-      }
-      callback(null, {
-        id: id,
-        el: element,
-        width: size.width,
-        height: size.height
-      });
-    });
-
-    function loadContentURI(id, url, done) {
+    setTimeout(function () {
       var iframe = document.getElementById(id).querySelector('iframe');
-      var script = document.createElement('script');
-      script.src = 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20data.headers%20where%20url%3D%22' +
-        encodeURIComponent(url) + '%22&format=json&diagnostics=true&env=store%3A%2F%2F' +
-        'datatables.org%2Falltableswithkeys&callback=yml_cors_' + id;
-      document.body.appendChild(script);
-
-      window['yml_cors_' + id] = function (data) {
-        if (data && data.query && data.query.results && data.query.results.resources &&
-          data.query.results.resources.content && data.query.results.resources.status == 200) {
-          renderIframeContent(iframe, data.query.results.resources.content);
-        } else if (data && data.error && data.error.description) {
-          renderIframeContent(iframe, data.error.description);
-        } else {
-          renderIframeContent(iframe, 'Error: Cannot load ' + url);
-        }
-      };
-
-      function renderIframeContent(iframe, html) {
-        iframe.src = 'about:blank';
-        iframe.contentWindow.document.open();
-        if (typeof html === 'string') {
-          iframe.contentWindow.document.write(html.replace(/<head>/i, '<head><base href="' + url + '">' +
-            '<scr' + 'ipt>document.addEventListener("click", function(e) { if(e.target && e.target.nodeName == "A") ' +
-            '{ e.preventDefault(); parent.loadURL(e.target.href); } });</scr' + 'ipt>'));
-        } else if (typeof html === 'object') {
-          iframe.contentWindow.document.write('<code>' + JSON.stringify(html, null, 2) + '</code>');
-        } else {
-          iframe.contentWindow.document.write('Unable to parse HTML content.');
-        }
-        iframe.contentWindow.document.close();
-      }
-
       iframe.onerror = function (err) {
-        done(err);
+        callback(err);
       };
-
       iframe.onload = function () {
-        done();
+        callback(null, {
+          id: id,
+          el: element,
+          width: compute(iframe, 'width', true),
+          height: compute(iframe, 'height', true)
+        });
       };
-    }
+    }, 500);
   };
 
   /**
@@ -933,7 +893,6 @@
     }
 
     centerize(childNode);
-
     watcher(options.id || uuid(), function () {
       var parent = {
         width: options.width || compute(parentNode, 'width', true),
