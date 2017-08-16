@@ -1,3 +1,5 @@
+'use strict';
+
 window.onload = function () {
   var embedo = new Embedo({
     facebook: {
@@ -22,7 +24,7 @@ window.onload = function () {
   var timer;
   var timeout = 500;
 
-  function build(event) {
+  function build() {
     if (timer) {
       clearTimeout(timer);
     }
@@ -37,7 +39,7 @@ window.onload = function () {
         document.getElementById('test-container').style.width = width;
       }
 
-      if (width > 0) {
+      if (height > 0) {
         document.getElementById('test-container').style.height = height;
       }
 

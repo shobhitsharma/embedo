@@ -150,7 +150,7 @@ html {
 
 body {
   color: #666;
-  font-size: 13px;
+  font-size: 0.75em;
   line-height: 1.5;
   color: white;
   overflow-x: hidden;
@@ -249,7 +249,7 @@ div#embedo-app>section.teaser>p {
   color: rgba(255, 255, 255, 0.7);
   width: 100%;
   margin: 15px auto;
-  max-width: 540px;
+  max-width: 330px;
 }
 
 div#embedo-app>section {
@@ -344,6 +344,11 @@ div#embedo-app>section>div {
   text-align: center;
 }
 
+div#embedo-app>section>.code-editor {
+  text-align: left;
+  background-color: #000;
+}
+
 section.readme {
   text-align: left;
 }
@@ -426,7 +431,7 @@ footer {
   position: relative;
   text-align: center;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 1.1em;
   margin: 40px auto;
   color: rgba(255, 255, 255, 0.7);
 }

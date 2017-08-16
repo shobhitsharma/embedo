@@ -1,25 +1,42 @@
-embedo [![CDNJS](https://img.shields.io/cdnjs/v/embedo.svg)](https://cdnjs.com/libraries/embedo) [![npm version](https://badge.fury.io/js/embedo.svg)](https://badge.fury.io/js/embedo)
-=============
+# embedo [![npm](https://img.shields.io/npm/v/embedo.svg)](https://npmjs.org/package/embedo) ![Bower](https://img.shields.io/bower/v/embedo.svg)
 
-<img align="left" height="85"
-     title="Embedo"
-     src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" style="margin-right: 25px;">
+<img src="https://cdn01.onzu.com/2017/3/5/14/embedo.png" height="200" align="right">
 
-**Embedo** adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It takes cares of resizing the container, emitting necessary events and with support for native and external options to be pass along.
+> **Embedo** adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It takes cares of resizing the container, emitting necessary events and with support for native and external options to be pass along.
 
-It handles external SDKs, oEmbeds, adds responsivness and is intended to make easier integrations with less hassels or any setup.
+### What's currently supported?
 
-## Install
+* Facebook URLs containing post, photos and videos
+* Twitter URLs containing user timeline and tweets
+* YouTube videos URLs, playlists will play in loop
+* Instagram URLs containing posts and videos
+* Pinterest URLs containing posts and pins
+* Vimeo URLs containing videos
+* Google Maps URLs containing cordinates to a location
+* Embeds other urls or .pdf, .mp4, .webm, .ppsx and other formats as alternative
+
+## Installation
 
 ```sh
 # npm
 $ npm install embedo --save
 
-# Bower
+# yarn
+$ yarn add embedo
+
+# bower
 $ bower install embedo
 ```
 
-Alternatively, import latest versions hosted on CDNs via [jsDelivr](https://cdn.jsdelivr.net/gh/shobhitsharma/embedo/embedo.min.js), [cdnjs](https://cdnjs.com/libraries/embedo) or [latest unpkg](https://unpkg.com/embedo). It takes care of adding external scripts and necessary requirements to embed, and does checks if you've already added them already.
+Alternatively, import using CDN while updating `version` as per requirements from scripts below:
+
+```html
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"></script>
+
+<script type="text/javascript" src="https://unpkg.com/embedo[@VERSION]/embedo.min.js"></script>
+```
 
 ## Usage
 
@@ -32,7 +49,7 @@ const embedo = new Embedo(); // OR const embedo = new Embedo();
 embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]*optional>);
 ```
 
-### Initialize Options
+### Initialize SDKs
 
 The following options can be set during library import is called:
 
@@ -44,7 +61,7 @@ The following options can be set during library import is called:
 | `pinterest`     | object/boolean  | false      | Injects Pinterest SDK                          |
 | `googlemaps`    | object/boolean   | null       | Injects Google Maps SDK                        |
 
-For **YouTube** and **Vimeo**, no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<iframe>` or `<object>` tag.
+For **YouTube** and **Vimeo**, no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<embed>` or `<object>` tag.
 
 See an example [here](https://github.com/shobhitsharma/embedo/tree/master/docs/js/main.js).
 
@@ -76,17 +93,20 @@ The `.load()` function is all what you need to embed third party content given u
 embedo.load(<HTMLElement{}>, <URL[string|Array]>, <options[{}*optional]>)
 ```
 
-Since there are restrictions for sizes, that you can't bypass, an additonal functionality is added as **automagic** function which basically scales and add flex support to adjust content with assigned or detected size. 
+Due to incongruent behavior of external oembed resources when it comes to custom content sizes limitations, an external functionality called `automagic` is added, which basically determine DOM size and scales element using flex support to fit container while respecting parameters passed along as options in the arguments (enabled by default; use `strict` flag to disable).
 
-If you dont want any scaling, and require only simple or native layer; it can be ignored by passing `{strict: true}` as option.
+
+## Options
+
+The `options` are native and external based as described below: 
 
 **Native Options**
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
-| `width`      | number   | null      | Custom width of container (gets ignored if not supported via native embed API)    |
-| `height`       | number   | null      | Custom height of container                       |
-| `strict`     | boolean  | true      | Enabled/Disabled auto-resizing container                |
+| `width`      | number   | null      | Custom width of container (gets ignored if not supported via SDK)    |
+| `height`       | number   | null      | Custom height of container (gets ignored if not supported via SDK)                       |
+| `strict`     | boolean  | false      | Enable or disable auto-resizing functionality                |
 
 **External Options**
 
@@ -97,6 +117,10 @@ If you dont want any scaling, and require only simple or native layer; it can be
 * Pinterest - See [API Reference](https://developers.pinterest.com/tools/widget-builder/)
 * Google Maps - Supports `zoom` as integer and `mapTypeId` as enum as `roadmap|satellite|hybrid|terrain` ([API Reference](https://developers.google.com/maps/documentation/javascript/reference))
 
+
+## Methods
+
+Embedo exposes following functions that you need after including the library:
 ### .refresh()
 
 The `embedo.refresh()` method can be called explicitly when you have a `change` or `resize` event, which re-calculates the dimensions of generated content.
@@ -121,24 +145,24 @@ embedo.destroy(document.getElementById('my-element-id'));
 embedo.destroy();
 ```
 
-### Event Listeners
+## Events
 
 Embedo also has internal event listeners implemented which emits following events:
 
 | Listeners   | Methods  |  Description                                |
 | ------------|----------|---------------------------------------------|
-| `watch`     | on/once/off   |  Updated element's properties and dimensions|
-| `refresh`   | on/once/off   |  Triggers after an element refreshes      |
-| `destroy`   | on/once/off   |  Triggers after emo destorys              |
-| `error`     | on/once/off   |  Returns exception that occurs during load|
+| `watch`     | on/once/off   |  When an element has loaded or size is modified in DOM|
+| `refresh`   | on/once/off   |  When a refresh event is finished      |
+| `destroy`   | on/once/off   |  When embedo instance(s) are destroyed |
+| `error`     | on/once/off   |  Exception handler happened during embed |
 
-They can be instantiated like this:
+They return basic details such as identifiers for request including width or height, and can be instantiated like this:
 
 ```js
-embedo.on('watch', function (result) {});
-embedo.on('refresh', function (request, result) {});
-embedo.on('error', function (error) {});
-embedo.on('destroy', function () {});
+embedo.on('watch', (result)=> {});
+embedo.on('refresh', (request, result)=> {});
+embedo.on('destroy', ()=> {});
+embedo.on('error', (error)=> {});
 ```
 
 ## Example
@@ -149,18 +173,19 @@ embedo.load(
   'https://twitter.com/Sh0bhit/status/797584590214926340'
 );
 
+embedo.load(
+  document.getElementById('my-awesome-container'), [
+  'https://www.instagram.com/p/BXQyu8Zh0dR',
+  'https://www.instagram.com/p/BXOasjpBllf',
+  'https://www.instagram.com/p/BXNRCkAhn-0'
+], {
+  hidecaption: false
+});
+
 // jQuery
 embedo.load($('.my-unique-selector').get(0), 'https://www.youtube.com/watch?v=Q6gYFO4iGlk');
 ```
 
-## Development and Contribution
+## Changelog
 
-If you'd like to add some features or report bugs, pleaase feel free to fork, pull or create an issue for that concern.
-
-```bash
-# Local testing/development
-$ npm start
-
-# Build source
-$ npm run build
-```
+See [all releases](https://github.com/shobhitsharma/embedo/releases) with specifications, changes and other necessary update logs.

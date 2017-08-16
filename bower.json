@@ -1,6 +1,6 @@
 {
   "name": "embedo",
-  "description": "A simple, fast, lightweight and standalone social media content embedder plugin for web",
+  "description": "A simple, fast, lightweight and standalone content embed plugin for web",
   "main": "embedo.js",
   "authors": [
     "Shobhit Sharma <hi@shobh.it>"

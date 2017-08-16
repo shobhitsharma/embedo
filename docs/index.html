@@ -4,14 +4,14 @@
 <head>
   <meta charset="utf-8">
   <title>embedo - Social Media Embed Plugin</title>
-  <meta content="A simple, fast, lightweight and standalone social media content embedder plugin for web" name="description">
+  <meta content="A simple, fast, lightweight and standalone content embed plugin for web" name="description">
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <link href="https://github.com/favicon.ico" rel="icon" type="image/ico">
   <!-- Global OG Tags -->
   <meta content="embedo - Social Media Embed Plugin" property="og:site_name">
   <meta content="website" property="og:type">
   <meta content="https://cdn01.onzu.com/2017/4/14/0/embedo.png" property="og:image">
-  <meta content="A simple, fast, lightweight and standalone social media content embedder plugin for web" property="og:description">
+  <meta content="A simple, fast, lightweight and standalone content embed plugin for web" property="og:description">
   <meta content="embedo - Social Media Embed Plugin" property="og:title">
   <meta content="https://shobhitsharma.github.io/embedo" property="og:url">
   <!-- Twitter OG Tags -->
@@ -19,7 +19,7 @@
   <meta content="@Sh0bhit" name="twitter:site">
   <meta content="@Sh0bhit" name="twitter:creator">
   <meta content="embedo - Social Media Embed Plugin" name="twitter:title">
-  <meta content="A simple, fast, lightweight and standalone social media content embedder plugin for web." name="twitter:description">
+  <meta content="A simple, fast, lightweight and standalone content embed plugin for web." name="twitter:description">
   <meta content="https://shobhitsharma.github.io/embedo" name="twitter:url">
   <meta content="https://cdn01.onzu.com/2017/4/14/0/embedo.png" property="og:image">
   <meta content="https://cdn01.onzu.com/2017/4/14/0/embedo.png" name="twitter:image">
@@ -37,7 +37,7 @@
       </header>
       <section class="teaser">
         <h1>embedo</h1>
-        <p>A simple, lightweight and standalone social media content embed plugin for web</p>
+        <p>A simple, lightweight and standalone content embed plugin for web</p>
         <div class="buttons">
           <a href="https://github.com/shobhitsharma/embedo"><i class="fa fa-star"></i> Star</a>
           <a href="https://github.com/shobhitsharma/embedo/archive/master.zip"><i class="fa fa-cloud-download"></i> Download</a>
@@ -65,33 +65,44 @@
  /**
   * @implements Embedo setup
   *
-  * @package npm install embedo --save
-  * @package bower install embedo
-  * @import https://www.jsdelivr.com/projects/embedo (via jsdelivr)
-  * @import https://cdnjs.com/libraries/embedo (via cdnjs)
-  * @import https://unpkg.com/embedo (source via unpkg)
+  * @package {npm} npm install embedo --save
+  * @package {bower} bower install embedo
+
+  * @import {jsdelivr} https://cdn.jsdelivr.net/npm/embedo
+  * @import {cdnjs} https://cdnjs.com/libraries/embedo
+  * @import {unpkg} https://unpkg.com/embedo
   */
 
   import Embedo from './my/vendor/folder';
 
   const embedo = new Embedo({
     facebook: {
-      appId: 'my_app_id',
-      version: 'v2.8'
-    }, // Enable facebook SDK
+      appId: 'my_app_id', // Enable facebook SDK
+      version: 'v2.10'
+    },
     twitter: true,  // Enable twitter SDK
     instagram: true,  // Enable instagram SDK
     pinterest: true  // Enable pinterest SDK,
     googlemaps: {
-      key: 'my_api_key'
-    } // Enables google maps API
+      key: 'my_api_key' // Enables google maps API
+    }
   });
 
-  // Calling .load() event [HTMLElement, url[String|Array], options[Object]]
+  // Calling .load() event (HTMLElement, url[String|Array], options[Object])
   embedo.load(
     document.getElementById('my-awesome-container'),
     'https://twitter.com/Twitter/status/849866660882206721'
   );
+
+  // OR calling .load() event (HTMLElement, url[String|Array], options[Object])
+  embedo.load(
+    document.getElementById('my-awesome-container'), [
+    'https://www.instagram.com/p/BX3fMnRjHpZ',
+    'https://www.instagram.com/p/BX3ejdJHmkD',
+    'https://www.instagram.com/p/BX3VEDqFvmg'
+  ], {
+    hidecaption: false
+  });
 
   // Load with native and external options
   embedo.load(
@@ -103,16 +114,6 @@
       hidecaption: true
     }
   );
-
-  // Calling .load() event with multiple urls [HTMLElement, url[String|Array], options[Object]]
-  embedo.load(
-    document.getElementById('my-awesome-container'), [
-    'https://www.instagram.com/p/BXQyu8Zh0dR',
-    'https://www.instagram.com/p/BXOasjpBllf',
-    'https://www.instagram.com/p/BXNRCkAhn-0'
-  ], {
-    hidecaption: false
-  });
 
   // Also, the jQuery way
   embedo.load($('my-awesome-container').get(0), 'my://url');
@@ -132,47 +133,47 @@
         </div>
       </section>
       <footer>
-        <div class="supported-sites">
-          <h4>What's currently supported?</h4>
-          <div class="supports">
-            <span class="site fa fa-facebook"></span>
-            <span class="site-description">Embeds Facebook URLs containing post, photos and videos</span>
+          <div class="supported-sites">
+            <h4>What's currently supported?</h4>
+            <div class="supports">
+              <span class="site fa fa-facebook"></span>
+              <span class="site-description">Facebook URLs containing post, photos and videos</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-twitter"></span>
+              <span class="site-description">Twitter URLs containing user timeline and tweets</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-youtube"></span>
+              <span class="site-description">YouTube videos URLs, playlists will play in loop</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-instagram"></span>
+              <span class="site-description">Instagram URLs containing posts and videos</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-pinterest"></span>
+              <span class="site-description">Pinterest URLs containing posts and pins</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-vimeo"></span>
+              <span class="site-description">Vimeo URLs containing videos</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-google"></span>
+              <span class="site-description">Google Maps URLs containing cordinates to a location</span>
+            </div>
+            <div class="supports">
+              <span class="site fa fa-link"></span>
+              <span class="site-description">Embeds other urls or .pdf, .mp4, .webm, .ppsx and other formats as alternative</span>
+            </div>
           </div>
-          <div class="supports">
-            <span class="site fa fa-twitter"></span>
-            <span class="site-description">Embeds Twitter URLs containing user timeline and tweets</span>
+          <div class="copyrights">
+            <a href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md" target="_blank">
+                <i class="fa fa-copyright"></i> Distributed under MIT License
+              </a>
           </div>
-          <div class="supports">
-            <span class="site fa fa-youtube"></span>
-            <span class="site-description">Embeds YouTube videos URLs, playlists will play in loop</span>
-          </div>
-          <div class="supports">
-            <span class="site fa fa-instagram"></span>
-            <span class="site-description">Embeds Instagram URLs containing posts and videos</span>
-          </div>
-          <div class="supports">
-            <span class="site fa fa-pinterest"></span>
-            <span class="site-description">Embeds Pinterest URLs containing posts and pins</span>
-          </div>
-          <div class="supports">
-            <span class="site fa fa-vimeo"></span>
-            <span class="site-description">Embeds Vimeo videos URLs</span>
-          </div>
-          <div class="supports">
-            <span class="site fa fa-google"></span>
-            <span class="site-description">Embeds Google Maps URLs containing cordinates to a location</span>
-          </div>
-          <div class="supports">
-            <span class="site fa fa-link"></span>
-            <span class="site-description">Alternatively, embeds external web URLs into iframes</span>
-          </div>
-        </div>
-        <div class="copyrights">
-          <a href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md" target="_blank">
-            <i class="fa fa-copyright"></i> Distributed under MIT License
-          </a>
-        </div>
-      </footer>
+        </footer>
     </div>
     <div class="sky">
       <div class="cloud-1 cloud">
@@ -232,7 +233,7 @@
 
   </script>
   <!-- Here is how embedo.js get declared on top of your implementation -->
-  <script src="https://unpkg.com/embedo/embedo.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
   <script src="./js/main.js"></script>
 </body>
