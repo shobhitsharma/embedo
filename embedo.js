@@ -1,14 +1,14 @@
 /**
  * @file Embedo JS
  *
- * Embedo is third party embed plugin with features having events and resizing.
+ * Embedo is third party content embed plugin with features having events and resizing.
  * It provides a layer above popular social media sites native embed snippets
- * making it easier to hook content without writing or touching many files in any
- * website source.
+ * making it easier to hook content without modifying much code.
  *
  * @license MIT
  * @author Shobhit Sharma <hi@shobh.it>
  */
+'use strict';
 
 (function (global, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -19,7 +19,6 @@
     global.Embedo = window.Embedo = factory();
   }
 })(this, function () {
-  'use strict';
 
   /**
    * @class Embedo Prototype
@@ -146,16 +145,14 @@
   });
 
   /**
-   * @method Initialize auth component
-   *
-   * @name init
+   * @method init
+   * Primary Embedo initialization
    *
    * @param {object} options Optional parameters.
    * @return callback
    */
   Embedo.prototype.init = function (options) {
     console.log('Embedo Initialized..', options);
-
     appendSDK('facebook', options.facebook);
     appendSDK('twitter', options.twitter);
     appendSDK('instagram', options.instagram);
@@ -368,27 +365,13 @@
       return callback('Unable to detect Youtube video id.');
     }
 
-    var embed_options = extender({
+    var youtube_uri = Embedo.defaults.SOURCES.youtube.oEmbed + getYTVideoID(url) + '?' + toQueryString(extender({
       modestbranding: 1,
       autohide: 1,
       showinfo: 0
-    }, options, Embedo.defaults.RESTRICTED);
+    }, options, Embedo.defaults.RESTRICTED));
 
-    var size = getDimensions(element, options.width, options.height);
-    var embed_uri = Embedo.defaults.SOURCES.youtube.oEmbed + getYTVideoID(url) + '?' + toQueryString(embed_options);
-
-    element.appendChild(generateEmbed(id, 'youtube',
-      '<iframe src="' + embed_uri + '" ' + 'width="' + size.width + '" height="' + size.height + '"' +
-      'frameborder="0" allowtransparency="true"></iframe>'
-    ));
-
-    callback(null, {
-      id: id,
-      url: url,
-      el: element,
-      width: size.width,
-      height: size.height
-    });
+    this.iframe(id, element, youtube_uri, options, callback);
 
     /**
      * @func getYTVideoID
@@ -454,9 +437,12 @@
   Embedo.prototype.pinterest = function (id, element, url, options, callback) {
     var size = getDimensions(element, options.width, options.height);
     var pin_size = (size.width > 600 ? 'large' : (size.width < 345 ? 'small' : 'medium'));
-    var pin_el = '<a data-pin-do="embedPin"';
-    pin_el += options.data_ping_lang ? ' data-pin-lang="' + options.data_ping_lang + '"' : '';
-    pin_el += ' data-pin-width="' + pin_size + '" href="' + url + '"></a>';
+    var pin_el = generateElement('a', {
+      'href': url,
+      'data-pin-do': 'embedPin',
+      'data-pin-lang': options.data_ping_lang || 'en',
+      'data-pin-width': pin_size
+    });
     var container = generateEmbed(id, 'pinterest', pin_el);
     element.appendChild(container);
 
@@ -492,7 +478,6 @@
   Embedo.prototype.googlemaps = function (id, element, url, options, callback) {
     var size = getDimensions(element, options.width, options.height);
     var cordinates = getCordinates(url);
-
     if (!cordinates) {
       return callback(new Error('unable_to_find_cordinates'));
     }
@@ -532,10 +517,14 @@
       });
     });
 
+    /**
+     * @func getCordinates
+     *
+     * @param {string} url
+     */
     function getCordinates(url) {
       var regex = /@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/;
       var match = url.match(regex);
-
       return (match && match.length && match[1] && match[2]) ? {
         lat: parseFloat(match[1], 0),
         lng: parseFloat(match[2], 0)
@@ -544,8 +533,8 @@
   };
 
   /**
-   * @method website
-   * Website Embed prototype
+   * @method iframe
+   * Embed URLs to HTML5 frame prototype
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -553,26 +542,49 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.website = function (id, element, url, options, callback) {
+  Embedo.prototype.iframe = function (id, element, url, options, callback) {
     var size = getDimensions(element, options.width, options.height);
-    element.appendChild(generateEmbed(id, 'website',
-      '<iframe src="' + url + '" width="' + size.width + '" height="' + size.height + '" frameborder="0"></iframe>'
-    ));
+    var extension = url.substr(url.lastIndexOf('.')) || '';
+    var mimes = {
+      csv: 'text/csv',
+      doc: 'application/msword',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      pdf: 'application/pdf',
+      gif: 'image/gif',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
+      js: 'application/javascript',
+      json: 'application/json',
+      xhtml: 'application/xhtml+xml',
+      pps: 'application/vnd.ms-powerpoint',
+      ppsx: 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+      xml: 'application/xml',
+      default: 'text/html'
+    };
+    var mimetype = mimes[extension.toLowerCase()] || mimes.default;
+    var embed_el = generateElement('embed', {
+      type: mimetype,
+      src: url,
+      width: size.width,
+      height: size.height
+    });
+
+    element.appendChild(generateEmbed(id, 'iframe', embed_el));
 
     setTimeout(function () {
-      var iframe = document.getElementById(id).querySelector('iframe');
-      iframe.onerror = function (err) {
+      var embed = document.getElementById(id).querySelector('embed');
+      embed.onerror = function (err) {
         callback(err);
       };
-      iframe.onload = function () {
+      embed.onload = function () {
         callback(null, {
           id: id,
           el: element,
-          width: compute(iframe, 'width', true),
-          height: compute(iframe, 'height', true)
+          width: compute(embed, 'width', true),
+          height: compute(embed, 'height', true)
         });
       };
-    }, 500);
+    }, 0);
   };
 
   /**
@@ -684,7 +696,7 @@
         return;
       }
 
-      if (request.source === 'website' || request.source === 'youtube' || request.source === 'googlemaps') {
+      if (request.source === 'iframe' || request.source === 'googlemaps') {
         return this.emit('refresh', request, {
           width: compute(request.el, 'width', true),
           height: compute(request.el, 'height', true)
@@ -726,7 +738,7 @@
     }
     var removed = [];
 
-    this.requests.forEach(function (request, index, requests) {
+    this.requests.forEach(function (request) {
       if (!request.el || !validateElement(request.el)) {
         return;
       }
@@ -866,11 +878,9 @@
       if (err) {
         return;
       }
-
       centerize(childNode);
       childNode.style.width = options.width ? options.width + 'px' : '100%';
       childNode.style.height = options.height ? options.height + 'px' : '100%';
-
       callback(null, {});
     });
   }
@@ -940,7 +950,7 @@
         width: parent.width,
         height: parent.height
       });
-    }, 750);
+    }, 500);
   }
 
   /**
@@ -967,6 +977,44 @@
   }
 
   /**
+   * @function generateElement
+   * Generates DOM element
+   *
+   * @param {string} source
+   * @param {object} attributes
+   * @returns HTMLElement
+   */
+  function generateElement(type, attributes) {
+    var el = document.createElement(type);
+    Object.keys(attributes || {}).forEach(function (type) {
+      el.setAttribute(type, attributes[type]);
+    });
+    return el;
+  }
+
+  /**
+   * @function generateEmbed
+   * Generates Embed Container
+   *
+   * @param {string} source
+   * @param {string} html
+   * @returns
+   */
+  function generateEmbed(id, source, html) {
+    id = id || uuid();
+    var container = document.createElement('div');
+    container.setAttribute('id', id);
+    container.setAttribute('data-embedo-id', id);
+    container.setAttribute('data-embedo-source', source);
+    if (validateElement(html)) {
+      container.appendChild(html);
+    } else {
+      container.innerHTML = html || '';
+    }
+    return container;
+  }
+
+  /**
    * @function generateScript
    * Generates script tag element
    *
@@ -980,20 +1028,6 @@
     script.setAttribute('async', '');
     script.setAttribute('charset', 'utf-8');
     return script;
-  }
-
-  /**
-   * @function generateElement
-   * Generates DOM element
-   *
-   * @param {string} source
-   * @returns HTMLElement
-   */
-  function generateElement(type, id, className) {
-    var elm = document.createElement(type);
-    elm.setAttribute('id', id);
-    elm.setAttribute('className', className);
-    return elm;
   }
 
   /**
@@ -1018,7 +1052,6 @@
    * @returns {string}
    */
   function getURLSource(url) {
-    var type;
     var urlRegExp = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
     var sources = Object.keys(Embedo.defaults.SOURCES) || [];
 
@@ -1026,17 +1059,13 @@
       return null;
     }
 
-    var matched_source = sources.find(function (source) {
-      if (!Embedo.defaults.SOURCES[source]) {
-        return null;
-      } else if (url.match(Embedo.defaults.SOURCES[source].REGEX)) {
+    var matched_source = sources.filter(function (source) {
+      if (Embedo.defaults.SOURCES[source] && url.match(Embedo.defaults.SOURCES[source].REGEX)) {
         return source;
-      } else {
-        return null;
       }
-    });
+    }).filter(Boolean);
 
-    return matched_source ? matched_source : 'website';
+    return matched_source && matched_source.length ? matched_source[0] : 'iframe';
   }
 
   /**
@@ -1083,24 +1112,6 @@
     script.async = true;
     script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
     document.body.appendChild(script);
-  }
-
-  /**
-   * @function generateEmbed
-   * Generates Embed Container
-   *
-   * @param {string} source
-   * @param {string} html
-   * @returns
-   */
-  function generateEmbed(id, source, html) {
-    id = id || uuid();
-    var container = document.createElement('div');
-    container.setAttribute('id', id);
-    container.setAttribute('data-embedo-id', id);
-    container.setAttribute('data-embedo-source', source);
-    container.innerHTML = html || '';
-    return container;
   }
 
   /**
@@ -1298,22 +1309,22 @@
    * @returns {Function}
    */
   function watcher(id, fn, timer) {
-    window.watcher_stack = window.watcher_stack || {};
-    window.watcher_stack[id] = window.watcher_stack[id] || {
+    window.embedo_watcher = window.embedo_watcher || {};
+    window.embedo_watcher[id] = window.embedo_watcher[id] || {
       id: id,
       count: 0,
       request: null
     };
 
-    if (window.watcher_stack[id].count > 0 && window.watcher_stack[id].request) {
-      window.watcher_stack[id].count -= 1;
-      clearTimeout(window.watcher_stack[id].request);
+    if (window.embedo_watcher[id].count > 0 && window.embedo_watcher[id].request) {
+      window.embedo_watcher[id].count -= 1;
+      clearTimeout(window.embedo_watcher[id].request);
     }
 
-    window.watcher_stack[id].count += 1;
-    window.watcher_stack[id].request = setTimeout(function (e) {
-      window.watcher_stack[id].count -= 1;
-      if (window.watcher_stack[id].count === 0) {
+    window.embedo_watcher[id].count += 1;
+    window.embedo_watcher[id].request = setTimeout(function () {
+      window.embedo_watcher[id].count -= 1;
+      if (window.embedo_watcher[id].count === 0) {
         fn.call();
       }
     }, timer);

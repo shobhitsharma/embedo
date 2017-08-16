@@ -1,3 +1,5 @@
+'use strict';
+
 window.onload = function () {
   var embedo = new Embedo({
     facebook: {
@@ -17,37 +19,24 @@ window.onload = function () {
   document.getElementById('test-width').addEventListener('input', build);
   document.getElementById('test-height').addEventListener('input', build);
 
-  function build(event) {
-    document.getElementById('test-container').innerHTML = '';
 
-    typewatch('embedo-test', function () {
-      embedo.load(document.getElementById('test-container'),
-        document.getElementById('test-url').value, {
-          width: parseInt(document.getElementById('test-width').value) || null,
-          height: parseInt(document.getElementById('test-height').value) || null
-        });
-    }, 750);
+  // Embed file test
+  embedo.load(document.getElementById('embedo-file'), 'http://www.a3ts.org/wp-content/uploads/2014/07/PREVAC.pdf');
 
-    // Test event on delay
-    setTimeout(function () {
-      embedo.refresh(document.getElementById('test-container'));
-    }, 5000);
-  }
+  // Embed external URL test
+  embedo.load(document.getElementById('embedo-website'), 'https://static01.nyt.com/video/players/offsite/index.html?videoId=100000005363413');
+
+  // Embed video URL
+  embedo.load(document.getElementById('embedo-video'), 'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm');
 
   // Multiple URLs
   embedo.load(document.getElementById('embedo-multiple'), [
-    'https://www.instagram.com/p/BXQyu8Zh0dR',
-    'https://www.instagram.com/p/BXOasjpBllf',
-    'https://www.instagram.com/p/BXNRCkAhn-0'
+    'https://www.instagram.com/p/BX3fMnRjHpZ',
+    'https://www.instagram.com/p/BX3ejdJHmkD',
+    'https://www.instagram.com/p/BX3VEDqFvmg'
   ], {
     hidecaption: false
   });
-
-  // // Website load test
-  // embedo.load(document.getElementById('embedo-website'), 'https://news.ycombinator.com');
-
-  // // Feed URL Test (JSON)
-  // embedo.load(document.getElementById('embedo-feed'), 'https://news.ycombinator.com/rss');
 
   // Loads google maps URL
   // embedo.load(
@@ -123,9 +112,9 @@ window.onload = function () {
   // }, 5000);
 
   // Destroy All Embdos Test
-  setTimeout(function () {
-    embedo.destroy(document.getElementById('embedo-multiple'));
-  }, 5000);
+  // setTimeout(function () {
+  //   embedo.destroy(document.getElementById('embedo-multiple'));
+  // }, 5000);
 
   // // Destroy Single Embdos Test
   // setTimeout(function () {
@@ -148,28 +137,19 @@ window.onload = function () {
   embedo.on('error', function (error) {
     console.error('Embedo error', error);
   });
-};
 
-function typewatch(id, fn, timer) {
-  window.typewatch_stack = window.typewatch_stack || {};
-  window.typewatch_stack[id] = window.typewatch_stack[id] || {
-    id: id,
-    count: 0,
-    request: null
-  };
+  function build() {
+    document.getElementById('test-container').innerHTML = '';
 
-  if (window.typewatch_stack[id].count > 0 && window.typewatch_stack[id].request) {
-    window.typewatch_stack[id].count -= 1;
-    clearTimeout(window.typewatch_stack[id].request);
+    embedo.load(document.getElementById('test-container'),
+      document.getElementById('test-url').value, {
+        width: parseInt(document.getElementById('test-width').value) || null,
+        height: parseInt(document.getElementById('test-height').value) || null
+      });
+
+    // Test event on delay
+    setTimeout(function () {
+      embedo.refresh(document.getElementById('test-container'));
+    }, 5000);
   }
-
-  window.typewatch_stack[id].count += 1;
-  window.typewatch_stack[id].request = setTimeout(function (e) {
-    window.typewatch_stack[id].count -= 1;
-    if (window.typewatch_stack[id].count === 0) {
-      fn.call();
-    }
-  }, timer);
-
-  return null;
-}
+};
