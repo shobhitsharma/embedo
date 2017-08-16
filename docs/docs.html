@@ -156,9 +156,9 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
         <p>The <code>.load()</code> function is all what you need to embed third party content given under following arguments.</p>
 <pre><code class="language-js">embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement{}</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL[string|Array]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options[{}*optional]</span>&gt;</span>)</span>
 </code></pre>
-        <p>Due to incongruent behavior of external oembed resources when it comes to custom content sizes limitations, an external
-          functionality called <code>automagic</code> is added, which basically determine DOM size and scales element using
-          flex support to fit container while respecting parameters passed along as options in the arguments (enabled by
+        <p>Due to incongruent content size behavior of external oembed resources with restrcitions, additional
+          functionality called <code>automagic</code> is added, which basically parent DOM element's specs and scales embed container using
+          flex support in order fit container while respecting custom width or height passed as arguments (enabled by
           default; use <code>strict</code> flag to disable).</p>
         <h2><a id="Options_98"></a>Options</h2>
         <p>The <code>options</code> are native and external based as described below:</p>

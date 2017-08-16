@@ -91,7 +91,7 @@ The `.load()` function is all what you need to embed third party content given u
 embedo.load(<HTMLElement{}>, <URL[string|Array]>, <options[{}*optional]>)
 ```
 
-Due to incongruent behavior of external oembed resources when it comes to custom content sizes limitations, an external functionality called `automagic` is added, which basically determine DOM size and scales element using flex support to fit container while respecting parameters passed along as options in the arguments (enabled by default; use `strict` flag to disable).
+Due to incongruent content size behavior of external oembed resources with restrcitions, additional functionality called `automagic` is added, which basically parent DOM element's specs and scales embed container using flex support in order fit container while respecting custom width or height passed as arguments (enabled by default; use `strict` flag to disable).
 
 
 ## Options
