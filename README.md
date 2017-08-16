@@ -28,13 +28,11 @@ $ yarn add embedo
 $ bower install embedo
 ```
 
-Alternatively, import using CDN while updating `version` as per requirements from scripts below:
+Alternatively, import using CDN while updating `version` as per requirements from any script below:
 
 ```html
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"></script>
-
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"></script>
-
 <script type="text/javascript" src="https://unpkg.com/embedo[@VERSION]/embedo.min.js"></script>
 ```
 
