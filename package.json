@@ -1,6 +1,6 @@
 {
   "name": "embedo",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Embeds external resources to DOM elements with perks",
   "main": "embedo.js",
   "scripts": {
