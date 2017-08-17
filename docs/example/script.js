@@ -27,7 +27,9 @@ window.onload = function () {
   embedo.load(document.getElementById('embedo-website'), 'https://static01.nyt.com/video/players/offsite/index.html?videoId=100000005363413');
 
   // Embed video URL
-  embedo.load(document.getElementById('embedo-video'), 'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm');
+  embedo.load(document.getElementById('embedo-video'), 'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm', {
+    controls: 'contorls'
+  });
 
   // Multiple URLs
   embedo.load(document.getElementById('embedo-multiple'), [

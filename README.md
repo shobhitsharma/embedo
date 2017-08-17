@@ -13,7 +13,7 @@
 * Pinterest URLs containing posts and pins
 * Vimeo URLs containing videos
 * Google Maps URLs containing cordinates to a location
-* Embeds other urls or .pdf, .mp4, .webm, .ppsx and other formats as alternative
+* Embeds other urls or .pdf, .mp4, .webm and other formats as alternative
 
 ## Installation
 
@@ -80,10 +80,7 @@ new Embedo({
   }
 })
 ```
-
-## Events
-
-### .load()
+### .load() Call
 
 The `.load()` function is all what you need to embed third party content given under following arguments. 
 
@@ -186,4 +183,4 @@ embedo.load($('.my-unique-selector').get(0), 'https://www.youtube.com/watch?v=Q6
 
 ## Changelog
 
-See [all releases](https://github.com/shobhitsharma/embedo/releases) with specifications, changes and other necessary update logs.
+See [all releases](https://github.com/shobhitsharma/embedo/releases) with specs or necessary update logs.

@@ -76,7 +76,7 @@
       youtube: {
         SDK: null,
         oEmbed: 'https://www.youtube.com/embed/',
-        REGEX: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
+        REGEX: /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/,
         PARAMS: null
       },
       pinterest: {
@@ -544,35 +544,39 @@
    */
   Embedo.prototype.iframe = function (id, element, url, options, callback) {
     var size = getDimensions(element, options.width, options.height);
-    var extension = url.substr(url.lastIndexOf('.')) || '';
+    var extension = (url.substr(url.lastIndexOf('.')) || '').replace('.', '').toLowerCase();
     var mimes = {
       csv: 'text/csv',
       doc: 'application/msword',
       docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       pdf: 'application/pdf',
       gif: 'image/gif',
-      mp4: 'video/mp4',
-      webm: 'video/webm',
       js: 'application/javascript',
       json: 'application/json',
       xhtml: 'application/xhtml+xml',
       pps: 'application/vnd.ms-powerpoint',
       ppsx: 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
       xml: 'application/xml',
+      ogg: 'video/ogg',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
       default: 'text/html'
     };
-    var mimetype = mimes[extension.toLowerCase()] || mimes.default;
-    var embed_el = generateElement('embed', {
+    var mimetype = mimes[extension] || mimes.default;
+    var has_video = extension.match(/(mp4|ogg|webm|ogv|ogm)/);
+    var el_type = has_video ? 'video' : 'embed';
+    var override = extender({}, options, Embedo.defaults.RESTRICTED);
+    var embed_el = generateElement(el_type, extender({
       type: mimetype,
       src: url,
       width: size.width,
       height: size.height
-    });
+    }, override));
 
     element.appendChild(generateEmbed(id, 'iframe', embed_el));
 
     setTimeout(function () {
-      var embed = document.getElementById(id).querySelector('embed');
+      var embed = document.getElementById(id).querySelector(el_type);
       embed.onerror = function (err) {
         callback(err);
       };
