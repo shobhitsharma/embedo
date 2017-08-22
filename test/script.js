@@ -10,15 +10,19 @@ window.onload = function () {
     twitter: true,
     instagram: true,
     pinterest: true,
-    googlemaps: {
-      key: 'AIzaSyDDmeVWuW86QT0JPikPas0BeWxbpVBlFy8'
-    }
+    // googlemaps: {
+    //   key: 'AIzaSyDDmeVWuW86QT0JPikPas0BeWxbpVBlFy8'
+    // }
   });
 
   document.getElementById('test-url').addEventListener('input', build);
   document.getElementById('test-width').addEventListener('input', build);
   document.getElementById('test-height').addEventListener('input', build);
 
+  embedo.load(document.getElementById('embedo-gist'), 'https://gist.github.com/brandonb927/4149074.js');
+
+  embedo.load(document.getElementById('embedo-codepen'),
+    'https:////codepen.io/PavelDoGreat/embed/zdWzEL/?height=265&theme-id=0&default-tab=js,result&embed-version=2');
 
   // Embed file test
   embedo.load(document.getElementById('embedo-file'), 'http://www.a3ts.org/wp-content/uploads/2014/07/PREVAC.pdf');
@@ -124,21 +128,21 @@ window.onload = function () {
   // }, 20000);
 
   // Test Element Watch Events
-  embedo.on('watch', function (result) {
-    console.log('Embedo watch', result);
-  });
+  // embedo.on('watch', function (result) {
+  //   console.log('Embedo watch', result);
+  // });
 
-  embedo.on('refresh', function (request, data) {
-    console.log('Embedo refresh', request, data);
-  });
+  // embedo.on('refresh', function (request, data) {
+  //   console.log('Embedo refresh', request, data);
+  // });
 
-  embedo.on('destroy', function () {
-    console.log('Embedo destroy');
-  });
+  // embedo.on('destroy', function () {
+  //   console.log('Embedo destroy');
+  // });
 
-  embedo.on('error', function (error) {
-    console.error('Embedo error', error);
-  });
+  // embedo.on('error', function (error) {
+  //   console.error('Embedo error', error);
+  // });
 
   function build() {
     document.getElementById('test-container').innerHTML = '';

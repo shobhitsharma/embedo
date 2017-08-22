@@ -48,8 +48,7 @@
         <h2>embedo.js</h2>
       </div>
       <section class="embedo-documentation markdown-body">
-        <h1>embedo</h1>
-        <blockquote>
+        <blockquote style="font-size: 1.3em;">
           <p><strong>Embedo</strong> adds a layer on top of third party embed APIs while ensuring best practices and native
             guidelines for each component. It takes cares of resizing the container, emitting necessary events and with support
             for native and external options to be pass along.</p>
@@ -62,34 +61,40 @@
           <li>Instagram URLs containing posts and videos</li>
           <li>Pinterest URLs containing posts and pins</li>
           <li>Vimeo URLs containing videos</li>
+          <li>Github URLs containing gists</li>
           <li>Google Maps URLs containing cordinates to a location</li>
-          <li>Embeds other urls including .pdf, .mp4, .webm and other formats as alternative</li>
+          <li>Embeds other urls or .pdf, .mp4, .webm and many formats as alternative</li>
+          <li>Embeds any URL that fulfils HTTP access control (CORS) policy</li>
         </ul>
-        <h2><a id="Installation_17"></a>Installation</h2>
-<pre><code class="language-sh"><span class="hljs-comment"># npm</span>
-$ npm install embedo --save
+        <h2><a id="Installation_19"></a>Installation</h2>
+<pre><code class="language-sh">$ npm install embedo --save
 
-<span class="hljs-comment"># yarn</span>
 $ yarn add embedo
 
-<span class="hljs-comment"># bower</span>
 $ bower install embedo
 </code></pre>
-<br/>
-        <p>Alternatively, import using CDN while updating <code>version</code> as per requirements from any script below:</p>
-<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+        <br/>
+        <p>Alternatively, import using CDN while replacing <code>version</code> as per requirements from any script below:</p>
+<pre><code class="language-html"><span class="hljs-comment">&lt;!--- unpkg --&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://unpkg.com/embedo[@VERSION]/embedo.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!--- jsDelivr --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!--- CDNjs --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre>
-<h2><a id="Usage_40"></a>Usage</h2>
-<p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/example">found here</a>.</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> Embedo = <span class="hljs-built_in">require</span>(<span class="hljs-string">'embedo'</span>); <span class="hljs-comment">// OR import Embedo from 'embedo';</span>
-<span class="hljs-keyword">const</span> embedo = <span class="hljs-keyword">new</span> Embedo(); <span class="hljs-comment">// OR const embedo = new Embedo();</span>
+        <h2><a id="Usage_45"></a>Usage</h2>
+        <p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/example">found here</a>.</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> Embedo <span class="hljs-keyword">from</span> <span class="hljs-string">'/path/to/vendor'</span>;
+
+<span class="hljs-keyword">const</span> embedo = <span class="hljs-keyword">new</span> Embedo();
 
 embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement[object]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL[string]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options[object]*optional</span>&gt;</span>)</span>;
 </code></pre>
-        <h3><a id="Initialize_SDKs_51"></a>Initialize SDKs</h3>
-        <p>The following options can be set during library import is called:</p>
+        <h3><a id="Initialize_SDKs_57"></a>Initialize SDKs</h3>
+        <p>The following options can be set during library import is called, they automatically inject required SDK snippets
+          to DOM while checking existing ones:</p>
         <table class="table table-striped table-bordered">
           <thead>
             <tr>
@@ -132,11 +137,11 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
             </tr>
           </tbody>
         </table>
-        <p>For <strong>YouTube</strong> and <strong>Vimeo</strong>, no sdk is required. If you were to host any external URL
-          with HTML or any other file, it will try to render after checking cross browser policies and other validations
-          to an <code>&lt;embed&gt;</code> or <code>&lt;object&gt;</code> tag.</p>
-        <p>See an example <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/js/main.js">here</a>.</p>
-        <h3><a id="Advance_Options_67"></a>Advance Options</h3>
+        <p>For <strong>Github</strong>, <strong>YouTube</strong>, <strong>Vimeo</strong> and others no sdk is required. If you
+          were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies
+          and other validations to an <code>&lt;embed&gt;</code> or <code>&lt;object&gt;</code> tag.</p>
+        <p>Try an example <a href="https://codepen.io/shobhitsharma/pen/yojJZp">here</a>.</p>
+        <h3><a id="Advance_Options_73"></a>Advance Options</h3>
         <p>Since facebook and googlemaps require <code>appId</code> and <code>api_key</code> attributes for authorization, they
           can be passed along as:</p>
 <pre><code class="language-js"><span class="hljs-comment">// Custom options for Facebook and Google Maps</span>
@@ -151,16 +156,13 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
   }
 })
 </code></pre>
-        <h2><a id="Events_85"></a>Events</h2>
-        <h3><a id="load_87"></a>.load()</h3>
+        <h3><a id="load_Call_90"></a>.load() Call</h3>
         <p>The <code>.load()</code> function is all what you need to embed third party content given under following arguments.</p>
 <pre><code class="language-js">embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">HTMLElement{}</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">URL[string|Array]</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-title">options[{}*optional]</span>&gt;</span>)</span>
 </code></pre>
-        <p>Due to incongruent content size behavior of external oembed resources with restrcitions, additional
-          functionality called <code>automagic</code> is added, which basically parent DOM element's specs and scales embed container using
-          flex support in order fit container while respecting custom width or height passed as arguments (enabled by
-          default; use <code>strict</code> flag to disable).</p>
-        <h2><a id="Options_98"></a>Options</h2>
+        <p>Due to incongruent third party restrictions regarding sizes, additional functionality called <code>automagic</code>          is added, which basically auto-scales the container to fit within DOM without overflowing (enabled by default unless
+          <code>strict</code> is set to <code>true</code>).</p>
+        <h2><a id="Options_101"></a>Options</h2>
         <p>The <code>options</code> are native and external based as described below:</p>
         <p><strong>Native Options</strong></p>
         <table class="table table-striped table-bordered">
@@ -202,9 +204,9 @@ embedo.load(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title
           <li>Pinterest - See <a href="https://developers.pinterest.com/tools/widget-builder/">API Reference</a></li>
           <li>Google Maps - Supports <code>zoom</code> as integer and <code>mapTypeId</code> as enum as <code>roadmap|satellite|hybrid|terrain</code>            (<a href="https://developers.google.com/maps/documentation/javascript/reference">API Reference</a>)</li>
         </ul>
-        <h2><a id="Methods_120"></a>Methods</h2>
+        <h2><a id="Methods_123"></a>Methods</h2>
         <p>Embedo exposes following functions that you need after including the library:</p>
-        <h3><a id="refresh_123"></a>.refresh()</h3>
+        <h3><a id="refresh_126"></a>.refresh()</h3>
         <p>The <code>embedo.refresh()</code> method can be called explicitly when you have a <code>change</code> or <code>resize</code>          event, which re-calculates the dimensions of generated content.</p>
 <pre><code class="language-js"><span class="hljs-comment">// Refresh single container</span>
 embedo.refresh(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>));
@@ -212,7 +214,7 @@ embedo.refresh(<span class="hljs-built_in">document</span>.getElementById(<span 
 <span class="hljs-comment">// Refresh all embedo instances</span>
 embedo.refresh();
 </code></pre>
-        <h3><a id="destroy_135"></a>.destroy()</h3>
+        <h3><a id="destroy_138"></a>.destroy()</h3>
         <p>The <code>embedo.destroy()</code> method can be called explicitly when wish to remove and unbind embedo instance(s).</p>
 <pre><code class="language-js"><span class="hljs-comment">// Destroy single container</span>
 embedo.destroy(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>));
@@ -220,7 +222,7 @@ embedo.destroy(<span class="hljs-built_in">document</span>.getElementById(<span 
 <span class="hljs-comment">// Destroys all embedo instances</span>
 embedo.destroy();
 </code></pre>
-        <h2><a id="Events_147"></a>Events</h2>
+        <h2><a id="Events_150"></a>Events</h2>
         <p>Embedo also has internal event listeners implemented which emits following events:</p>
         <table class="table table-striped table-bordered">
           <thead>
@@ -254,13 +256,14 @@ embedo.destroy();
           </tbody>
         </table>
         <p>They return basic details such as identifiers for request including width or height, and can be instantiated like
-          this:</p>
+          this:
+        </p>
 <pre><code class="language-js">embedo.on(<span class="hljs-string">'watch'</span>, (result)=&gt; {});
 embedo.on(<span class="hljs-string">'refresh'</span>, (request, result)=&gt; {});
 embedo.on(<span class="hljs-string">'destroy'</span>, ()=&gt; {});
 embedo.on(<span class="hljs-string">'error'</span>, (error)=&gt; {});
 </code></pre>
-<h2><a id="Example_167"></a>Example</h2>
+        <h2><a id="Example_170"></a>Example</h2>
 <pre><code class="language-js">embedo.load(
   <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'my-element-id'</span>),
   <span class="hljs-string">'https://twitter.com/Sh0bhit/status/797584590214926340'</span>
@@ -278,9 +281,9 @@ embedo.load(
 <span class="hljs-comment">// jQuery</span>
 embedo.load($(<span class="hljs-string">'.my-unique-selector'</span>).get(<span class="hljs-number">0</span>), <span class="hljs-string">'https://www.youtube.com/watch?v=Q6gYFO4iGlk'</span>);
 </code></pre>
-        <h2><a id="Changelog_188"></a>Changelog</h2>
-        <p>See <a href="https://github.com/shobhitsharma/embedo/releases">all releases</a> with specifications, changes and
-          other necessary update logs.</p>
+        <h2><a id="Changelog_191"></a>Changelog</h2>
+        <p>See <a href="https://github.com/shobhitsharma/embedo/releases">all releases</a> with specs or necessary update logs.</p>
+
 
       </section>
 
@@ -317,7 +320,7 @@ embedo.load($(<span class="hljs-string">'.my-unique-selector'</span>).get(<span 
           </div>
           <div class="supports">
             <span class="site fa fa-link"></span>
-            <span class="site-description">Embeds other urls including .pdf, .mp4, .webm and other formats as alternative</span>
+            <span class="site-description">Embeds third party URLs, gists or formats like .pdf, .webm, .ppsx etc.</span>
           </div>
         </div>
         <div class="copyrights">

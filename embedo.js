@@ -8,9 +8,9 @@
  * @license MIT
  * @author Shobhit Sharma <hi@shobh.it>
  */
-'use strict';
-
 (function (global, factory) {
+  'use strict';
+
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof module === 'object' && module.exports) {
@@ -19,6 +19,7 @@
     global.Embedo = window.Embedo = factory();
   }
 })(this, function () {
+  'use strict';
 
   /**
    * @class Embedo Prototype
@@ -95,6 +96,12 @@
         SDK: 'https://maps.googleapis.com/maps/api/js',
         oEmbed: null,
         REGEX: /(http|https)?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*/i,
+        PARAMS: {}
+      },
+      github: {
+        SDK: null,
+        oEmbed: null,
+        REGEX: /https:\/\/gist\.github\.com\/(\w+)\/(\w+)/,
         PARAMS: {}
       }
     },
@@ -533,6 +540,39 @@
   };
 
   /**
+   * @method github
+   * Embed github URLs (gist) to DOM
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.github = function github(id, element, url, options, callback) {
+    var size = getDimensions(element, options.width, options.height);
+    var iframe = generateElement('iframe', extender({
+      width: size.width,
+      height: size.height
+    }, options, Embedo.defaults.RESTRICTED));
+    var container = generateEmbed(id, 'github', iframe);
+
+    element.appendChild(container);
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write('<body><script src="' + url + '"></script></body>');
+    iframe.contentWindow.document.close();
+
+    iframe.onload = function () {
+      callback(null, {
+        id: id,
+        el: element,
+        width: compute(container, 'width', true),
+        height: compute(container, 'height', true)
+      });
+    };
+  };
+
+  /**
    * @method iframe
    * Embed URLs to HTML5 frame prototype
    *
@@ -543,6 +583,7 @@
    * @return callback
    */
   Embedo.prototype.iframe = function (id, element, url, options, callback) {
+    var fragment = document.createDocumentFragment();
     var size = getDimensions(element, options.width, options.height);
     var extension = (url.substr(url.lastIndexOf('.')) || '').replace('.', '').toLowerCase();
     var mimes = {
@@ -573,7 +614,8 @@
       height: size.height
     }, override));
 
-    element.appendChild(generateEmbed(id, 'iframe', embed_el));
+    fragment.appendChild(generateEmbed(id, 'iframe', embed_el));
+    element.appendChild(fragment);
 
     setTimeout(function () {
       var embed = document.getElementById(id).querySelector(el_type);
@@ -588,7 +630,7 @@
           height: compute(embed, 'height', true)
         });
       };
-    }, 0);
+    }, 200);
   };
 
   /**
@@ -644,8 +686,7 @@
 
     this.emit('watch', 'load', request);
 
-    this[source](
-      id, element, url, options,
+    this[source](id, element, url, options,
       function (err, data) {
         if (err) {
           return this.emit('error', err);

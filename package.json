@@ -1,12 +1,12 @@
 {
   "name": "embedo",
   "version": "1.4.1",
-  "description": "Embeds external resources to DOM elements with perks",
+  "description": "Embeds third party content to DOM with perks",
   "main": "embedo.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "python -m SimpleHTTPServer",
-    "test": "mocha",
+    "start": "python -m SimpleHTTPServer 8080",
+    "test": "mocha test/*.spec.js",
     "build": "uglifyjs embedo.js --compress --mangle --output=embedo.min.js"
   },
   "repository": {
@@ -18,7 +18,8 @@
     "embedo",
     "social-media-plugin",
     "content-embed",
-    "oemebed"
+    "iframe",
+    "oembed"
   ],
   "author": "Shobhit Sharma <hi@shobh.it>",
   "license": "MIT",
@@ -28,7 +29,8 @@
   "homepage": "https://github.com/shobhitsharma/embedo",
   "devDependencies": {
     "chai": "^4.1.1",
+    "jsdom": "11.2.0",
     "mocha": "^3.5.0",
-    "uglify-js": "^3.0.27"
+    "uglify-js": "^3.0.28"
   }
 }
