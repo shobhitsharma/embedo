@@ -12,8 +12,10 @@
 * Instagram URLs containing posts and videos
 * Pinterest URLs containing posts and pins
 * Vimeo URLs containing videos
+* Github URLs containing gists
 * Google Maps URLs containing cordinates to a location
-* Embeds other urls or .pdf, .mp4, .webm and other formats as alternative
+* Embeds other urls or .pdf, .mp4, .webm and many formats as alternative
+* Embeds any URL that fulfils HTTP access control (CORS) policy
 
 ## Installation
 
@@ -31,9 +33,14 @@ $ bower install embedo
 Alternatively, import using CDN while updating `version` as per requirements from any script below:
 
 ```html
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"></script>
+<!--- unpkg -->
 <script type="text/javascript" src="https://unpkg.com/embedo[@VERSION]/embedo.min.js"></script>
+
+<!--- jsDelivr -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"></script>
+
+<!--- CDNjs -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"></script>
 ```
 
 ## Usage
@@ -41,15 +48,16 @@ Alternatively, import using CDN while updating `version` as per requirements fro
 Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/docs/example).
 
 ```js
-const Embedo = require('embedo'); // OR import Embedo from 'embedo';
-const embedo = new Embedo(); // OR const embedo = new Embedo();
+import Embedo from '/path/to/vendor';
+
+const embedo = new Embedo();
 
 embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]*optional>);
 ```
 
 ### Initialize SDKs
 
-The following options can be set during library import is called:
+The following options can be set during library import is called, they automatically inject required SDK snippets to DOM while checking existing ones:
 
 | Parameter       | Type     | Default    | Description                                    |
 | -------------   |----------|------------|------------------------------------------------|
@@ -59,9 +67,9 @@ The following options can be set during library import is called:
 | `pinterest`     | object/boolean  | false      | Injects Pinterest SDK                          |
 | `googlemaps`    | object/boolean   | null       | Injects Google Maps SDK                        |
 
-For **YouTube** and **Vimeo**, no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<embed>` or `<object>` tag.
+For **Github**, **YouTube**, **Vimeo** and others no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<embed>` or `<object>` tag.
 
-See an example [here](https://github.com/shobhitsharma/embedo/tree/master/docs/js/main.js).
+Try an example [here](https://codepen.io/shobhitsharma/pen/yojJZp).
 
 ### Advance Options
 
@@ -88,7 +96,7 @@ The `.load()` function is all what you need to embed third party content given u
 embedo.load(<HTMLElement{}>, <URL[string|Array]>, <options[{}*optional]>)
 ```
 
-Due to incongruent content size behavior of external oembed resources with restrcitions, additional functionality called `automagic` is added, which basically parent DOM element's specs and scales embed container using flex support in order fit container while respecting custom width or height passed as arguments (enabled by default; use `strict` flag to disable).
+Due to incongruent third party restrictions regarding sizes, additional functionality called `automagic` is added, which basically auto-scales the container to fit within DOM without overflowing (enabled by default unless `strict` is set to `true`).
 
 
 ## Options
