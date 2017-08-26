@@ -92,7 +92,9 @@
   embedo.load(
     document.getElementById('my-awesome-container'),
     'https://twitter.com/Twitter/status/849866660882206721'
-  );
+  )
+  .done((data) => {})
+  .fail((err) => {})
 
   // OR calling .load() event (HTMLElement, url[String|Array], options[Object])
   embedo.load(
@@ -124,7 +126,10 @@
   // Destroy event (if no element passed, destroys all embedo instances)
   embedo.destroy(document.getElementById('my-awesome-container'));
 
-  // Event Handlers to watch element mutated, refreshed or removed
+  // Single instance event handler
+  embedo.load(el, url, options).done((data) => {}).fail((err) => {})
+
+  // Global instances event handlers
   embedo.on('watch', (event, result) => {});
   embedo.on('refresh', (result, data) => {});
   embedo.on('destroy', () => {});

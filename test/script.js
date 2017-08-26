@@ -1,6 +1,8 @@
 'use strict';
 
 window.onload = function () {
+  Embedo.debug = true;
+
   var embedo = new Embedo({
     facebook: {
       version: 'v2.8',
@@ -19,6 +21,32 @@ window.onload = function () {
   document.getElementById('test-width').addEventListener('input', build);
   document.getElementById('test-height').addEventListener('input', build);
 
+  // Loads facebook post
+  embedo.load(
+    document.getElementById('embedo-facebook'),
+    'https://www.facebook.com/Channel4/videos/10154585936602330', {
+      width: 330,
+      height: 400
+    }
+  ).fail(function (err) {
+    console.error('Embedo instance error', err);
+  }).done(function (data) {
+    console.log('Embedo instance watch', data);
+  });
+
+  // Multiple URLs
+  embedo.load(document.getElementById('embedo-multiple'), [
+    'https://www.instagram.com/p/BX3fMnRjHpZ',
+    'https://www.instagram.com/p/BX3ejdJHmkD',
+    'https://www.instagram.com/p/BX3VEDqFvmg'
+  ], {
+    hidecaption: false
+  }).fail(function (err) {
+    console.error('Embedo instance error', err);
+  }).done(function (data) {
+    console.log('Embedo instance watch', data);
+  });
+
   embedo.load(document.getElementById('embedo-gist'), 'https://gist.github.com/brandonb927/4149074.js');
 
   embedo.load(document.getElementById('embedo-codepen'),
@@ -33,15 +61,6 @@ window.onload = function () {
   // Embed video URL
   embedo.load(document.getElementById('embedo-video'), 'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm', {
     controls: 'contorls'
-  });
-
-  // Multiple URLs
-  embedo.load(document.getElementById('embedo-multiple'), [
-    'https://www.instagram.com/p/BX3fMnRjHpZ',
-    'https://www.instagram.com/p/BX3ejdJHmkD',
-    'https://www.instagram.com/p/BX3VEDqFvmg'
-  ], {
-    hidecaption: false
   });
 
   // Loads google maps URL
@@ -60,15 +79,6 @@ window.onload = function () {
     'https://www.pinterest.com/pin/99360735500167749'
   );
 
-  // Loads facebook post
-  embedo.load(
-    document.getElementById('embedo-facebook'),
-    'https://www.facebook.com/LaLiga/posts/1131604813542743', {
-      width: 600,
-      height: 400
-    }
-  );
-
   // Loads tweet
   embedo.load(
     document.getElementById('embedo-twitter'),
@@ -85,17 +95,10 @@ window.onload = function () {
 
   // Loads youtube video
   embedo.load(
-    document.getElementById('embedo-youtube'),
-    'https://www.youtube.com/watch?v=JGwWNGJdvx8', {
-      width: 640,
-      height: 480
-    }
-  );
-
-  // Loads youtube embed video
-  embedo.load(
-    document.getElementById('embedo-youtube-embed'),
-    'https://www.youtube.com/embed/vn2qXpcon-s', {
+    document.getElementById('embedo-youtube'), [
+      'https://www.youtube.com/watch?v=JGwWNGJdvx8',
+      'https://www.youtube.com/embed/vn2qXpcon-s'
+    ], {
       width: 640,
       height: 480
     }
@@ -104,20 +107,27 @@ window.onload = function () {
   // Loads vimeo video
   embedo.load(
     document.getElementById('embedo-vimeo'),
-    'https://vimeo.com/212603149'
+    'https://vimeo.com/212603149', {
+      height: 500
+    }
   );
 
-  // // Refresh All Embedo instances
-  // setTimeout(function () {
-  //   embedo.refresh(document.getElementById('embedo-multiple'));
-  // }, 5000);
+  embedo.load(
+    document.getElementById('embedo-jsfiddle'),
+    'http://jsfiddle.net/skelly/FX44w/embedded/'
+  );
+
+  // Refresh All Embedo instances
+  setTimeout(function () {
+    embedo.refresh();
+  }, 5000);
 
   // Refresh Single Embedo instance
-  // setTimeout(function () {
-  //   embedo.refresh(document.getElementById('embedo-facebook'));
-  // }, 5000);
+  setTimeout(function () {
+    embedo.refresh(document.getElementById('embedo-facebook'));
+  }, 5000);
 
-  // Destroy All Embdos Test
+  // // Destroy All Embdos Test
   // setTimeout(function () {
   //   embedo.destroy(document.getElementById('embedo-multiple'));
   // }, 5000);
@@ -128,21 +138,21 @@ window.onload = function () {
   // }, 20000);
 
   // Test Element Watch Events
-  // embedo.on('watch', function (result) {
-  //   console.log('Embedo watch', result);
-  // });
+  embedo.on('watch', function (result) {
+    console.log('Embedo watch', result);
+  });
 
-  // embedo.on('refresh', function (request, data) {
-  //   console.log('Embedo refresh', request, data);
-  // });
+  embedo.on('refresh', function (request, data) {
+    console.log('Embedo refresh', request, data);
+  });
 
-  // embedo.on('destroy', function () {
-  //   console.log('Embedo destroy');
-  // });
+  embedo.on('destroy', function () {
+    console.log('Embedo destroy');
+  });
 
-  // embedo.on('error', function (error) {
-  //   console.error('Embedo error', error);
-  // });
+  embedo.on('error', function (error) {
+    console.error('Embedo error', error);
+  });
 
   function build() {
     document.getElementById('test-container').innerHTML = '';
