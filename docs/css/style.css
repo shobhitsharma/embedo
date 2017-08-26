@@ -189,6 +189,12 @@ main {
   padding: 0;
 }
 
+main h1 {
+  font-weight: 600;
+  font-size: 3em;
+  text-align: center;
+}
+
 header {
   display: table;
   position: fixed;
@@ -223,7 +229,7 @@ header a:hover {
   color: white;
 }
 
-div#embedo-app {
+#embedo-app {
   position: relative;
   display: block;
   text-align: center;
@@ -232,18 +238,22 @@ div#embedo-app {
   max-width: 750px;
 }
 
-div#embedo-app>section.teaser {
+#embedo-app.test {
+  padding: 5% 0;
+}
+
+#embedo-app>section.teaser {
   position: relative;
   margin: 15% auto;
   font-size: 2.6em;
 }
 
-div#embedo-app>section.teaser h1 {
+#embedo-app>section.teaser h1 {
   font-weight: 700;
   font-size: 130%;
 }
 
-div#embedo-app>section.teaser>p {
+#embedo-app>section.teaser>p {
   font-size: 60%;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
@@ -252,12 +262,12 @@ div#embedo-app>section.teaser>p {
   max-width: 330px;
 }
 
-div#embedo-app>section {
+#embedo-app>section {
   max-width: 750px;
   margin: 1% auto;
 }
 
-div#embedo-app form {
+#embedo-app form {
   display: block;
   position: relative;
   margin: 0;
@@ -265,7 +275,7 @@ div#embedo-app form {
   overflow: hidden;
 }
 
-div#embedo-app form>input {
+#embedo-app form>input {
   float: left;
   color: rgb(0, 0, 0);
   margin-bottom: 15px;
@@ -322,31 +332,49 @@ div#embedo-app form>input {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-div#embedo-app form>input#test-url {
+#embedo-app form>input#test-url {
   width: 70%;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   border-right: 1px solid rgba(173, 173, 173, 0.32);
 }
 
-div#embedo-app form>input#test-width {
+#embedo-app form>input#test-width {
   width: 15%;
   border-right: 1px solid rgba(173, 173, 173, 0.32);
 }
 
-div#embedo-app form>input#test-height {
+#embedo-app form>input#test-height {
   width: 15%;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
 }
 
-div#embedo-app>section>div {
+#embedo-app>section>div {
   text-align: center;
 }
 
-div#embedo-app>section>.code-editor {
+#embedo-app.test>section>div {
+  text-align: center;
+  margin: 25px auto;
+}
+
+#embedo-app.test>section .code-demo {
+  border-radius: 5px;
+  background-color: #00000045;
+  padding: 25px;
+}
+
+#embedo-app.test>section .code-demo h2 {
   text-align: left;
-  background-color: #000;
+  font-size: 1.6em;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+#embedo-app>section> code {
+  text-align: left;
+  background-color: rgba(0, 0, 0, 0.87);
 }
 
 section.readme {
@@ -1868,16 +1896,16 @@ pre[class*="language-"] {
   section#action-hero {
     display: none;
   }
-  div#embedo-app {
+  #embedo-app {
     padding: 0;
   }
-  div#embedo-app>section.teaser {
+  #embedo-app>section.teaser {
     padding: 25px;
   }
-  div#embedo-app>section.teaser>p {
+  #embedo-app>section.teaser>p {
     font-size: 13px;
   }
-  div#embedo-app form>input {
+  #embedo-app form>input {
     font-size: 11px;
     padding: 15px 10px;
   }

@@ -10,7 +10,7 @@
 * Twitter URLs containing user timeline and tweets
 * YouTube videos URLs, playlists will play in loop
 * Instagram URLs containing posts and videos
-* Pinterest URLs containing posts and pins
+* Pinterest URLs containing board, profile and pins
 * Vimeo URLs containing videos
 * Github URLs containing gists
 * Google Maps URLs containing cordinates to a location
@@ -20,27 +20,16 @@
 ## Installation
 
 ```sh
-# npm
 $ npm install embedo --save
-
-# yarn
 $ yarn add embedo
-
-# bower
 $ bower install embedo
 ```
 
 Alternatively, import using CDN while updating `version` as per requirements from any script below:
 
 ```html
-<!--- unpkg -->
+<script type="text/javascript" src="https://unpkg.com/embedo/embedo.min.js"></script>
 <script type="text/javascript" src="https://unpkg.com/embedo[@VERSION]/embedo.min.js"></script>
-
-<!--- jsDelivr -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/embedo/embedo.min.js"></script>
-
-<!--- CDNjs -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/embedo[/VERSION]/embedo.js"></script>
 ```
 
 ## Usage
@@ -50,9 +39,21 @@ Embedo supports AMD and CommonJS modules. Also, an example can be [found here](h
 ```js
 import Embedo from '/path/to/vendor';
 
-const embedo = new Embedo();
+const embedo = new Embedo(options); // Initialize once (prefer globally)
 
+// Then call .load() method from anywhere
 embedo.load(<HTMLElement[object]>, <URL[string]>, <options[object]*optional>);
+
+// Chaining methods and callback
+embedo
+  .load(HTMLElement, URL, options)
+  .done(Function)
+  .fail(Function)
+
+// OR storing in a variable
+let my_embedo = embedo.load(HTMLElement, URL)
+my_embedo.done(Function);
+my_embedo.fail(Function);
 ```
 
 ### Initialize SDKs
@@ -96,7 +97,9 @@ The `.load()` function is all what you need to embed third party content given u
 embedo.load(<HTMLElement{}>, <URL[string|Array]>, <options[{}*optional]>)
 ```
 
-Due to incongruent third party restrictions regarding sizes, additional functionality called `automagic` is added, which basically auto-scales the container to fit within DOM without overflowing (enabled by default unless `strict` is set to `true`).
+Due to incongruent third party restrictions regarding sizes, additional functionality called `automagic` is added, which basically auto-scales the container to fit within DOM without overflowing (enabled by default unless `strict` is set to `true`). 
+
+For single instance with same arguments, `.render(el, url, options, callback)` function can also be used.
 
 
 ## Options
@@ -119,7 +122,6 @@ The `options` are native and external based as described below:
 * YouTube - See **Supported Parameters** section [here](https://developers.google.com/youtube/player_parameters)
 * Pinterest - See [API Reference](https://developers.pinterest.com/tools/widget-builder/)
 * Google Maps - Supports `zoom` as integer and `mapTypeId` as enum as `roadmap|satellite|hybrid|terrain` ([API Reference](https://developers.google.com/maps/documentation/javascript/reference))
-
 
 ## Methods
 
@@ -148,9 +150,9 @@ embedo.destroy(document.getElementById('my-element-id'));
 embedo.destroy();
 ```
 
-## Events
+## Event Listeners
 
-Embedo also has internal event listeners implemented which emits following events:
+Embedo has internal event listeners implemented which emits following events:
 
 | Listeners   | Methods  |  Description                                |
 | ------------|----------|---------------------------------------------|
@@ -159,13 +161,13 @@ Embedo also has internal event listeners implemented which emits following event
 | `destroy`   | on/once/off   |  When embedo instance(s) are destroyed |
 | `error`     | on/once/off   |  Exception handler happened during embed |
 
-They return basic details such as identifiers for request including width or height, and can be instantiated like this:
+During lifecycle of Embedo class, all instances are stored in memory to emit and handle necessary events for DOM. They listen to any change in size, destroyed or refreshed instances all in once place. The arguments contain meta data which helps to log and understand which particular instance has been called.
 
 ```js
-embedo.on('watch', (result)=> {});
-embedo.on('refresh', (request, result)=> {});
-embedo.on('destroy', ()=> {});
-embedo.on('error', (error)=> {});
+embedo.on('watch', (request) => {});
+embedo.on('refresh', (request, data) => {});
+embedo.on('destroy', (request) => {});
+embedo.on('error', (error) => {});
 ```
 
 ## Example
@@ -177,12 +179,17 @@ embedo.load(
 );
 
 embedo.load(
-  document.getElementById('my-awesome-container'), [
-  'https://www.instagram.com/p/BXQyu8Zh0dR',
-  'https://www.instagram.com/p/BXOasjpBllf',
-  'https://www.instagram.com/p/BXNRCkAhn-0'
-], {
-  hidecaption: false
+  document.getElementById('my-awesome-container'), 
+  [
+    'https://www.instagram.com/p/BXQyu8Zh0dR',
+    'https://www.instagram.com/p/BXOasjpBllf',
+    'https://www.instagram.com/p/BXNRCkAhn-0'
+  ], 
+  {
+    hidecaption: false
+  }
+).done(function (data) {
+  console.log(data);
 });
 
 // jQuery

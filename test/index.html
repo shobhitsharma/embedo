@@ -3,6 +3,7 @@
 <head>
   <title>Embedo - Test Suite</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="icon" type="image/png" href="https://github.com/fluidicon.png">
   <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="../docs/css/style.css" rel="stylesheet">
@@ -11,7 +12,8 @@
 <body>
   <div id="mocha"></div>
   <main>
-    <div id="embedo-app">
+    <div id="embedo-app" class="test">
+      <h1>Embedo Test Demo</h1>
       <section class="test-case" id="test-case">
         <form>
           <input id="test-url" placeholder="URL via facebook, twitter, instagram, youtube or pinterest"> <input id="test-width"
@@ -20,24 +22,137 @@
         <div id="test-container"></div>
       </section>
       <section class="samples">
-        <h2 style="text-align: center;">Test Cases</h2>
-        <div id="embedo-gist"></div>
-        <div id="embedo-codepen"></div>
-        <div id="embedo-file"></div>
-        <div id="embedo-multiple"></div>
-        <div id="embedo-website"></div>
-        <div id="embedo-video"></div>
-        <div id="embedo-googlemaps"></div>
-        <div id="embedo-pinterest"></div>
-        <div id="embedo-twitter"></div>
-        <div id="embedo-facebook"></div>
-        <div id="embedo-instagram"></div>
-        <div id="embedo-youtube"></div>
-        <div id="embedo-youtube-embed"></div>
-        <div id="embedo-vimeo"></div>
+        <div class="code-editor code-demo">
+          <h2>Facebook Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-facebook"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Github Gist Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-gist"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Codepen Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+      </pre>
+          <div id="embedo-codepen"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>File URL Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-file"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Multiple URLs Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-multiple"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>External Web URL Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-website"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Video Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-video"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Google Maps Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-googlemaps"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Pinterest Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-pinterest"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Twitter Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-twitter"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>MEDIA Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-instagram"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>JSFiddle Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-jsfiddle"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>YouTube Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-youtube"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Vimedo Embed</h2>
+<pre class="line-numbers">
+  <code class="language-javascript">
+embedo.load(element, 'https://your/url/here', {});
+  </code>
+</pre>
+          <div id="embedo-vimeo"></div>
+        </div>
       </section>
     </div>
   </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
   <script src="../embedo.js"></script>
   <script src="./script.js"></script>
 </body>
