@@ -38,7 +38,7 @@
     return this;
   }
 
-  Embedo.logger = function (type) {
+  Embedo.log = function (type) {
     if (Embedo.debug) {
       if (!window.console) {
         window.console = {};
@@ -596,7 +596,7 @@
    * @return callback
    */
   Embedo.prototype.init = function (options) {
-    Embedo.logger('info', 'Embedo Initialized..', options);
+    Embedo.log('info', 'Embedo Initialized..', options);
     appendSDK('facebook', options.facebook);
     appendSDK('twitter', options.twitter);
     appendSDK('instagram', options.instagram);
@@ -659,7 +659,7 @@
 
     Embedo.utils.fetch(embed_uri, function (error, content) {
       if (error) {
-        Embedo.logger('error', error);
+        Embedo.log('error', error);
         return callback(error);
       }
       var container = Embedo.utils.generateEmbed(id, 'facebook', content.html);
@@ -710,7 +710,7 @@
 
     Embedo.utils.fetch(embed_uri, function (error, content) {
       if (error) {
-        Embedo.logger('error', error);
+        Embedo.log('error', error);
         return callback(error);
       }
       var container = Embedo.utils.generateEmbed(id, 'twitter', content.html);
@@ -766,7 +766,7 @@
 
     Embedo.utils.fetch(embed_uri, function (error, content) {
       if (error) {
-        Embedo.logger('error', error);
+        Embedo.log('error', error);
         return callback(error);
       }
 
@@ -805,7 +805,7 @@
    */
   Embedo.prototype.youtube = function (id, element, url, options, callback) {
     if (!getYTVideoID(url)) {
-      Embedo.logger('error', 'Unable to detect Youtube video id.');
+      Embedo.log('error', 'Unable to detect Youtube video id.');
       return callback('Unable to detect Youtube video id.');
     }
 
@@ -854,7 +854,7 @@
 
     Embedo.utils.fetch(embed_uri, function (error, content) {
       if (error) {
-        Embedo.logger('error', error);
+        Embedo.log('error', error);
         return callback(error);
       }
       var container = Embedo.utils.generateEmbed(id, 'vimeo', content.html);
@@ -936,7 +936,7 @@
       height: size.height
     }, function (err) {
       if (err) {
-        Embedo.logger('error', err);
+        Embedo.log('error', err);
         return callback(err);
       }
 
@@ -1004,7 +1004,6 @@
       '</body>'
     );
     iframe.contentWindow.document.close();
-
     iframe.onload = function () {
       callback(null, {
         id: id,
@@ -1061,19 +1060,27 @@
     element.appendChild(fragment);
 
     setTimeout(function () {
-      var embed = document.getElementById(id).querySelector(el_type);
-      embed.onerror = function (err) {
-        callback(err);
-      };
-      embed.onload = function () {
+      if (el_type === 'video') {
         callback(null, {
           id: id,
           el: element,
-          width: Embedo.utils.compute(embed, 'width'),
-          height: Embedo.utils.compute(embed, 'height')
+          width: Embedo.utils.compute(embed_el, 'width'),
+          height: Embedo.utils.compute(embed_el, 'height')
         });
-      };
-    }, 200);
+      } else {
+        embed_el.onerror = function (err) {
+          callback(err);
+        };
+        embed_el.onload = function () {
+          callback(null, {
+            id: id,
+            el: element,
+            width: Embedo.utils.compute(embed_el, 'width'),
+            height: Embedo.utils.compute(embed_el, 'height')
+          });
+        };
+      }
+    }, 250);
   };
 
   /**
@@ -1087,12 +1094,12 @@
    * @return callback
    */
   Embedo.prototype.render = function (element, url, options, callback) {
-    Embedo.logger('info', 'Embedo Load:', element, url, options);
+    Embedo.log('info', 'Embedo Load:', element, url, options);
     options = options || {};
     callback = callback || function () {};
 
     if (!element || !Embedo.utils.validateElement(element)) {
-      Embedo.logger('error', '`element` is either missing or invalid');
+      Embedo.log('error', '`element` is either missing or invalid');
       return this.emit('error', new Error('element_is_missing'));
     }
 
@@ -1101,19 +1108,19 @@
     }
 
     if (!url || !Embedo.utils.validateURL(url)) {
-      Embedo.logger('error', '`url` is either missing or invalid');
+      Embedo.log('error', '`url` is either missing or invalid');
       return this.emit('error', new Error('invalid_or_missing_url'));
     }
 
     var source = getURLSource(url);
 
     if (!source) {
-      Embedo.logger('error', new Error('Invalid or Unsupported URL'));
+      Embedo.log('error', new Error('Invalid or Unsupported URL'));
       return this.emit('error', new Error('url_not_supported'));
     }
 
     if (!this[source]) {
-      Embedo.logger('error', new Error('Requested source is not implemented or missing.'));
+      Embedo.log('error', new Error('Requested source is not implemented or missing.'));
       return this.emit('error', new Error('unrecognised_url'));
     }
 
@@ -1177,12 +1184,12 @@
    * @return callback
    */
   Embedo.prototype.load = function (element, urls, options) {
-    Embedo.logger('info', 'Embedo Load:', element, urls, options);
+    Embedo.log('info', 'Embedo Load:', element, urls, options);
     options = options || {};
     var observer = new Embedo.utils.observer();
 
     if (!element || !Embedo.utils.validateElement(element)) {
-      Embedo.logger('error', '`element` is either missing or invalid');
+      Embedo.log('error', '`element` is either missing or invalid');
       this.emit('error', new Error('element_is_missing'));
     } else {
       if (urls instanceof Array) {
@@ -1400,14 +1407,11 @@
         return;
       }
       setTimeout(function () {
-        if (!childNode.firstChild) {
+        if (!childNode.querySelector('[data-pin-id]')) {
           window.PinUtils.build(childNode);
         }
-        automagic(parentNode, childNode, {
-          width: Embedo.utils.compute(childNode, 'width'),
-          height: Embedo.utils.compute(childNode, 'height')
-        }, callback);
-      }, 200);
+        automagic(parentNode, childNode, options, callback);
+      }, 1500);
     });
   }
 
@@ -1440,7 +1444,7 @@
    * @param {object} options
    */
   function automagic(parentNode, childNode, options, callback) {
-    Embedo.logger('info', 'automagic', parentNode, childNode, options);
+    Embedo.log('info', 'automagic', parentNode, childNode, options);
     options = options || {};
     callback = callback || function () {};
 
@@ -1466,29 +1470,27 @@
         });
       }
 
+      // Normalize unecessary adding padding/margins/dimensions
       if (childNode.firstChild) {
-        // Normalize unecessary adding padding/margins/dimensions
         childNode.firstChild.style.margin = '0 auto !important';
         childNode.firstChild.style.padding = '0 !important';
-        childNode.firstChild.style.minWidth = '0 !important';
-        childNode.firstChild.style.maxWidth = '0 !important';
-        childNode.firstChild.style.minHeight = '0 !important';
-        childNode.firstChild.style.maxHeight = '0 !important';
+        childNode.firstChild.style.minWidth = 'none !important';
+        childNode.firstChild.style.maxWidth = 'none !important';
+        childNode.firstChild.style.minHeight = 'none !important';
+        childNode.firstChild.style.maxHeight = 'none !important';
+      }
 
-        child.width = Embedo.utils.compute(childNode.firstChild, 'width');
-        child.height = Embedo.utils.compute(childNode.firstChild, 'height');
+      // Odd case when requested height is beyond limit of third party
+      if ('width' in options || 'height' in options) {
+        if ((child.width > parent.width || child.height > parent.height) &&
+          (parent.height > 0 && child.height > 0)) {
+          var scale = Math.min((parent.width / child.width), (parent.height / child.height));
 
-        // Odd case when requested height is beyond limit of third party
-        if ('width' in options || 'height' in options) {
-          if ((child.width > parent.width || child.height > parent.height) &&
-            (parent.height > 0 && child.height > 0)) {
-            var scale = Math.min((parent.width / child.width), (parent.height / child.height));
-            Embedo.utils.transform(childNode, 'scale(' + scale + ')');
-          }
+          Embedo.utils.transform(childNode, 'scale(' + scale + ')');
+        }
 
-          if (options.height > 0) {
-            childNode.style.height = options.height + 'px';
-          }
+        if (options.height > 0) {
+          childNode.style.height = options.height + 'px';
         }
       }
 
@@ -1525,5 +1527,4 @@
   }
 
   return Embedo;
-
 });

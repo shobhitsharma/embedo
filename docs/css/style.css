@@ -372,6 +372,7 @@ header a:hover {
   margin-bottom: 15px;
 }
 
+#embedo-app .code-editor,
 #embedo-app>section> code {
   text-align: left;
   background-color: rgba(0, 0, 0, 0.87);
