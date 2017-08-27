@@ -16,6 +16,7 @@
 * Google Maps URLs containing cordinates to a location
 * Embeds other urls or .pdf, .mp4, .webm and many formats as alternative
 * Embeds any URL that fulfils HTTP access control (CORS) policy
+* Supports IE9+ and all modern browsers.
 
 ## Installation
 
@@ -34,7 +35,7 @@ Alternatively, import using CDN while updating `version` as per requirements fro
 
 ## Usage
 
-Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://github.com/shobhitsharma/embedo/tree/master/docs/example).
+Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://codepen.io/shobhitsharma/pen/yojJZp).
 
 ```js
 import Embedo from '/path/to/vendor';
@@ -70,7 +71,7 @@ The following options can be set during library import is called, they automatic
 
 For **Github**, **YouTube**, **Vimeo** and others no sdk is required. If you were to host any external URL with HTML or any other file, it will try to render after checking cross browser policies and other validations to an `<embed>` or `<object>` tag.
 
-Try an example [here](https://codepen.io/shobhitsharma/pen/yojJZp).
+Try an example on [jsfiddle here](https://jsfiddle.net/shobhitsharma/wpajz4x9).
 
 ### Advance Options
 

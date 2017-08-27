@@ -24,14 +24,11 @@ window.onload = function () {
   // Loads facebook post
   embedo.load(
     document.getElementById('embedo-facebook'),
-    'https://www.facebook.com/Channel4/videos/10154585936602330', {
-      width: 330,
-      height: 400
-    }
+    'https://www.facebook.com/Channel4/videos/10154585936602330'
   ).fail(function (err) {
-    console.error('Embedo instance error', err);
+    Embedo.log('error', 'TESTING', 'Embedo instance error', err);
   }).done(function (data) {
-    console.log('Embedo instance watch', data);
+    Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
   });
 
   // Multiple URLs
@@ -42,9 +39,9 @@ window.onload = function () {
   ], {
     hidecaption: false
   }).fail(function (err) {
-    console.error('Embedo instance error', err);
+    Embedo.log('error', 'TESTING', 'Embedo instance error', err);
   }).done(function (data) {
-    console.log('Embedo instance watch', data);
+    Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
   });
 
   embedo.load(document.getElementById('embedo-gist'), 'https://gist.github.com/brandonb927/4149074.js');
@@ -139,19 +136,19 @@ window.onload = function () {
 
   // Test Element Watch Events
   embedo.on('watch', function (result) {
-    console.log('Embedo watch', result);
+    Embedo.log('info', 'TESTING', 'Embedo watch', result);
   });
 
   embedo.on('refresh', function (request, data) {
-    console.log('Embedo refresh', request, data);
+    Embedo.log('info', 'TESTING', 'Embedo refresh', request, data);
   });
 
   embedo.on('destroy', function () {
-    console.log('Embedo destroy');
+    Embedo.log('info', 'TESTING', 'Embedo destroy');
   });
 
   embedo.on('error', function (error) {
-    console.error('Embedo error', error);
+    Embedo.log('error', 'TESTING', 'Embedo error', error);
   });
 
   function build() {
