@@ -114,15 +114,15 @@ window.onload = function () {
     'http://jsfiddle.net/skelly/FX44w/embedded/'
   );
 
-  // Refresh All Embedo instances
-  setTimeout(function () {
-    embedo.refresh();
-  }, 5000);
+  // // Refresh All Embedo instances
+  // setTimeout(function () {
+  //   embedo.refresh();
+  // }, 5000);
 
-  // Refresh Single Embedo instance
-  setTimeout(function () {
-    embedo.refresh(document.getElementById('embedo-facebook'));
-  }, 5000);
+  // // Refresh Single Embedo instance
+  // setTimeout(function () {
+  //   embedo.refresh(document.getElementById('embedo-facebook'));
+  // }, 5000);
 
   // // Destroy All Embdos Test
   // setTimeout(function () {
