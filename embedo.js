@@ -313,7 +313,7 @@
      */
     generateScript: function generateScript(source) {
       var script = document.createElement('script');
-      script.type = 'text/javascript';
+      script.type = 'text\/javascript';
       script.src = encodeURI(source);
       script.setAttribute('async', '');
       script.setAttribute('charset', 'utf-8');
@@ -362,57 +362,42 @@
      * @param {function} callback
      */
     fetch: function fetch(url, options, callback) {
-      if ('function' === typeof options) {
+      if (typeof options === 'function') {
         callback = options;
         options = {};
       }
       options = options || {};
-      var script, timer;
-      var prefix = options.prefix || '__jp';
-      var id = options.name || (prefix + Embedo.utils.uuid());
-      var param = options.param || 'callback';
-      var timeout = null !== options.timeout ? options.timeout : 60000;
-      var target = document.getElementsByTagName('script')[0] || document.head;
+      var target = document.head || document.getElementsByTagName('head')[0];
+      var script = document.createElement('script');
+      var jsonpCallback = 'embedoFetch_' + Embedo.utils.uuid();
+      url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
+      url = url.replace('?&', '?');
 
-      if (timeout) {
-        timer = setTimeout(function () {
-          cleanup();
-          if (callback) {
-            callback(new Error('Timeout'));
-          }
-        }, timeout);
-      }
-
-      function cleanup() {
-        if (script.parentNode) {
-          script.parentNode.removeChild(script);
-        }
-        window[id] = function () {};
-        if (timer) {
-          clearTimeout(timer);
-        }
-      }
-
-      function cancel() {
-        if (window[id]) {
-          cleanup();
-        }
-      }
-
-      window[id] = function (data) {
-        cleanup();
-        if (callback) {
-          callback(null, data);
-        }
+      window[jsonpCallback] = function (data) {
+        clear(jsonpCallback, script);
+        callback(null, data);
       };
 
-      url += (~url.indexOf('?') ? '&' : '?') + param + '=' + encodeURIComponent(id);
-      url = url.replace('?&', '?');
-      script = document.createElement('script');
+      script.type = 'text\/javascript';
+      script.charset = 'UTF-8';
+      script.onerror = function (err) {
+        clear(jsonpCallback, script);
+        return callback(err);
+      };
+      target.appendChild(script);
       script.src = url;
-      target.parentNode.insertBefore(script, target);
 
-      return cancel;
+      function clear(jsonpCallback, script) {
+        try {
+          delete window[jsonpCallback];
+        } catch (e) {
+          window[jsonpCallback] = undefined;
+        }
+        if (script) {
+          target.removeChild(script);
+          script = undefined;
+        }
+      }
     },
 
     /**
@@ -1052,21 +1037,21 @@
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var extension = (url.substr(url.lastIndexOf('.')) || '').replace('.', '').toLowerCase();
     var mimes = {
-      csv: 'text/csv',
-      doc: 'application/msword',
-      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      pdf: 'application/pdf',
-      gif: 'image/gif',
-      js: 'application/javascript',
-      json: 'application/json',
-      xhtml: 'application/xhtml+xml',
-      pps: 'application/vnd.ms-powerpoint',
-      ppsx: 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-      xml: 'application/xml',
-      ogg: 'video/ogg',
-      mp4: 'video/mp4',
-      webm: 'video/webm',
-      html: 'text/html'
+      csv: 'text\/csv',
+      doc: 'application\/msword',
+      docx: 'application\/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      pdf: 'application\/pdf',
+      gif: 'image\/gif',
+      js: 'application\/javascript',
+      json: 'application\/json',
+      xhtml: 'application\/xhtml+xml',
+      pps: 'application\/vnd.ms-powerpoint',
+      ppsx: 'application\/vnd.openxmlformats-officedocument.presentationml.slideshow',
+      xml: 'application\/xml',
+      ogg: 'video\/ogg',
+      mp4: 'video\/mp4',
+      webm: 'video\/webm',
+      html: 'text\/html'
     };
     var mimetype = mimes[extension] || mimes.html;
     var has_video = extension.match(/(mp4|ogg|webm|ogv|ogm)/);
