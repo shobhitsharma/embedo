@@ -67,6 +67,7 @@
             <li>Google Maps URLs containing cordinates to a location</li>
             <li>Embeds other urls or .pdf, .mp4, .webm and many formats as alternative</li>
             <li>Embeds any URL that fulfils HTTP access control (CORS) policy</li>
+            <li>Supports IE9+ and all modern browsers</li>
           </ul>
           <h2><a id="Installation_13"></a>Installation</h2>
 <pre><code class="language-sh">$ npm install embedo --save
@@ -78,7 +79,7 @@ $ bower install embedo
 <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text/javascript"</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://unpkg.com/embedo[@VERSION]/embedo.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre>
           <h2><a id="Usage_28"></a>Usage</h2>
-<p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://github.com/shobhitsharma/embedo/tree/master/docs/example">found here</a>.</p>
+<p>Embedo supports AMD and CommonJS modules. Also, an example can be <a href="https://codepen.io/shobhitsharma/pen/yojJZp" target="_blank">found here</a>.</p>
 <pre><code class="language-js"><span class="hljs-keyword">import</span> Embedo <span class="hljs-keyword">from</span> <span class="hljs-string">'/path/to/vendor'</span>;
 
 <span class="hljs-keyword">const</span> embedo = <span class="hljs-keyword">new</span> Embedo(options); <span class="hljs-comment">// Initialize once (prefer globally)</span>
@@ -145,7 +146,7 @@ my_embedo.fail(<span class="hljs-built_in">Function</span>);
           <p>For <strong>Github</strong>, <strong>YouTube</strong>, <strong>Vimeo</strong> and others no sdk is required. If
             you were to host any external URL with HTML or any other file, it will try to render after checking cross browser
             policies and other validations to an <code>&lt;embed&gt;</code> or <code>&lt;object&gt;</code> tag.</p>
-          <p>Try an example <a href="https://codepen.io/shobhitsharma/pen/yojJZp">here</a>.</p>
+          <p>Try an example on <a href="https://jsfiddle.net/shobhitsharma/wpajz4x9">jsfiddle here</a>.</p>
           <h3><a id="Advance_Options_68"></a>Advance Options</h3>
           <p>Since facebook and googlemaps require <code>appId</code> and <code>api_key</code> attributes for authorization,
             they can be passed along as:</p>
@@ -344,15 +345,8 @@ embedo.load($(<span class="hljs-string">'.my-unique-selector'</span>).get(<span 
       </footer>
     </div>
   </main>
-  <!--[if (gte IE 5.5)&(lt IE 10)]>
-  <script src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/respond/1.4.2/respond.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/selectivizr/1.0.3b/selectivizr.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/g/html5shiv@3.7.3(html5shiv-printshiv.min.js),ie7.js@2.1b4"></script>
-  <script src="https://cdn.jsdelivr.net/css3polyfill/1.0.0/css3polyfill.min.js"></script>
-  <script src="https://cdn01.onzu.com/assets/polyfills.ie.js"></script>
-  <script src="https://cdn01.onzu.com/assets/polyfills.min.js"></script>
-  <![endif]-->
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
   <script>
     (function (i, s, o, g, r, a, m) {
       i['GoogleAnalyticsObject'] = r;
@@ -367,9 +361,7 @@ embedo.load($(<span class="hljs-string">'.my-unique-selector'</span>).get(<span 
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
     ga('create', 'UA-80234662-2', 'auto');
     ga('send', 'pageview');
-
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
 </body>
 
 </html>
