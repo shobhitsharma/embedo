@@ -28,20 +28,10 @@ window.onload = function () {
     if (timer) {
       clearTimeout(timer);
     }
-
     document.getElementById('test-container').innerHTML = '';
-
     timer = setTimeout(function () {
-      var width = parseInt(document.getElementById('test-width').value) || null;
-      var height = parseInt(document.getElementById('test-height').value) || null;
-
-      if (width > 0) {
-        document.getElementById('test-container').style.width = width;
-      }
-
-      if (height > 0) {
-        document.getElementById('test-container').style.height = height;
-      }
+      var width = document.getElementById('test-width').value;
+      var height = document.getElementById('test-height').value;
 
       embedo.load(document.getElementById('test-container'),
         document.getElementById('test-url').value, {

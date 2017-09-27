@@ -17,6 +17,33 @@ window.onload = function () {
     // }
   });
 
+  // Create IE + others compatible event handler
+  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+  var eventer = window[eventMethod];
+  var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+
+  // Decoding mesage posted on each successful render
+  eventer(messageEvent, function (e) {
+    if (e.data.match(/embedo.rendered/)) {
+      var decoded_message = JSON.parse(e.data.replace('embedo.rendered=', ''));
+      Embedo.log('warn', e, decoded_message);
+    }
+  }, false);
+
+  function build() {
+    document.getElementById('test-container').innerHTML = '';
+
+    embedo.load(document.getElementById('test-container'),
+      document.getElementById('test-url').value, {
+        width: document.getElementById('test-width').value || null,
+        height: document.getElementById('test-height').value || null
+      }).done(function (data) {
+      Embedo.log('info', 'build', 'onDoneEvent', data);
+    }).fail(function (err) {
+      Embedo.log('error', 'build', 'onErrorEvent', err);
+    });
+  }
+
   document.getElementById('test-url').addEventListener('input', build);
   document.getElementById('test-width').addEventListener('input', build);
   document.getElementById('test-height').addEventListener('input', build);
@@ -24,7 +51,10 @@ window.onload = function () {
   // Loads facebook post
   embedo.load(
     document.getElementById('embedo-facebook'),
-    'https://www.facebook.com/Channel4/videos/10154585936602330'
+    'https://www.facebook.com/Channel4/videos/10154585936602330', {
+      width: 640,
+      height: 500
+    }
   ).fail(function (err) {
     Embedo.log('error', 'TESTING', 'Embedo instance error', err);
   }).done(function (data) {
@@ -150,19 +180,4 @@ window.onload = function () {
   embedo.on('error', function (error) {
     Embedo.log('error', 'TESTING', 'Embedo error', error);
   });
-
-  function build() {
-    document.getElementById('test-container').innerHTML = '';
-
-    embedo.load(document.getElementById('test-container'),
-      document.getElementById('test-url').value, {
-        width: parseInt(document.getElementById('test-width').value) || null,
-        height: parseInt(document.getElementById('test-height').value) || null
-      });
-
-    // Test event on delay
-    setTimeout(function () {
-      embedo.refresh(document.getElementById('test-container'));
-    }, 5000);
-  }
 };
