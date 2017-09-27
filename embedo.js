@@ -41,7 +41,7 @@
   Embedo.log = function (type) {
     if (Embedo.debug) {
       if (typeof console !== 'undefined' && typeof console.log !== 'undefined' && console[type]) {
-        console[type]('Embedo DEBUG', type, Array.prototype.slice.call(arguments, 1));
+        console[type].apply(console, Array.prototype.slice.call(arguments, 1));
       }
     }
   };
@@ -65,7 +65,7 @@
         GLOBAL: 'FB',
         SDK: 'https://connect.facebook.net/en_US/all.js',
         oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
-        REGEX: /((https?:\/\/)?www\.facebook\.com\/(?:(videos|posts)\.php\?v=\d+|.*?\/(videos|posts)\/\d+\/?))/gi,
+        REGEX: /((http|https)?:\/\/(www\.)facebook\.com\/(?:(videos|posts)\.php\?v=\d+|.*?\/(videos|posts)\/\d+\/?))/gi,
         PARAMS: {
           version: 'v2.10',
           cookie: true,
@@ -437,7 +437,7 @@
       var value = bounds[prop];
 
       if (is_computed || value === 0) {
-        value = style[prop] && style[prop].match(/%/) ? style[prop] : parseFloat(style[prop]);
+        value = isNaN(Number(style[prop])) ? style[prop] : Number(style[prop]);
       }
 
       return value;
@@ -486,13 +486,9 @@
      * @returns {object{width,height}}
      */
     dimensions: function dimensions(el, width, height) {
-      var elWidth = Embedo.utils.compute(el, 'width');
-
-      width = (width && parseInt(width || 0) > 10) ?
-        width : (elWidth > 0 ? elWidth : Embedo.utils.compute(el.parentNode, 'width'));
-      height = (height && parseInt(height || 0) > 10) ?
-        height : (elWidth > 0 ? elWidth / 1.5 : Embedo.utils.compute(el.parentNode, 'height'));
-
+      var el_width = Embedo.utils.compute(el, 'width');
+      width = width ? width : (el_width > 0 ? el_width : Embedo.utils.compute(el.parentNode, 'width'));
+      height = height ? height : (el_width > 0 ? el_width / 1.5 : Embedo.utils.compute(el.parentNode, 'height'));
       return {
         width: width,
         height: height
@@ -604,19 +600,13 @@
    */
   Embedo.prototype.init = function (options) {
     Embedo.log('info', 'init', this.requests, options);
+
+    // Append SDK's to parent's body
     appendSDK('facebook', options.facebook);
     appendSDK('twitter', options.twitter);
     appendSDK('instagram', options.instagram);
     appendSDK('pinterest', options.pinterest);
     appendSDK('googlemaps', options.googlemaps);
-
-    // Adds window resize event
-    window.addEventListener('resize', this.emit('watch', 'window-resize', {
-      resize: {
-        width: window.innerWidth,
-        height: window.innerHeight
-      }
-    }), false);
 
     /**
      * @func appendSDK
@@ -658,7 +648,7 @@
       omitscript: true
     }, options, Embedo.defaults.RESTRICTED);
 
-    if (options.width && parseInt(options.width) > 0) {
+    if (options.width && Number(options.width) > 0) {
       query.maxwidth = options.maxwidth || options.width;
     }
 
@@ -709,7 +699,7 @@
       omit_script: 1
     }, options, Embedo.defaults.RESTRICTED);
 
-    if (options.width && parseInt(options.width) > 0) {
+    if (options.width && Number(options.width) > 0) {
       query.maxwidth = options.maxwidth || options.width;
     }
 
@@ -762,7 +752,7 @@
     }, options, Embedo.defaults.RESTRICTED);
 
     if (options.width) {
-      options.width = parseInt((options.maxwidth ? options.maxwidth : options.width), 10);
+      options.width = Number(options.maxwidth ? options.maxwidth : options.width);
 
       if (options.width > 320 && options.width < 750) {
         query.maxwidth = options.width;
@@ -1012,6 +1002,9 @@
       '<\/body>'
     );
     iframe.contentWindow.document.close();
+    iframe.onerror = function (err) {
+      callback(err);
+    };
     iframe.onload = function () {
       callback(null, {
         id: id,
@@ -1055,7 +1048,7 @@
     };
     var mimetype = mimes[extension] || mimes.html;
     var has_video = extension.match(/(mp4|ogg|webm|ogv|ogm)/);
-    var el_type = has_video ? 'video' : 'embed';
+    var el_type = has_video ? 'video' : (options.tagName || 'iframe');
     var override = Embedo.utils.merge({}, options, Embedo.defaults.RESTRICTED);
     var embed_el = Embedo.utils.generateElement(el_type, Embedo.utils.merge({
       type: mimetype,
@@ -1067,28 +1060,26 @@
     fragment.appendChild(Embedo.utils.generateEmbed(id, 'iframe', embed_el));
     element.appendChild(fragment);
 
-    setTimeout(function () {
-      if (el_type === 'video') {
+    if (el_type === 'video') {
+      callback(null, {
+        id: id,
+        el: element,
+        width: Embedo.utils.compute(embed_el, 'width'),
+        height: Embedo.utils.compute(embed_el, 'height')
+      });
+    } else {
+      embed_el.onerror = function (err) {
+        callback(err);
+      };
+      embed_el.onload = function () {
         callback(null, {
           id: id,
           el: element,
           width: Embedo.utils.compute(embed_el, 'width'),
           height: Embedo.utils.compute(embed_el, 'height')
         });
-      } else {
-        embed_el.onerror = function (err) {
-          callback(err);
-        };
-        embed_el.onload = function () {
-          callback(null, {
-            id: id,
-            el: element,
-            width: Embedo.utils.compute(embed_el, 'width'),
-            height: Embedo.utils.compute(embed_el, 'height')
-          });
-        };
-      }
-    }, 250);
+      };
+    }
   };
 
   /**
@@ -1151,6 +1142,10 @@
           this.emit('error', err);
           return callback(err);
         }
+        data.url = request.url;
+        data.source = request.source;
+        data.options = request.attributes;
+        parent.postMessage('embedo.rendered=' + JSON.stringify(data), '*');
         this.emit('watch', 'loaded', data);
         callback(null, data);
       }.bind(this)
@@ -1357,7 +1352,8 @@
   }
 
   /**
-   * @function Parses Twitter SDK
+   * @function twitterify
+   * Parses Twitter SDK
    *
    * @param {HTMLElement} parentNode
    * @param {HTMLElement} childNode
