@@ -65,7 +65,7 @@
         GLOBAL: 'FB',
         SDK: 'https://connect.facebook.net/en_US/all.js',
         oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
-        REGEX: /((http|https)?:\/\/(www\.)facebook\.com\/(?:(videos|posts)\.php\?v=\d+|.*?\/(videos|posts)\/\d+\/?))/gi,
+        REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
         PARAMS: {
           version: 'v2.10',
           cookie: true,
@@ -438,6 +438,10 @@
 
       if (is_computed || value === 0) {
         value = isNaN(Number(style[prop])) ? style[prop] : Number(style[prop]);
+      }
+
+      if (typeof value === 'string' && !/^\d+(\.\d+)?%$/.test(value)) {
+        value = value.replace(/[^\d.-]/g, '');
       }
 
       return value;
@@ -1337,14 +1341,11 @@
   function facebookify(parentNode, childNode, options, callback) {
     sdkReady('facebook', function (err) {
       if (err) {
-        return;
+        return callback(err);
       }
       window.FB.XFBML.parse(parentNode);
       window.FB.Event.subscribe('xfbml.render', function () {
-        if (!childNode.firstChild) {
-          return;
-        }
-        if (childNode.firstChild.getAttribute('fb-xfbml-state') === 'rendered') {
+        if (childNode.firstChild && childNode.firstChild.getAttribute('fb-xfbml-state') === 'rendered') {
           automagic(parentNode, childNode, options, callback);
         }
       });
@@ -1362,7 +1363,7 @@
   function twitterify(parentNode, childNode, options, callback) {
     sdkReady('twitter', function (err) {
       if (err) {
-        return;
+        return callback(err);
       }
       window.twttr.widgets.load(childNode);
       window.twttr.events.bind('rendered', function (event) {
@@ -1384,10 +1385,10 @@
   function instagramify(parentNode, childNode, options, callback) {
     sdkReady('instagram', function (err) {
       if (err) {
-        return;
+        return callback(err);
       }
       if (!window.instgrm.Embeds || !window.instgrm.Embeds) {
-        return;
+        return callback(new Error('instagram_sdk_missing'));
       }
       setTimeout(function () {
         window.instgrm.Embeds.process(childNode);
@@ -1407,10 +1408,10 @@
   function pinterestify(parentNode, childNode, options, callback) {
     sdkReady('pinterest', function (err) {
       if (err) {
-        return;
+        return callback(err);
       }
       if (!window.PinUtils || !window.PinUtils || !childNode || !childNode.firstChild) {
-        return;
+        return callback(new Error('pinterest_sdk_missing'));
       }
       setTimeout(function () {
         if (!childNode.querySelector('[data-pin-id]')) {
@@ -1432,7 +1433,7 @@
   function gmapsify(parentNode, childNode, options, callback) {
     sdkReady('googlemaps', function (err) {
       if (err) {
-        return;
+        return callback(err);
       }
       Embedo.utils.centerize(childNode);
       childNode.style.width = options.width ? options.width + 'px' : Embedo.utils.compute(parentNode, 'width');
