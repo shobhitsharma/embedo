@@ -37,7 +37,25 @@ window.onload = function () {
         document.getElementById('test-url').value, {
           width: width,
           height: height
-        });
+        }).done(function (data) {
+        if (window.ga) {
+          window.ga('send', 'event', {
+            eventCategory: 'embedo.load',
+            eventAction: 'done',
+            eventLabel: event.target.href,
+            eventValue: data
+          });
+        }
+      }).fail(function (err) {
+        if (window.ga) {
+          window.ga('send', 'event', {
+            eventCategory: 'embedo.load',
+            eventAction: 'error',
+            eventLabel: event.target.href,
+            eventValue: err
+          });
+        }
+      });
     }, timeout);
   }
 };
