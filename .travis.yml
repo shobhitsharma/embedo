@@ -4,10 +4,9 @@ notifications:
   email: false
 
 node_js:
+  - v8
   - v7
   - v6
-  - v5
-  - v4
 
 branches:
   only:

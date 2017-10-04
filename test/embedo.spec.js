@@ -28,7 +28,7 @@ describe('Embedo', function () {
     // Initialize constructor
     embedo = new Embedo({
       facebook: {
-        version: 'v2.8',
+        version: 'v2.10',
         appId: '269918776508696',
         xfbml: true
       },
@@ -44,8 +44,8 @@ describe('Embedo', function () {
   });
 
   after(function () {
-    delete global.window
-    delete global.document
+    delete global.window;
+    delete global.document;
   });
 
   it('constructor', function (done) {

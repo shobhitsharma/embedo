@@ -50,16 +50,45 @@ window.onload = function () {
 
   // Loads facebook post
   embedo.load(
-    document.getElementById('embedo-facebook'),
-    'https://www.facebook.com/Channel4/videos/10154585936602330', {
-      width: 640,
-      height: 500
-    }
+    document.getElementById('embedo-facebook-post'),
+    'https://www.facebook.com/9gag/posts/10156278718151840'
   ).fail(function (err) {
     Embedo.log('error', 'TESTING', 'Embedo instance error', err);
   }).done(function (data) {
     Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
   });
+
+  embedo.load(
+    document.getElementById('embedo-facebook-photo'),
+    'https://www.facebook.com/9gag/photos/a.109041001839.105995.21785951839/10156236707186840'
+  );
+
+  embedo.load(
+    document.getElementById('embedo-facebook-video'),
+    'https://www.facebook.com/9gag/videos/10156133478761840/'
+  );
+
+  // Loads tweet
+  embedo.load(
+    document.getElementById('embedo-twitter'),
+    'https://twitter.com/Sh0bhit/status/797584590214926340'
+  );
+
+  // Loads twitter timeline grid
+  embedo.load(
+    document.getElementById('embedo-twitter-grid'),
+    'https://twitter.com/TwitterDev/timelines/539487832448843776', {
+      widget_type: 'grid'
+    }
+  );
+
+  // Loads twitter timeline
+  embedo.load(
+    document.getElementById('embedo-twitter-timeline'),
+    'https://twitter.com/TwitterDev/timelines/539487832448843776', {
+      height: 500
+    }
+  );
 
   // Multiple URLs
   embedo.load(document.getElementById('embedo-multiple'), [
@@ -90,26 +119,34 @@ window.onload = function () {
     controls: 'contorls'
   });
 
-  // Loads google maps URL
-  // embedo.load(
-  //   document.getElementById('embedo-googlemaps'),
-  //   'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
-  //     width: 640,
-  //     height: 480,
-  //     zoom: 10
-  //   }
-  // );
-
   // Loads pinterest post
   embedo.load(
-    document.getElementById('embedo-pinterest'),
-    'https://www.pinterest.com/pin/99360735500167749'
+    document.getElementById("embedo-pinterest-pin"),
+    "https://www.pinterest.com/pin/99360735500167749", {
+      strict: true
+    }
   );
 
-  // Loads tweet
   embedo.load(
-    document.getElementById('embedo-twitter'),
-    'https://twitter.com/Sh0bhit/status/797584590214926340'
+    document.getElementById("embedo-pinterest-board"),
+    "https://www.pinterest.com/pinterest/official-news/", {
+      "data-pin-do": "embedBoard",
+      "data-pin-board-width": 750,
+      "data-pin-scale-height": 600,
+      "data-pin-scale-width": 80,
+      "strict": true
+    }
+  );
+
+  embedo.load(
+    document.getElementById("embedo-pinterest-profile"),
+    "https://www.pinterest.com/pinterest/", {
+      "data-pin-do": "embedUser",
+      "data-pin-board-width": 750,
+      "data-pin-scale-height": 500,
+      "data-pin-scale-width": 80,
+      "strict": true
+    }
   );
 
   // Loads instagram photo
@@ -143,6 +180,16 @@ window.onload = function () {
     document.getElementById('embedo-jsfiddle'),
     'http://jsfiddle.net/skelly/FX44w/embedded/'
   );
+
+  // Loads google maps URL
+  // embedo.load(
+  //   document.getElementById('embedo-googlemaps'),
+  //   'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
+  //     width: 640,
+  //     height: 480,
+  //     zoom: 10
+  //   }
+  // );
 
   // // Refresh All Embedo instances
   // setTimeout(function () {
