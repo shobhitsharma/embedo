@@ -35,7 +35,7 @@ Alternatively, import using CDN while updating `version` as per requirements fro
 
 ## Usage
 
-Embedo supports AMD and CommonJS modules. Also, an example can be [found here](https://codepen.io/shobhitsharma/pen/yojJZp).
+Embedo supports AMD and CommonJS modules. For detailed resources, [read wiki here](https://github.com/shobhitsharma/embedo/wiki).
 
 ```js
 import Embedo from '/path/to/vendor';
