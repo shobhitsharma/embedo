@@ -1447,8 +1447,8 @@ body #superman .leg:before {
 .markdown-body dl,
 .markdown-body table,
 .markdown-body pre {
-  margin-top: 0;
-  margin-bottom: 16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   color: rgba(249, 249, 249, 0.74);
 }
 

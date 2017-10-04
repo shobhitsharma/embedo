@@ -32,17 +32,17 @@ window.onload = function () {
     timer = setTimeout(function () {
       var width = document.getElementById('test-width').value;
       var height = document.getElementById('test-height').value;
+      var url = document.getElementById('test-url').value;
 
-      embedo.load(document.getElementById('test-container'),
-        document.getElementById('test-url').value, {
-          width: width,
-          height: height
-        }).done(function (data) {
+      embedo.load(document.getElementById('test-container'), url, {
+        width: width,
+        height: height
+      }).done(function (data) {
         if (window.ga) {
           window.ga('send', 'event', {
             eventCategory: 'embedo.load',
             eventAction: 'done',
-            eventLabel: event.target.href,
+            eventLabel: url,
             eventValue: data
           });
         }
@@ -51,7 +51,7 @@ window.onload = function () {
           window.ga('send', 'event', {
             eventCategory: 'embedo.load',
             eventAction: 'error',
-            eventLabel: event.target.href,
+            eventLabel: url,
             eventValue: err
           });
         }
