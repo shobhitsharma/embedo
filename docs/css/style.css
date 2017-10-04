@@ -221,6 +221,10 @@ header a {
   -webkit-transition: all 0.3s ease 0s;
 }
 
+header a.active {
+  color: white;
+}
+
 header .github-link {
   font-size: 2.8em;
 }
