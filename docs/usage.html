@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>embedo - Social Media Embed Plugin - Setup</title>
+  <meta content="A simple, fast, lightweight and standalone content embed plugin for web" name="description">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="https://github.com/favicon.ico" rel="icon" type="image/ico">
+  <!-- Global OG Tags -->
+  <meta content="embedo - Social Media Embed Plugin" property="og:site_name">
+  <meta content="website" property="og:type">
+  <meta content="https://cdn01.onzu.com/2017/4/14/0/embedo.png" property="og:image">
+  <meta content="A simple, fast, lightweight and standalone content embed plugin for web" property="og:description">
+  <meta content="embedo - Social Media Embed Plugin" property="og:title">
+  <meta content="https://shobhitsharma.github.io/embedo" property="og:url">
+  <!-- Twitter OG Tags -->
+  <meta content="summary_large_image" name="twitter:card">
+  <meta content="@Sh0bhit" name="twitter:site">
+  <meta content="@Sh0bhit" name="twitter:creator">
+  <meta content="embedo - Social Media Embed Plugin" name="twitter:title">
+  <meta content="A simple, fast, lightweight and standalone content embed plugin for web." name="twitter:description">
+  <meta content="https://shobhitsharma.github.io/embedo" name="twitter:url">
+  <meta content="https://cdn01.onzu.com/2017/4/14/0/embedo.png" property="og:image">
+  <meta content="https://cdn01.onzu.com/2017/4/14/0/embedo.png" name="twitter:image">
+  <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <main>
+    <div id="embedo-app">
+      <header class="header">
+        <a href="/">Setup</a>
+        <a href="/docs">Docs</a>
+        <a class="github-link" href="https://github.com/shobhitsharma/embedo" target="_blank"><i class="fa fa-github"></i></a>
+      </header>
+      <section class="teaser">
+        <h1>embedo</h1>
+        <p>A simple, lightweight and standalone content embed plugin for web</p>
+        <div class="buttons">
+          <a href="https://github.com/shobhitsharma/embedo"><i class="fa fa-star"></i> Star</a>
+          <a href="https://github.com/shobhitsharma/embedo/archive/master.zip"><i class="fa fa-cloud-download"></i> Download</a>
+        </div>
+      </section>
+      <div class="topbar">
+        <div class="action-buttons"></div>
+        <h2>usage.js</h2>
+      </div>
+      <section class="embedo-documentation markdown-body">
+        <h1 id="embedo-embed-guidelines">embedo - Embed Guidelines</h1>
+
+        <p>Embedo only allows public URLs to be embedded fulfilling Cross Domain policies. If you try to embed something that is out-of-domain scope where the script has executed or not allowed with CORS, those URLs should be avoided. </p>
+
+        <p>Embedo uses oEmbed API endpoints for facebook, twitter, instagram and vimeo acting more as a wrapper around respective API which allows using existing field-value set as descriptive in the documentation.</p>
+
+
+        <h2 id="quick-links">Quick Links</h2>
+
+        <ul>
+          <li><a href="https://shobhitsharma.github.io/embedo/docs">Documentation</a>
+          </li>
+          <li><a href="https://shobhitsharma.github.io/embedo">Demo or Live Test</a>
+          </li>
+          <li><a href="https://codepen.io/shobhitsharma/pen/yojJZp">Codepen - Demo</a>
+          </li>
+          <li><a href="https://codepen.io/shobhitsharma/pen/prOGzd">Codepen - Using with React</a>
+          </li>
+        </ul>
+
+
+        <h2 id="facebook-posts">Facebook Posts</h2>
+
+        <p>This supports only <strong>public posts</strong>, mostly Pages. If you see <code>settings</code> icon with a tooltip saying “Custom”, that requires facebook authorization, so only <code>globe</code> icon ones should be embedded.
+        </p>
+
+        <p>The URL must contain the <code>pageId</code> or <code>pageUsername</code> and URL for photos, posts or videos should look or closer which support <a href="https://www.regexpal.com/94994">this expression</a>.</p>
+
+
+<pre class="prettyprint"><code class="language-bash hljs ">https://www.facebook.com/[FACEBOOK_HANDLE]/photos/[SESSION_OR_USER_SCOPE_ID]/[POST_ID_HERE]
+https://www.facebook.com/[FACEBOOK_HANDLE]/posts/[POST_ID_HERE]
+https://www.facebook.com/[FACEBOOK_HANDLE]/videos/[POST_ID_HERE]/
+https://www.facebook.com/pages/[FACEBOOK_HANDLE]/posts/[POST_ID_HERE]
+https://www.facebook.com/pages/[FACEBOOK_HANDLE]/videos/[POST_ID_HERE]/</code></pre>
+
+        <p>PS: If you’re running this in headless browsers (eg. phantom) or demos on jsfiddle/codepen/etc, facebook SDK will throw security exception due to recent changes in their server. But it will work normally when script is imported.</p>
+        <br><p><strong>Resources</strong></p>
+        <ul>
+          <li><a href="https://developers.facebook.com/docs/plugins/oembed-endpoints">oEmbed API Documentation</a></li>
+        </ul>
+
+
+        <h2 id="twitter-tweets-timelines-and-grid">Twitter - Tweets, Timelines and Grid</h2>
+
+        <p>This is straightforward, the exact twitter URL can be embedded while passing options from oembed API.</p>
+
+
+<pre class="prettyprint"><code class="language-bash hljs ">https://twitter.com/[TWITTER_HANDLE]
+https://twitter.com/[TWITTER_HANDLE]/status/[TWEET_ID]
+https://twitter.com/[TWITTER_HANDLE]/timelines/[TIMELINE_ID]</code></pre>
+
+        <p><strong>For Timeline embed:</strong>
+        </p>
+
+
+<pre class="prettyprint"><code class="language-js hljs ">embedo.load(HTMLElement, <span class="hljs-string">'https://twitter.com/TwitterDev/timelines/539487832448843776'</span>)</code></pre>
+
+        <p><strong>For Timeline Grid embed:</strong>
+        </p>
+
+
+<pre class="prettyprint"><code class="language-js hljs ">embedo.load(HTMLElement, <span class="hljs-string">'https://twitter.com/TwitterDev/timelines/539487832448843776'</span>, {
+  widget_type: <span class="hljs-string">'grid'</span>
+})</code></pre>
+        <br><p><strong>Resources</strong></p>
+        <ul>
+          <li><a href="https://dev.twitter.com/web/embedded-timelines">Twitter timeline embed guidelines</a></li>
+          <li><a href="https://dev.twitter.com/web/overview">Twitter for Websites Guidelines</a></li>
+        </ul>
+
+
+        <h2 id="instagram-posts">Instagram Posts</h2>
+
+        <p>Only posts can be embedded, no timeline. So your URL should be closer to this pattern:</p>
+
+
+<pre class="prettyprint"><code class="language-bash hljs ">https://www.instagram.com/p/[POST_ID_HERE]</code></pre>
+              <br><p><strong>Resources</strong></p>
+        <ul>
+          <li><a href="https://www.instagram.com/developer/embedding/">Instagram Embed Guidelines</a></li>
+        </ul>
+
+
+        <h2 id="youtube-videos">YouTube Videos</h2>
+
+        <p>Supports URLs matching <code>/watch?v=</code> or <code>/embed</code> in URL should work. Avoid playlist(s) URL.</p>
+
+
+<pre class="prettyprint"><code class="language-bash hljs ">https://www.youtube.com/watch?v=[VIDEO_ID]
+https://www.youtube.com/embed/[VIDEO_ID]
+https://youtu.be/[VIDEO_ID]</code></pre>
+
+
+        <h2 id="vimeo">Vimeo</h2>
+
+        <p>Supports URLs matching video or channel links.</p>
+
+
+<pre class="prettyprint"><code class="language-bash hljs ">https://vimeo.com/[VIDEO_ID]
+https://vimeo.com/channels/[CHANNEL_HANDLE]/[VIDEO_ID]</code></pre>
+
+
+        <h2 id="pinterest">Pinterest</h2>
+
+        <p>By default, supports Pins embed.</p>
+
+
+<pre class="prettyprint"><code class="language-bash hljs ">https://www.pinterest.com/pin/[PIN_ID]
+https://www.pinterest(.co.uk|.de|ANY)/pin/[PIN_ID]/</code></pre>
+
+        <p><strong>For Board embed:</strong>
+        </p>
+
+
+<pre class="prettyprint"><code class="language-js hljs ">embedo.load(HTMLElement, <span class="hljs-string">'https://www.pinterest.com/pinterest/official-news/'</span>, {
+  <span class="hljs-string">'data-pin-do'</span>: <span class="hljs-string">'embedBoard'</span>,
+  <span class="hljs-string">'data-pin-board-width'</span>: <span class="hljs-number">400</span>,
+  <span class="hljs-string">'data-pin-scale-height'</span>: <span class="hljs-number">240</span>,
+  <span class="hljs-string">'data-pin-scale-width'</span>: <span class="hljs-number">80</span>,
+  <span class="hljs-string">'strict'</span>: <span class="hljs-literal">true</span> <span class="hljs-comment">// To allow above size dimensions to be used</span>
+})</code></pre>
+
+        <p><strong>For Profile embed:</strong>
+        </p>
+
+
+<pre class="prettyprint"><code class="language-js hljs ">embedo.load(HTMLElement, <span class="hljs-string">'https://www.pinterest.com/pinterest/'</span>, {
+  <span class="hljs-string">'data-pin-do'</span>: <span class="hljs-string">'embedUser'</span>
+})</code></pre>
+        <br><p><strong>Resources</strong></p>
+        <ul>
+          <li><a href="https://developers.pinterest.com/tools/widget-builder/?type=pin">Pinterest Embed Guidelines</a></li>
+        </ul>
+
+
+        <h2 id="others">Others</h2>
+
+        <p>The external links, based upon detected mime gets embed either in <code>&lt;iframe&gt;</code> or <code>&lt;video&gt;</code> elements. These could be any URL possible which has public access or cross-domain disabled.</p>
+
+        <p>Its also possible to override the HTML Tag using:</p>
+
+<pre class="prettyprint"><code class="language-js hljs ">embedo.load(HTMLElement, <span class="hljs-string">'https://my.awesome/url/here'</span>, { tagName: <span class="hljs-string">'embed'</span> })</code></pre>
+      </section>
+
+      <footer>
+        <div class="supported-sites">
+          <h4>What's currently supported?</h4>
+          <div class="supports">
+            <span class="site fa fa-facebook"></span>
+            <span class="site-description">Facebook URLs containing post, photos and videos</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-twitter"></span>
+            <span class="site-description">Twitter URLs containing user timeline and tweets</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-youtube"></span>
+            <span class="site-description">YouTube videos URLs, playlists will play in loop</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-instagram"></span>
+            <span class="site-description">Instagram URLs containing posts and videos</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-pinterest"></span>
+            <span class="site-description">Pinterest URLs containing posts and pins</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-vimeo"></span>
+            <span class="site-description">Vimeo URLs containing videos</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-google"></span>
+            <span class="site-description">Google Maps URLs containing cordinates to a location</span>
+          </div>
+          <div class="supports">
+            <span class="site fa fa-link"></span>
+            <span class="site-description">Embeds third party URLs, gists or formats like .pdf, .webm, .ppsx etc.</span>
+          </div>
+        </div>
+        <div class="copyrights">
+          <a href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md" target="_blank">
+            <i class="fa fa-copyright"></i> Distributed under MIT License
+          </a>
+        </div>
+      </footer>
+    </div>
+  </main>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+  <script>
+    (function(i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'UA-80234662-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+</body>
+
+</html>

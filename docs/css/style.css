@@ -298,7 +298,6 @@ header a:hover {
 }
 
 #embedo-app .embedo-documentation {
-  text-align: left;
   padding: 25px;
   background-color: rgba(0, 0, 0, 0.86);
   color: white;
@@ -308,6 +307,11 @@ header a:hover {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.27);
   -webkit-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.27);
   -moz-box-shadow: 0 15px 35px rgba(0, 0, 0, 0.27);
+  text-align: left;
+}
+
+#embedo-app #preview {
+  text-align: left;
 }
 
 .buttons {

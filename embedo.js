@@ -707,6 +707,10 @@
       query.maxwidth = options.maxwidth || options.width;
     }
 
+    if (options.height && Number(options.height) > 0) {
+      query.maxheight = options.maxheight || options.height;
+    }
+
     embed_uri += '?' + Embedo.utils.querystring(query);
 
     Embedo.utils.fetch(embed_uri, function (error, content) {
@@ -1052,7 +1056,7 @@
     };
     var mimetype = mimes[extension] || mimes.html;
     var has_video = extension.match(/(mp4|ogg|webm|ogv|ogm)/);
-    var el_type = has_video ? 'video' : (options.tagName || 'iframe');
+    var el_type = has_video ? 'video' : (options.tagName || 'embed');
     var override = Embedo.utils.merge({}, options, Embedo.defaults.RESTRICTED);
     var embed_el = Embedo.utils.generateElement(el_type, Embedo.utils.merge({
       type: mimetype,
@@ -1065,12 +1069,14 @@
     element.appendChild(fragment);
 
     if (el_type === 'video') {
-      callback(null, {
-        id: id,
-        el: element,
-        width: Embedo.utils.compute(embed_el, 'width'),
-        height: Embedo.utils.compute(embed_el, 'height')
-      });
+      setTimeout(function () {
+        callback(null, {
+          id: id,
+          el: element,
+          width: Embedo.utils.compute(embed_el, 'width'),
+          height: Embedo.utils.compute(embed_el, 'height')
+        });
+      }, 250);
     } else {
       embed_el.onerror = function (err) {
         callback(err);
@@ -1084,6 +1090,17 @@
         });
       };
     }
+  };
+
+  /**
+   * @method communicate
+   * Uses postMessage API to post message to window
+   * Helpful in phantom process or testing purposes
+   *
+   * @param {object} data
+   */
+  Embedo.prototype.communicate = function communicate(data) {
+    window.postMessage('embedo.rendered=' + JSON.stringify(data), '*');
   };
 
   /**
@@ -1149,7 +1166,7 @@
         data.url = request.url;
         data.source = request.source;
         data.options = request.attributes;
-        parent.postMessage('embedo.rendered=' + JSON.stringify(data), '*');
+        this.communicate(data);
         this.emit('watch', 'loaded', data);
         callback(null, data);
       }.bind(this)
@@ -1345,6 +1362,7 @@
       }
       window.FB.XFBML.parse(parentNode);
       window.FB.Event.subscribe('xfbml.render', function () {
+        // First state will be `parsed` and then `rendered` to acknowledge embed.
         if (childNode.firstChild && childNode.firstChild.getAttribute('fb-xfbml-state') === 'rendered') {
           automagic(parentNode, childNode, options, callback);
         }
