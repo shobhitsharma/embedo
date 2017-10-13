@@ -18,7 +18,7 @@
 * Google Maps URLs containing cordinates to a location
 * Embeds other urls or .pdf, .mp4, .webm and many formats as alternative
 * Embeds any URL that fulfils HTTP access control (CORS) policy
-* Supports IE9+ and all modern browsers.
+* Supports IE10+ and all modern browsers.
 
 ***
 

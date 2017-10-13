@@ -5,7 +5,7 @@
   "main": "embedo.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "python -m SimpleHTTPServer 8080",
+    "start": "http-server ./ -ssl -o",
     "test": "mocha test/*.spec.js",
     "build": "uglifyjs embedo.js --compress --mangle --output=embedo.min.js"
   },
@@ -29,8 +29,10 @@
   "homepage": "https://github.com/shobhitsharma/embedo",
   "devDependencies": {
     "chai": "^4.1.2",
-    "jsdom": "11.3.0",
-    "mocha": "^4.0.0",
+    "http-server": "^0.10.0",
+    "jsdom": "^11.3.0",
+    "karma": "^1.7.1",
+    "mocha": "^4.0.1",
     "uglify-js": "^3.1.3"
   }
 }
