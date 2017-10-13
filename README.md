@@ -4,7 +4,7 @@
 
 > **Embedo** adds a layer on top of third party embed APIs while ensuring best practices and native guidelines for each component. It takes cares of resizing the container, emitting necessary events and with support for native and external options to be pass along.
 
-### Docs: [Options](https://github.com/shobhitsharma/embedo/wiki/Options) / [API](https://github.com/shobhitsharma/embedo/wiki/API) / [Usage](https://github.com/shobhitsharma/embedo/wiki/Usage) / [Changelog](https://github.com/shobhitsharma/embedo/releases)
+### Docs: [Options](https://github.com/shobhitsharma/embedo/wiki/Options) / [API](https://github.com/shobhitsharma/embedo/wiki/API) / [Events](https://github.com/shobhitsharma/embedo/wiki/Events) / [Usage](https://github.com/shobhitsharma/embedo/wiki/Usage) / [Changelog](https://github.com/shobhitsharma/embedo/releases)
 
 ### What's currently supported?
 
@@ -18,7 +18,7 @@
 * Google Maps URLs containing cordinates to a location
 * Embeds other urls or .pdf, .mp4, .webm and many formats as alternative
 * Embeds any URL that fulfils HTTP access control (CORS) policy
-* Supports IE9+ and all modern browsers.
+* Supports IE10+ and all modern browsers.
 
 ***
 

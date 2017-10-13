@@ -1,7 +1,19 @@
 'use strict';
 
-window.onload = function () {
-  Embedo.debug = true;
+if (window.addEventListener) {
+  window.addEventListener("load", run, false);
+} else if (window.attachEvent) {
+  window.attachEvent("onload", run);
+} else {
+  window.onload = run;
+}
+
+function run() {
+  if (!window.Embedo) {
+    throw new Error('Embedo is unavailable.');
+  }
+
+  Embedo.debug = true; // Enable debug mode for logs
 
   var embedo = new Embedo({
     facebook: {
@@ -11,8 +23,8 @@ window.onload = function () {
     },
     twitter: true,
     instagram: true,
-    pinterest: true,
-    // googlemaps: {
+    pinterest: true
+    // , googlemaps: {
     //   key: 'AIzaSyDDmeVWuW86QT0JPikPas0BeWxbpVBlFy8'
     // }
   });
@@ -23,10 +35,10 @@ window.onload = function () {
   var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
 
   // Decoding mesage posted on each successful render
-  eventer(messageEvent, function (e) {
-    if (e.data.match(/embedo.rendered/)) {
-      var decoded_message = JSON.parse(e.data.replace('embedo.rendered=', ''));
-      Embedo.log('warn', e, decoded_message);
+  eventer(messageEvent, function (event) {
+    if (event.data && Array.isArray(event.data) && event.data.indexOf('embedo') !== -1) {
+      var decoded_message = JSON.parse(event.data[2]);
+      Embedo.log('warn', event, decoded_message);
     }
   }, false);
 
@@ -71,7 +83,9 @@ window.onload = function () {
   // Loads tweet
   embedo.load(
     document.getElementById('embedo-twitter'),
-    'https://twitter.com/Sh0bhit/status/797584590214926340'
+    'https://twitter.com/Sh0bhit/status/797584590214926340', {
+      height: 1000
+    }
   );
 
   // Loads twitter timeline grid
@@ -103,21 +117,37 @@ window.onload = function () {
     Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
   });
 
-  embedo.load(document.getElementById('embedo-gist'), 'https://gist.github.com/brandonb927/4149074.js');
+  embedo.load(document.getElementById('embedo-multiple-mixed'), [
+    'https://twitter.com/samccone/status/918142052927291392',
+    'https://www.instagram.com/p/BX3ejdJHmkD',
+    'https://www.youtube.com/watch?v=iKzRIweSBLA'
+  ], {
+    width: 640
+  }).fail(function (err) {
+    Embedo.log('error', 'TESTING', 'Embedo instance error', err);
+  }).done(function (data) {
+    Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
+  });
+
+  embedo.load(document.getElementById('embedo-gist'),
+    'https://gist.github.com/brandonb927/4149074.js');
 
   embedo.load(document.getElementById('embedo-codepen'),
-    'https:////codepen.io/PavelDoGreat/embed/zdWzEL/?height=265&theme-id=0&default-tab=js,result&embed-version=2');
+    'https://codepen.io/PavelDoGreat/embed/zdWzEL/?height=265&theme-id=0&default-tab=js,result&embed-version=2');
 
   // Embed file test
-  embedo.load(document.getElementById('embedo-file'), 'http://www.a3ts.org/wp-content/uploads/2014/07/PREVAC.pdf');
+  embedo.load(document.getElementById('embedo-file'),
+    'http://www.a3ts.org/wp-content/uploads/2014/07/PREVAC.pdf');
 
   // Embed external URL test
-  embedo.load(document.getElementById('embedo-website'), 'https://static01.nyt.com/video/players/offsite/index.html?videoId=100000005363413');
+  embedo.load(document.getElementById('embedo-website'),
+    'https://static01.nyt.com/video/players/offsite/index.html?videoId=100000005363413');
 
   // Embed video URL
-  embedo.load(document.getElementById('embedo-video'), 'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm', {
-    controls: 'contorls'
-  });
+  embedo.load(document.getElementById('embedo-video'),
+    'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm', {
+      controls: 'contorls'
+    });
 
   // Loads pinterest post
   embedo.load(
@@ -227,4 +257,4 @@ window.onload = function () {
   embedo.on('error', function (error) {
     Embedo.log('error', 'TESTING', 'Embedo error', error);
   });
-};
+}

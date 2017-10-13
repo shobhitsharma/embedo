@@ -123,7 +123,7 @@
         PARAMS: {}
       }
     },
-    RESTRICTED: ['url', 'strict', 'height', 'width']
+    RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize']
   };
 
   /**
@@ -433,18 +433,67 @@
       }
 
       var bounds = el.getBoundingClientRect();
-      var style = window.getComputedStyle(el);
       var value = bounds[prop];
 
-      if (is_computed || value === 0) {
-        value = isNaN(Number(style[prop])) ? style[prop] : Number(style[prop]);
+      if (is_computed || !value) {
+        if (document.defaultView && document.defaultView.getComputedStyle) {
+          value = document.defaultView.getComputedStyle(el, '').getPropertyValue(prop);
+        } else if (el.currentStyle) {
+          prop = prop.replace(/\-(\w)/g, function (m, p) {
+            return p.toUpperCase();
+          });
+          value = el.currentStyle[prop];
+        }
       }
 
       if (typeof value === 'string' && !/^\d+(\.\d+)?%$/.test(value)) {
         value = value.replace(/[^\d.-]/g, '');
       }
 
-      return value;
+      return isNaN(Number(value)) ? value : Number(value);
+    },
+
+    /**
+     * @method convertToPx
+     * Calculates approximate pixel value for vw, vh or % values
+     *
+     * @implements relative_px
+     * @implements percent_px
+     */
+    convertToPx: function convertToPx(el, prop, value) {
+      if (!isNaN(Number(value))) {
+        return Number(value);
+      } else if (/^\d+(\.\d+)?%$/.test(value)) {
+        return percent_px(el, prop, value);
+      } else if (value.match(/(vh|vw)/)) {
+        var dimension = value.replace(/[0-9]/g, '');
+        return relative_px(dimension, value);
+      }
+
+      // Converts vw or vh to PX
+      function relative_px(type, value) {
+        var w = window,
+          d = document,
+          e = d.documentElement,
+          g = d.body,
+          x = w.innerWidth || e.clientWidth || g.clientWidth,
+          y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+        if (type === 'vw') {
+          return (x * parseFloat(value)) / 100;
+        } else if (type === 'vh') {
+          return (y * parseFloat(value)) / 100;
+        } else {
+          return undefined;
+        }
+      }
+
+      // Converts % to PX
+      function percent_px(el, prop, percent) {
+        var parent_width = Embedo.utils.compute(el.parentNode, prop, true);
+        percent = parseFloat(percent);
+        return parent_width * (percent / 100);
+      }
     },
 
     /**
@@ -503,21 +552,39 @@
      * @function centerize
      * Align an element center in relation to parent div
      *
-     * @param {HTMLElement} element
+     * @param {HTMLElement} parent_el
+     * @param {HTMLElement} child_el
+     * @param {object} options
      * @returns
      */
-    centerize: function centerize(element) {
-      if (!Embedo.utils.validateElement(element)) {
+    centerize: function centerize(parent_el, child_el, options) {
+      if (!Embedo.utils.validateElement(parent_el) || !Embedo.utils.validateElement(child_el)) {
         return;
       }
-      element.style.display = '-webkit-box';
-      element.style.display = '-moz-box';
-      element.style.display = '-ms-flexbox';
-      element.style.display = '-webkit-flex';
-      element.style.display = 'flex';
-      element.style['justify-content'] = 'center';
-      element.style['align-items'] = 'center';
-      element.style.margin = '0 auto';
+      options = options || {};
+
+      // Make parent_el to adopt full table layout
+      parent_el.style.display = 'table';
+      parent_el.style.textAlign = 'center';
+      parent_el.style.width = '100%';
+
+      // Assign child to add auto-spacing as cell
+      if (options.height) {
+        child_el.style.display = 'table-cell';
+      }
+      child_el.style.verticalAlign = 'middle';
+      child_el.style.margin = '0 auto';
+
+      // If embdedded, ensure dimensions are followed
+      if (child_el.firstChild) {
+        var child_width = Embedo.utils.compute(child_el, 'width', true);
+
+        child_el.firstChild.style.display = 'inline-block';
+        child_el.firstChild.style.marginLeft = 'auto !important';
+        child_el.firstChild.style.marginRIght = 'auto !important';
+        child_el.firstChild.style.width = child_width + 'px !important';
+        child_el.firstChild.style.maxWidth = child_width + 'px !important';
+      }
     },
 
     /**
@@ -652,7 +719,7 @@
       omitscript: true
     }, options, Embedo.defaults.RESTRICTED);
 
-    if (options.width && Number(options.width) > 0) {
+    if ('width' in options || 'maxwidth' in options) {
       query.maxwidth = options.maxwidth || options.width;
     }
 
@@ -671,7 +738,8 @@
         url: url,
         strict: options.strict,
         width: options.width,
-        height: options.height
+        height: options.height,
+        centerize: options.centerize
       }, function (err, result) {
         if (err) {
           return callback(err);
@@ -703,11 +771,11 @@
       omit_script: 1
     }, options, Embedo.defaults.RESTRICTED);
 
-    if (options.width && Number(options.width) > 0) {
+    if ('width' in options || 'maxwidth' in options) {
       query.maxwidth = options.maxwidth || options.width;
     }
 
-    if (options.height && Number(options.height) > 0) {
+    if ('height' in options || 'maxheight' in options) {
       query.maxheight = options.maxheight || options.height;
     }
 
@@ -726,7 +794,8 @@
         url: url,
         strict: options.strict,
         width: options.width,
-        height: options.height
+        height: options.height,
+        centerize: options.centerize
       }, function (err, result) {
         if (err) {
           return callback(err);
@@ -759,10 +828,9 @@
       hidecaption: true
     }, options, Embedo.defaults.RESTRICTED);
 
-    if (options.width) {
-      options.width = Number(options.maxwidth ? options.maxwidth : options.width);
-
-      if (options.width > 320 && options.width < 750) {
+    if ('width' in options || 'maxwidth' in options) {
+      options.width = options.maxwidth ? options.maxwidth : options.width;
+      if (options.width > 320) {
         query.maxwidth = options.width;
       }
     }
@@ -783,7 +851,8 @@
         url: url,
         strict: options.strict,
         width: options.width,
-        height: options.height
+        height: options.height,
+        centerize: options.centerize
       }, function (err, result) {
         if (err) {
           return callback(err);
@@ -853,7 +922,7 @@
       url: url,
       width: size.width,
       height: size.height,
-      autohide: 1,
+      autohide: 1
     }, options, Embedo.defaults.RESTRICTED);
     var embed_uri = Embedo.defaults.SOURCES.vimeo.oEmbed + '?' + Embedo.utils.querystring(embed_options);
 
@@ -901,7 +970,8 @@
       url: url,
       strict: options.strict,
       width: size.width,
-      height: size.height
+      height: size.height,
+      centerize: options.centerize
     }, function (err, result) {
       if (err) {
         Embedo.log('error', 'pinterest', err);
@@ -939,7 +1009,8 @@
     gmapsify(element, container, {
       url: url,
       width: size.width,
-      height: size.height
+      height: size.height,
+      centerize: options.centerize
     }, function (err) {
       if (err) {
         Embedo.log('error', 'googlemaps', err);
@@ -1100,7 +1171,7 @@
    * @param {object} data
    */
   Embedo.prototype.communicate = function communicate(data) {
-    window.postMessage('embedo.rendered=' + JSON.stringify(data), '*');
+    window.postMessage(['embedo', 'rendered', JSON.stringify(data)], '*');
   };
 
   /**
@@ -1142,6 +1213,14 @@
     if (!this[source]) {
       Embedo.log('error', 'render', new Error('Requested source is not implemented or missing.'));
       return this.emit('error', new Error('unrecognised_url'));
+    }
+
+    if ('width' in options && options.width) {
+      options.width = Embedo.utils.convertToPx(element, 'width', options.width);
+    }
+
+    if ('height' in options && options.height) {
+      options.height = Embedo.utils.convertToPx(element, 'height', options.height);
     }
 
     var id = Embedo.utils.uuid();
@@ -1363,8 +1442,13 @@
       window.FB.XFBML.parse(parentNode);
       window.FB.Event.subscribe('xfbml.render', function () {
         // First state will be `parsed` and then `rendered` to acknowledge embed.
-        if (childNode.firstChild && childNode.firstChild.getAttribute('fb-xfbml-state') === 'rendered') {
-          automagic(parentNode, childNode, options, callback);
+        if (childNode.firstChild) {
+          if (options.centerize !== false) {
+            Embedo.utils.centerize(parentNode, childNode, options);
+          }
+          if (childNode.firstChild.getAttribute('fb-xfbml-state') === 'rendered') {
+            automagic(parentNode, childNode, options, callback);
+          }
         }
       });
     });
@@ -1386,6 +1470,9 @@
       window.twttr.widgets.load(childNode);
       window.twttr.events.bind('rendered', function (event) {
         if (childNode.firstChild && childNode.firstChild.getAttribute('id') === event.target.getAttribute('id')) {
+          if (options.centerize !== false) {
+            Embedo.utils.centerize(parentNode, childNode, options);
+          }
           automagic(parentNode, childNode, options, callback);
         }
       });
@@ -1408,10 +1495,19 @@
       if (!window.instgrm.Embeds || !window.instgrm.Embeds) {
         return callback(new Error('instagram_sdk_missing'));
       }
-      setTimeout(function () {
-        window.instgrm.Embeds.process(childNode);
-        automagic(parentNode, childNode, options, callback);
-      }, 0);
+
+      window.instgrm.Embeds.process(childNode);
+      var instagram_embed_timer = setInterval(handleInstagramRendered, 250);
+
+      function handleInstagramRendered() {
+        if (childNode.firstChild && childNode.firstChild.className.match(/instagram-media-rendered/)) {
+          clearInterval(instagram_embed_timer);
+          if (options.centerize !== false) {
+            Embedo.utils.centerize(parentNode, childNode, options);
+          }
+          return automagic(parentNode, childNode, options, callback);
+        }
+      }
     });
   }
 
@@ -1431,12 +1527,27 @@
       if (!window.PinUtils || !window.PinUtils || !childNode || !childNode.firstChild) {
         return callback(new Error('pinterest_sdk_missing'));
       }
+
+      var pinterest_embed_timer = setInterval(handlePinterestEmbed, 250);
+
       setTimeout(function () {
-        if (!childNode.querySelector('[data-pin-id]')) {
+        if (!childNode.querySelector('[data-pin-href]')) {
           window.PinUtils.build(childNode);
         }
-        automagic(parentNode, childNode, options, callback);
-      }, 1500);
+      }, 750);
+
+      function handlePinterestEmbed() {
+        if (childNode.querySelector('[data-pin-href]')) {
+          clearInterval(pinterest_embed_timer);
+          if (options.centerize !== false) {
+            Embedo.utils.centerize(parentNode, childNode, options);
+          }
+          return automagic(parentNode, childNode, options, callback);
+        } else if (pinterest_embed_timer >= 100) {
+          clearInterval(pinterest_embed_timer);
+          return callback(new Error('pinterest_embed_failed'));
+        }
+      }
     });
   }
 
@@ -1453,7 +1564,9 @@
       if (err) {
         return callback(err);
       }
-      Embedo.utils.centerize(childNode);
+      if (options.centerize !== false) {
+        Embedo.utils.centerize(parentNode, childNode, options);
+      }
       childNode.style.width = options.width ? options.width + 'px' : Embedo.utils.compute(parentNode, 'width');
       childNode.style.height = options.height ? options.height + 'px' : Embedo.utils.compute(parentNode, 'height');
       callback(null, {});
@@ -1477,7 +1590,6 @@
       return callback(new Error('HTMLElement does not exist in DOM.'));
     }
 
-    Embedo.utils.centerize(childNode);
     Embedo.utils.watcher(options.id || Embedo.utils.uuid(), function () {
       var parent = {
         width: options.width || Embedo.utils.compute(parentNode, 'width'),
@@ -1506,16 +1618,19 @@
       }
 
       // Odd case when requested height is beyond limit of third party
-      if ('width' in options || 'height' in options) {
-        if ((child.width > parent.width || child.height > parent.height) &&
-          (parent.height > 0 && child.height > 0)) {
-          var scale = Math.min((parent.width / child.width), (parent.height / child.height));
+      // Only apply when fixed width and heights are provided
+      if (options.width && options.height) {
+        var isOverflowing = (child.width > parent.width || child.height > parent.height);
 
-          Embedo.utils.transform(childNode, 'scale(' + scale + ')');
+        if (options.width) {
+          childNode.style.width = options.width + 'px';
         }
-
-        if (options.height > 0) {
+        if (options.height) {
           childNode.style.height = options.height + 'px';
+        }
+        if (isOverflowing) {
+          var scale = Math.min((parent.width / child.width), (parent.height / child.height));
+          Embedo.utils.transform(childNode, 'scale(' + scale + ')');
         }
       }
 

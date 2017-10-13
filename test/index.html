@@ -4,8 +4,6 @@
   <title>Embedo - Test Suite</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="icon" type="image/png" href="https://github.com/fluidicon.png">
-  <link href="https://fonts.googleapis.com/css?family=Karla:400,700" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="../docs/css/style.css" rel="stylesheet">
 </head>
 
@@ -66,6 +64,10 @@
           <div id="embedo-multiple"></div>
         </div>
         <div class="code-editor code-demo">
+          <h2>Multiple Mixed URLs Embed</h2>
+          <div id="embedo-multiple-mixed"></div>
+        </div>
+        <div class="code-editor code-demo">
           <h2>External Web URL Embed</h2>
           <div id="embedo-website"></div>
         </div>
@@ -88,10 +90,15 @@
       </section>
     </div>
   </main>
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <!--[if IE]>
+  <script src="https://cdn01.onzu.com/assets/IE7.min.js"></script>
+  <script src="https://cdn01.onzu.com/assets/IE8.min.js"></script>
+  <script src="https://cdn01.onzu.com/assets/IE9.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.1/core.min.js"></script>
+  <![endif]-->
+  <!-- Here is how embedo.js get declared on top of your implementation -->
   <script src="../embedo.js"></script>
   <script src="./script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
 </body>
 
 </html>
