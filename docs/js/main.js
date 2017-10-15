@@ -29,13 +29,13 @@ function render() {
     document.getElementById('test-height').addEventListener('input', build);
   }
 
-
   function build() {
-    document.getElementById('test-container').innerHTML = '';
     Embedo.utils.watcher('demo', function () {
       var width = document.getElementById('test-width').value;
       var height = document.getElementById('test-height').value;
       var url = document.getElementById('test-url').value;
+      
+      document.getElementById('test-container').innerHTML = '';
 
       embedo.load(document.getElementById('test-container'), url, {
         width: width,
@@ -49,6 +49,6 @@ function render() {
           window.ga('send', 'event', 'Embedo Demo', 'failed', url);
         }
       });
-    }, 250);
+    }, 300);
   }
 }
