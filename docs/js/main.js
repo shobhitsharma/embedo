@@ -1,9 +1,17 @@
 'use strict';
 
-window.onload = function () {
+if (window.addEventListener) {
+  window.addEventListener('load', render, false);
+} else if (window.attachEvent) {
+  window.attachEvent('onload', render);
+} else {
+  window.onload = render;
+}
+
+function render() {
   var embedo = new Embedo({
     facebook: {
-      version: 'v2.8',
+      version: 'v2.10',
       appId: '269918776508696',
       xfbml: true
     },
@@ -21,15 +29,10 @@ window.onload = function () {
     document.getElementById('test-height').addEventListener('input', build);
   }
 
-  var timer;
-  var timeout = 500;
 
   function build() {
-    if (timer) {
-      clearTimeout(timer);
-    }
     document.getElementById('test-container').innerHTML = '';
-    timer = setTimeout(function () {
+    Embedo.utils.watcher('demo', function () {
       var width = document.getElementById('test-width').value;
       var height = document.getElementById('test-height').value;
       var url = document.getElementById('test-url').value;
@@ -37,25 +40,15 @@ window.onload = function () {
       embedo.load(document.getElementById('test-container'), url, {
         width: width,
         height: height
-      }).done(function (data) {
+      }).done(function () {
         if (window.ga) {
-          window.ga('send', 'event', {
-            eventCategory: 'embedo.load',
-            eventAction: 'done',
-            eventLabel: url,
-            eventValue: data
-          });
+          window.ga('send', 'event', 'Embedo Demo', 'success', url);
         }
-      }).fail(function (err) {
+      }).fail(function () {
         if (window.ga) {
-          window.ga('send', 'event', {
-            eventCategory: 'embedo.load',
-            eventAction: 'error',
-            eventLabel: url,
-            eventValue: err
-          });
+          window.ga('send', 'event', 'Embedo Demo', 'failed', url);
         }
       });
-    }, timeout);
+    }, 250);
   }
-};
+}

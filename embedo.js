@@ -563,28 +563,25 @@
       }
       options = options || {};
 
-      // Make parent_el to adopt full table layout
-      parent_el.style.display = 'table';
-      parent_el.style.textAlign = 'center';
-      parent_el.style.width = '100%';
+      if (options.width) {
+        parent_el.style.width = options.width;
+        parent_el.style.maxWidth = options.width;
+      }
 
-      // Assign child to add auto-spacing as cell
       if (options.height) {
-        child_el.style.display = 'table-cell';
+        parent_el.style.height = options.height;
+        parent_el.style.maxHeight = options.height;
       }
-      child_el.style.verticalAlign = 'middle';
+
+      child_el.style.display = '-moz-box';
+      child_el.style.display = '-ms-flexbox';
+      child_el.style.display = '-webkit-flex';
+      child_el.style.display = '-webkit-box';
+      child_el.style.display = 'flex';
+      child_el.style.textAlign = 'center';
+      child_el.style['justify-content'] = 'center';
+      child_el.style['align-items'] = 'center';
       child_el.style.margin = '0 auto';
-
-      // If embdedded, ensure dimensions are followed
-      if (child_el.firstChild) {
-        var child_width = Embedo.utils.compute(child_el, 'width', true);
-
-        child_el.firstChild.style.display = 'inline-block';
-        child_el.firstChild.style.marginLeft = 'auto !important';
-        child_el.firstChild.style.marginRIght = 'auto !important';
-        child_el.firstChild.style.width = child_width + 'px !important';
-        child_el.firstChild.style.maxWidth = child_width + 'px !important';
-      }
     },
 
     /**

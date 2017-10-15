@@ -29,6 +29,32 @@ function run() {
     // }
   });
 
+  /**
+   * URL Form Tests
+   */
+  document.getElementById('test-url').addEventListener('input', build);
+  document.getElementById('test-width').addEventListener('input', build);
+  document.getElementById('test-height').addEventListener('input', build);
+
+  function build() {
+    document.getElementById('test-container').innerHTML = '';
+
+    Embedo.utils.watcher('demo', function () {
+      embedo.load(document.getElementById('test-container'),
+        document.getElementById('test-url').value, {
+          width: document.getElementById('test-width').value || null,
+          height: document.getElementById('test-height').value || null
+        }).done(function (data) {
+        Embedo.log('info', 'build', 'onDoneEvent', data);
+      }).fail(function (err) {
+        Embedo.log('error', 'build', 'onErrorEvent', err);
+      });
+    }, 250);
+  }
+
+  /**
+   * postMessage Event Tracking
+   */
   // Create IE + others compatible event handler
   var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
   var eventer = window[eventMethod];
@@ -41,24 +67,6 @@ function run() {
       Embedo.log('warn', event, decoded_message);
     }
   }, false);
-
-  function build() {
-    document.getElementById('test-container').innerHTML = '';
-
-    embedo.load(document.getElementById('test-container'),
-      document.getElementById('test-url').value, {
-        width: document.getElementById('test-width').value || null,
-        height: document.getElementById('test-height').value || null
-      }).done(function (data) {
-      Embedo.log('info', 'build', 'onDoneEvent', data);
-    }).fail(function (err) {
-      Embedo.log('error', 'build', 'onErrorEvent', err);
-    });
-  }
-
-  document.getElementById('test-url').addEventListener('input', build);
-  document.getElementById('test-width').addEventListener('input', build);
-  document.getElementById('test-height').addEventListener('input', build);
 
   // Loads facebook post
   embedo.load(
