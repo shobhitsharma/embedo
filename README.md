@@ -8,7 +8,7 @@
 
 ### What's currently supported?
 
-* Facebook URLs containing post, photos and videos
+* Facebook URLs containing page, post, photos, videos or comments
 * Twitter URLs containing user timeline and tweets
 * YouTube videos URLs, playlists will play in loop
 * Instagram URLs containing posts and videos
