@@ -737,12 +737,12 @@
     var type, fb_html_class;
 
     if (/^([^\/?].+\/)?post|photo(s|\.php)[\/?].*$/gm.test(url)) {
-      type = 'post';
+      type = url.match(/comment_id|reply_comment_id/) ? 'comment' : 'post';
     } else if (/^([^\/?].+\/)?video(s|\.php)[\/?].*$/gm.test(url)) {
       type = 'video';
     }
 
-    if (type) {
+    if (type && type.match(/post|video/)) {
       var embed_uri = Embedo.utils.replacer(Embedo.defaults.SOURCES.facebook.oEmbed, {
         type: type
       });
@@ -765,7 +765,7 @@
         handleFacebookEmbed(content.html);
       });
     } else {
-      if (url.match(/comment_id|reply_comment_id/)) {
+      if (type === 'comment' || url.match(/comment_id|reply_comment_id/)) {
         fb_html_class = 'fb-comment-embed';
         options['data-numposts'] = options['data-numposts'] || 5;
       } else if (url.match(/plugins\/comments/)) {
@@ -775,14 +775,14 @@
         options['data-height'] = options['data-height'] || options.maxheight || options.height || 500;
       }
 
-      options['data-width'] = options['data-width'] || options.maxwidth || options.width || 340;
-
       var fb_html = Embedo.utils.generateElement('div', Embedo.utils.merge({
         'class': fb_html_class,
         'data-href': url,
-        'data-numposts': 5
+        'data-width': options['data-width'] || options.maxwidth || options.width || 350
       }, options));
 
+      fb_html.removeAttribute('width');
+      fb_html.removeAttribute('height');
       handleFacebookEmbed(fb_html);
     }
 

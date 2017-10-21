@@ -70,19 +70,22 @@
         </ul>
 
 
-        <h2 id="facebook-posts">Facebook Posts</h2>
+        <h2 id="facebook-posts">Facebook Page, Posts and Comments</h2>
 
-        <p>This supports only <strong>public posts</strong>, mostly Pages. If you see <code>settings</code> icon with a tooltip saying “Custom”, that requires facebook authorization, so only <code>globe</code> icon ones should be embedded.
+        <p>This supports only <strong>public</strong> entities as page, post, videos, photos or comment(s). If you see <code>settings</code> icon with a tooltip saying “Custom”, that requires facebook authorization, so only <code>globe</code> icon ones should be embedded.
         </p>
 
         <p>The URL must contain the <code>pageId</code> or <code>pageUsername</code> and URL for photos, posts or videos should look or closer which support <a href="https://www.regexpal.com/94994">this expression</a>.</p>
 
 
-<pre class="prettyprint"><code class="language-bash hljs ">https://www.facebook.com/[FACEBOOK_HANDLE]/photos/[SESSION_OR_USER_SCOPE_ID]/[POST_ID_HERE]
+<pre class="prettyprint"><code class="language-bash hljs ">https://www.facebook.com/[FACEBOOK_HANDLE]
+https://www.facebook.com/[FACEBOOK_HANDLE]/photos/[SESSION_OR_USER_SCOPE_ID]/[POST_ID_HERE]
 https://www.facebook.com/[FACEBOOK_HANDLE]/posts/[POST_ID_HERE]
 https://www.facebook.com/[FACEBOOK_HANDLE]/videos/[POST_ID_HERE]/
 https://www.facebook.com/pages/[FACEBOOK_HANDLE]/posts/[POST_ID_HERE]
-https://www.facebook.com/pages/[FACEBOOK_HANDLE]/videos/[POST_ID_HERE]/</code></pre>
+https://www.facebook.com/pages/[FACEBOOK_HANDLE]/videos/[POST_ID_HERE]
+https://www.facebook.com/[FACEBOOK_HANDLE]/posts/[POST_ID_HERE]?comment_id=[COMMENT_ID]
+https://www.facebook.com/[FACEBOOK_HANDLE]/posts/[POST_ID_HERE]?reply_comment_id=[REPLY_COMMENT_ID]</code></pre>
 
         <p>PS: If you’re running this in headless browsers (eg. phantom) or demos on jsfiddle/codepen/etc, facebook SDK will throw security exception due to recent changes in their server. But it will work normally when script is imported.</p>
         <p><strong>Resources</strong></p>
