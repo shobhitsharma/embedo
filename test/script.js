@@ -52,22 +52,6 @@ function run() {
     }, 250);
   }
 
-  /**
-   * postMessage Event Tracking
-   */
-  // Create IE + others compatible event handler
-  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-  var eventer = window[eventMethod];
-  var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
-
-  // Decoding mesage posted on each successful render
-  eventer(messageEvent, function (event) {
-    if (event.data && Array.isArray(event.data) && event.data.indexOf('embedo') !== -1) {
-      var decoded_message = JSON.parse(event.data[2]);
-      Embedo.log('warn', event, decoded_message);
-    }
-  }, false);
-
   // Loads facebook post
   embedo.load(
     document.getElementById('embedo-facebook-post'),
@@ -88,12 +72,25 @@ function run() {
     'https://www.facebook.com/9gag/videos/10156133478761840/'
   );
 
+  embedo.load(
+    document.getElementById('embedo-facebook-page'),
+    'https://www.facebook.com/facebook'
+  );
+
+  embedo.load(
+    document.getElementById('embedo-facebook-comment'),
+    'https://www.facebook.com/zuck/posts/10102577175875681?comment_id=1193531464007751&reply_comment_id=654912701278942'
+  );
+
+  embedo.load(
+    document.getElementById('embedo-facebook-comments'),
+    'https://developers.facebook.com/docs/plugins/comments#configurator'
+  );
+
   // Loads tweet
   embedo.load(
     document.getElementById('embedo-twitter'),
-    'https://twitter.com/Sh0bhit/status/797584590214926340', {
-      height: 1000
-    }
+    'https://twitter.com/Sh0bhit/status/797584590214926340'
   );
 
   // Loads twitter timeline grid
@@ -265,4 +262,20 @@ function run() {
   embedo.on('error', function (error) {
     Embedo.log('error', 'TESTING', 'Embedo error', error);
   });
+
+  /**
+   * postMessage Event Tracking
+   */
+  // Create IE + others compatible event handler
+  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+  var eventer = window[eventMethod];
+  var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+
+  // Decoding mesage posted on each successful render
+  eventer(messageEvent, function (event) {
+    if (event.data && Array.isArray(event.data) && event.data.indexOf('embedo') !== -1) {
+      var decoded_message = JSON.parse(event.data[2]);
+      Embedo.log('warn', event, decoded_message);
+    }
+  }, false);
 }

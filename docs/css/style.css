@@ -405,8 +405,9 @@ section.readme {
   text-align: center;
 }
 
-.fb-post.fb_iframe_widget {
+[data-embedo-source="facebook"] > div {
   background-color: white;
+  border-radius: 3px;
 }
 
 .code-editor-container {
