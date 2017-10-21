@@ -1,8 +1,10 @@
+'use strict';
+
 var fs = require('fs');
 var expect = require('chai').expect;
 var should = require('chai').should;
-var Embedo = require('../embedo');
 var jsdom = require('jsdom');
+var Embedo = require('../embedo');
 
 // Cache FileBuffer
 var html = fs.readFileSync(require.resolve('./index.html'), 'utf8');

@@ -38,11 +38,12 @@
     return this;
   }
 
-  Embedo.log = function (type) {
-    if (Embedo.debug) {
-      if (typeof console !== 'undefined' && typeof console.log !== 'undefined' && console[type]) {
-        console[type].apply(console, Array.prototype.slice.call(arguments, 1));
-      }
+  Embedo.log = function log(type) {
+    if (!Embedo.debug) {
+      return;
+    }
+    if (typeof console !== 'undefined' && typeof console[type] !== 'undefined') {
+      console[type].apply(console, Array.prototype.slice.call(arguments, 1));
     }
   };
 
@@ -63,8 +64,8 @@
     SOURCES: {
       facebook: {
         GLOBAL: 'FB',
-        SDK: 'https://connect.facebook.net/en_US/all.js',
-        oEmbed: 'https://www.facebook.com/plugins/post/oembed.json',
+        SDK: 'https://connect.facebook.net/${locale}/all.js',
+        oEmbed: 'https://www.facebook.com/plugins/${type}/oembed.json',
         REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
         PARAMS: {
           version: 'v2.10',
@@ -148,12 +149,10 @@
 
     /**
      * @function extend
-     *
      * @returns {object}
      */
     extend: function extend(obj) {
       obj = obj || {};
-
       for (var i = 1; i < arguments.length; i++) {
         if (!arguments[i]) {
           continue;
@@ -164,7 +163,6 @@
           }
         }
       }
-
       return obj;
     },
 
@@ -213,6 +211,27 @@
           }
         }
       };
+    },
+
+    /**
+     * @func replacer
+     * Replaces ${entity} with object key/value pair
+     *
+     * @param {string} str
+     * @param {object} obj
+     */
+    replacer: function replacer(str, obj) {
+      if (!str || !obj) {
+        return;
+      }
+      if (obj) {
+        for (var key in obj) {
+          if (str) {
+            str = str.split('${' + key + '}').join(obj[key]);
+          }
+        }
+      }
+      return str;
     },
 
     /**
@@ -558,6 +577,7 @@
      * @returns
      */
     centerize: function centerize(parent_el, child_el, options) {
+      Embedo.log('info', 'centerize', parent_el, child_el, options);
       if (!Embedo.utils.validateElement(parent_el) || !Embedo.utils.validateElement(child_el)) {
         return;
       }
@@ -566,6 +586,8 @@
       if (options.width) {
         parent_el.style.width = options.width;
         parent_el.style.maxWidth = options.width;
+        parent_el.style.marginLeft = 'auto';
+        parent_el.style.marginRight = 'auto';
       }
 
       if (options.height) {
@@ -688,7 +710,9 @@
       if (!type || !props) {
         return;
       }
-      var sdk = Embedo.defaults.SOURCES[type.toLowerCase()].SDK;
+      var sdk = Embedo.utils.replacer(Embedo.defaults.SOURCES[type.toLowerCase()].SDK, {
+        locale: props.locale || window.navigator.language || 'en_US'
+      });
 
       if (!Embedo.utils.handleScriptValidation(sdk)) {
         if (props && typeof props === 'object') {
@@ -710,24 +734,60 @@
    * @return callback
    */
   Embedo.prototype.facebook = function (id, element, url, options, callback) {
-    var embed_uri = Embedo.defaults.SOURCES.facebook.oEmbed;
-    var query = Embedo.utils.merge({
-      url: encodeURI(url),
-      omitscript: true
-    }, options, Embedo.defaults.RESTRICTED);
+    var type, fb_html_class;
 
-    if ('width' in options || 'maxwidth' in options) {
-      query.maxwidth = options.maxwidth || options.width;
+    if (/^([^\/?].+\/)?post|photo(s|\.php)[\/?].*$/gm.test(url)) {
+      type = 'post';
+    } else if (/^([^\/?].+\/)?video(s|\.php)[\/?].*$/gm.test(url)) {
+      type = 'video';
     }
 
-    embed_uri += '?' + Embedo.utils.querystring(query);
+    if (type) {
+      var embed_uri = Embedo.utils.replacer(Embedo.defaults.SOURCES.facebook.oEmbed, {
+        type: type
+      });
+      var query = Embedo.utils.merge({
+        url: encodeURI(url),
+        omitscript: true
+      }, options, Embedo.defaults.RESTRICTED);
 
-    Embedo.utils.fetch(embed_uri, function (error, content) {
-      if (error) {
-        Embedo.log('error', 'facebook', error);
-        return callback(error);
+      if ('width' in options || 'maxwidth' in options) {
+        query.maxwidth = options.maxwidth || options.width;
       }
-      var container = Embedo.utils.generateEmbed(id, 'facebook', content.html);
+
+      embed_uri += '?' + Embedo.utils.querystring(query);
+
+      Embedo.utils.fetch(embed_uri, function (error, content) {
+        if (error) {
+          Embedo.log('error', 'facebook', error);
+          return callback(error);
+        }
+        handleFacebookEmbed(content.html);
+      });
+    } else {
+      if (url.match(/comment_id|reply_comment_id/)) {
+        fb_html_class = 'fb-comment-embed';
+        options['data-numposts'] = options['data-numposts'] || 5;
+      } else if (url.match(/plugins\/comments/)) {
+        fb_html_class = 'fb-comments';
+      } else {
+        fb_html_class = 'fb-page';
+        options['data-height'] = options['data-height'] || options.maxheight || options.height || 500;
+      }
+
+      options['data-width'] = options['data-width'] || options.maxwidth || options.width || 340;
+
+      var fb_html = Embedo.utils.generateElement('div', Embedo.utils.merge({
+        'class': fb_html_class,
+        'data-href': url,
+        'data-numposts': 5
+      }, options));
+
+      handleFacebookEmbed(fb_html);
+    }
+
+    function handleFacebookEmbed(html) {
+      var container = Embedo.utils.generateEmbed(id, 'facebook', html);
       element.appendChild(container);
 
       facebookify(element, container, {
@@ -748,7 +808,7 @@
           height: result.height
         });
       });
-    });
+    }
   };
 
   /**
@@ -960,14 +1020,15 @@
       'data-pin-width': pin_size
     }, options));
     var container = Embedo.utils.generateEmbed(id, 'pinterest', pin_el);
+
     element.appendChild(container);
 
     pinterestify(element, container, {
       id: id,
       url: url,
       strict: options.strict,
-      width: size.width,
-      height: size.height,
+      width: options.width,
+      height: options.height,
       centerize: options.centerize
     }, function (err, result) {
       if (err) {
@@ -1187,7 +1248,7 @@
     callback = callback || function () {};
 
     if (!element || !Embedo.utils.validateElement(element)) {
-      Embedo.log('error', 'render', '`element` is either missing or invalid');
+      Embedo.log('info', 'render', '`element` is either missing or invalid');
       return this.emit('error', new Error('element_is_missing'));
     }
 
@@ -1196,19 +1257,19 @@
     }
 
     if (!url || !Embedo.utils.validateURL(url)) {
-      Embedo.log('error', 'render', '`url` is either missing or invalid');
+      Embedo.log('info', 'render', '`url` is either missing or invalid');
       return this.emit('error', new Error('invalid_or_missing_url'));
     }
 
     var source = getURLSource(url);
 
     if (!source) {
-      Embedo.log('error', 'render', new Error('Invalid or Unsupported URL'));
+      Embedo.log('info', 'render', new Error('Invalid or Unsupported URL'));
       return this.emit('error', new Error('url_not_supported'));
     }
 
     if (!this[source]) {
-      Embedo.log('error', 'render', new Error('Requested source is not implemented or missing.'));
+      Embedo.log('info', 'render', new Error('Requested source is not implemented or missing.'));
       return this.emit('error', new Error('unrecognised_url'));
     }
 
@@ -1289,7 +1350,7 @@
     var observer = new Embedo.utils.observer();
 
     if (!element || !Embedo.utils.validateElement(element)) {
-      Embedo.log('error', 'load', '`element` is either missing or invalid');
+      Embedo.log('info', 'load', '`element` is either missing or invalid');
       this.emit('error', new Error('element_is_missing'));
     } else {
       if (urls instanceof Array) {
@@ -1604,16 +1665,6 @@
         });
       }
 
-      // Normalize unecessary adding padding/margins/dimensions
-      if (childNode.firstChild) {
-        childNode.firstChild.style.margin = '0 auto !important';
-        childNode.firstChild.style.padding = '0 !important';
-        childNode.firstChild.style.minWidth = 'none !important';
-        childNode.firstChild.style.maxWidth = 'none !important';
-        childNode.firstChild.style.minHeight = 'none !important';
-        childNode.firstChild.style.maxHeight = 'none !important';
-      }
-
       // Odd case when requested height is beyond limit of third party
       // Only apply when fixed width and heights are provided
       if (options.width && options.height) {
@@ -1622,9 +1673,11 @@
         if (options.width) {
           childNode.style.width = options.width + 'px';
         }
+
         if (options.height) {
           childNode.style.height = options.height + 'px';
         }
+
         if (isOverflowing) {
           var scale = Math.min((parent.width / child.width), (parent.height / child.height));
           Embedo.utils.transform(childNode, 'scale(' + scale + ')');

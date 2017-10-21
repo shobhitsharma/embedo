@@ -31,22 +31,22 @@ function render() {
 
   function build() {
     Embedo.utils.watcher('demo', function () {
+      var url = document.getElementById('test-url').value;
       var width = document.getElementById('test-width').value;
       var height = document.getElementById('test-height').value;
-      var url = document.getElementById('test-url').value;
-      
-      document.getElementById('test-container').innerHTML = '';
+      var hash = url + '#w=' + width + '&h=' + height;
 
+      document.getElementById('test-container').innerHTML = '';
       embedo.load(document.getElementById('test-container'), url, {
         width: width,
         height: height
       }).done(function () {
         if (window.ga) {
-          window.ga('send', 'event', 'Embedo Demo', 'success', url);
+          window.ga('send', 'event', 'Demo', hash, 'success');
         }
       }).fail(function () {
         if (window.ga) {
-          window.ga('send', 'event', 'Embedo Demo', 'failed', url);
+          window.ga('send', 'event', 'Demo', hash, 'failed');
         }
       });
     }, 300);
