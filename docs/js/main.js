@@ -34,7 +34,7 @@ function render() {
       var url = document.getElementById('test-url').value;
       var width = document.getElementById('test-width').value;
       var height = document.getElementById('test-height').value;
-      var hash = url + '#w=' + width + '&h=' + height;
+      var dimensions = 'w=' + width + '&h=' + height;
 
       document.getElementById('test-container').innerHTML = '';
       embedo.load(document.getElementById('test-container'), url, {
@@ -42,11 +42,11 @@ function render() {
         height: height
       }).done(function () {
         if (window.ga) {
-          window.ga('send', 'event', 'Demo', hash, 'success');
+          window.ga('send', 'event', 'success', url, dimensions);
         }
       }).fail(function () {
         if (window.ga) {
-          window.ga('send', 'event', 'Demo', hash, 'failed');
+          window.ga('send', 'event', 'failed', url, dimensions);
         }
       });
     }, 300);
