@@ -40,13 +40,13 @@ function render() {
       embedo.load(document.getElementById('test-container'), url, {
         width: width,
         height: height
-      }).done(function () {
+      }).done(function (data) {
         if (window.ga) {
-          window.ga('send', 'event', 'success', url, dimensions);
+          window.ga('send', 'event', '[done] ' + url, data.url, dimensions);
         }
-      }).fail(function () {
+      }).fail(function (err) {
         if (window.ga) {
-          window.ga('send', 'event', 'failed', url, dimensions);
+          window.ga('send', 'event', '[error] '+ url, err.message, dimensions);
         }
       });
     }, 300);
