@@ -1222,17 +1222,6 @@
   };
 
   /**
-   * @method communicate
-   * Uses postMessage API to post message to window
-   * Helpful in phantom process or testing purposes
-   *
-   * @param {object} data
-   */
-  Embedo.prototype.communicate = function communicate(data) {
-    window.postMessage(['embedo', 'rendered', JSON.stringify(data)], '*');
-  };
-
-  /**
    * @method render
    * Renders an embedo instance
    *
@@ -1303,7 +1292,7 @@
         data.url = request.url;
         data.source = request.source;
         data.options = request.attributes;
-        this.communicate(data);
+
         this.emit('watch', 'loaded', data);
         callback(null, data);
       }.bind(this)
