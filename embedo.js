@@ -9,7 +9,7 @@
  * @author Shobhit Sharma <hi@shobh.it>
  */
 
-(function (global, factory) {
+(function(global, factory) {
   'use strict';
 
   if (typeof define === 'function' && define.amd) {
@@ -19,8 +19,7 @@
   } else {
     global.Embedo = window.Embedo = factory();
   }
-
-})(this, function () {
+})(this, function() {
   'use strict';
 
   /**
@@ -68,7 +67,7 @@
         oEmbed: 'https://www.facebook.com/plugins/${type}/oembed.json',
         REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
         PARAMS: {
-          version: 'v2.10',
+          version: 'v3.1',
           cookie: true,
           appId: null,
           xfbml: true
@@ -197,7 +196,7 @@
     sequencer: function sequencer() {
       var args = arguments;
       return {
-        then: function (done) {
+        then: function(done) {
           var counter = 0;
           for (var i = 0; i < args.length; i++) {
             args[i](callme);
@@ -239,30 +238,30 @@
      *
      * Deferred Implementation for Object
      */
-    observer: (function () {
+    observer: (function() {
       function Deferred() {
         this.resolved = [];
         this.rejected = [];
       }
       Deferred.prototype = {
-        execute: function (list, args) {
+        execute: function(list, args) {
           var i = list.length;
           args = Array.prototype.slice.call(args);
           while (i--) {
             list[i].apply(null, args);
           }
         },
-        resolve: function () {
+        resolve: function() {
           this.execute(this.resolved, arguments);
         },
-        reject: function () {
+        reject: function() {
           this.execute(this.rejected, arguments);
         },
-        done: function (callback) {
+        done: function(callback) {
           this.resolved.push(callback);
           return this;
         },
-        fail: function (callback) {
+        fail: function(callback) {
           this.rejected.push(callback);
           return this;
         }
@@ -277,7 +276,9 @@
      * @returns
      */
     validateURL: function validateURL(url) {
-      return /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(url);
+      return /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(
+        url
+      );
     },
 
     /**
@@ -291,7 +292,7 @@
     generateElement: function generateElement(type, attributes) {
       var el = document.createElement(type);
 
-      Object.keys(attributes || {}).forEach(function (type) {
+      Object.keys(attributes || {}).forEach(function(type) {
         el.setAttribute(type, attributes[type]);
       });
 
@@ -332,7 +333,7 @@
      */
     generateScript: function generateScript(source) {
       var script = document.createElement('script');
-      script.type = 'text\/javascript';
+      script.type = 'text/javascript';
       script.src = encodeURI(source);
       script.setAttribute('async', '');
       script.setAttribute('charset', 'utf-8');
@@ -347,10 +348,13 @@
      * @returns HTMLElement
      */
     validateElement: function validateElement(obj) {
-      return (
-        typeof HTMLElement === 'object' ? obj instanceof window.HTMLElement :
-        obj && typeof obj === 'object' && obj !== null && obj.nodeType === 1 && typeof obj.nodeName === 'string'
-      );
+      return typeof HTMLElement === 'object'
+        ? obj instanceof window.HTMLElement
+        : obj &&
+            typeof obj === 'object' &&
+            obj !== null &&
+            obj.nodeType === 1 &&
+            typeof obj.nodeName === 'string';
     },
 
     /**
@@ -392,14 +396,14 @@
       url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
       url = url.replace('?&', '?');
 
-      window[jsonpCallback] = function (data) {
+      window[jsonpCallback] = function(data) {
         clear(jsonpCallback, script);
         callback(null, data);
       };
 
-      script.type = 'text\/javascript';
+      script.type = 'text/javascript';
       script.charset = 'UTF-8';
-      script.onerror = function (err) {
+      script.onerror = function(err) {
         clear(jsonpCallback, script);
         return callback(err);
       };
@@ -458,7 +462,7 @@
         if (document.defaultView && document.defaultView.getComputedStyle) {
           value = document.defaultView.getComputedStyle(el, '').getPropertyValue(prop);
         } else if (el.currentStyle) {
-          prop = prop.replace(/\-(\w)/g, function (m, p) {
+          prop = prop.replace(/\-(\w)/g, function(m, p) {
             return p.toUpperCase();
           });
           value = el.currentStyle[prop];
@@ -538,7 +542,7 @@
       }
 
       window.EMBEDO_WATCHER[id].count += 1;
-      window.EMBEDO_WATCHER[id].request = setTimeout(function () {
+      window.EMBEDO_WATCHER[id].request = setTimeout(function() {
         window.EMBEDO_WATCHER[id].count -= 1;
         if (window.EMBEDO_WATCHER[id].count === 0) {
           fn.call();
@@ -559,8 +563,16 @@
      */
     dimensions: function dimensions(el, width, height) {
       var el_width = Embedo.utils.compute(el, 'width');
-      width = width ? width : (el_width > 0 ? el_width : Embedo.utils.compute(el.parentNode, 'width'));
-      height = height ? height : (el_width > 0 ? el_width / 1.5 : Embedo.utils.compute(el.parentNode, 'height'));
+      width = width
+        ? width
+        : el_width > 0
+          ? el_width
+          : Embedo.utils.compute(el.parentNode, 'width');
+      height = height
+        ? height
+        : el_width > 0
+          ? el_width / 1.5
+          : Embedo.utils.compute(el.parentNode, 'height');
       return {
         width: width,
         height: height
@@ -617,7 +629,7 @@
       }
       url = url.split('#')[0];
       var scripts = document.getElementsByTagName('script');
-      for (var i = scripts.length; i--;) {
+      for (var i = scripts.length; i--; ) {
         if (scripts[i].src === url) {
           return true;
         }
@@ -647,13 +659,13 @@
    * @implements emit
    */
   Embedo.prototype = Object.create({
-    on: function (event, listener) {
+    on: function(event, listener) {
       if (typeof this.events[event] !== 'object') {
         this.events[event] = [];
       }
       this.events[event].push(listener);
     },
-    off: function (event, listener) {
+    off: function(event, listener) {
       var index;
       if (typeof this.events[event] === 'object') {
         index = this.events[event].indexOf(listener);
@@ -662,8 +674,11 @@
         }
       }
     },
-    emit: function (event) {
-      var i, listeners, length, args = [].slice.call(arguments, 1);
+    emit: function(event) {
+      var i,
+        listeners,
+        length,
+        args = [].slice.call(arguments, 1);
       if (typeof this.events[event] === 'object') {
         listeners = this.events[event].slice();
         length = listeners.length;
@@ -673,7 +688,7 @@
         }
       }
     },
-    once: function (event, listener) {
+    once: function(event, listener) {
       this.on(event, function g() {
         this.off(event, g);
         listener.apply(this, arguments);
@@ -688,7 +703,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.init = function (options) {
+  Embedo.prototype.init = function(options) {
     Embedo.log('info', 'init', this.requests, options);
 
     // Append SDK's to parent's body
@@ -733,7 +748,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.facebook = function (id, element, url, options, callback) {
+  Embedo.prototype.facebook = function(id, element, url, options, callback) {
     var type, fb_html_class;
 
     if (/^([^\/?].+\/)?post|photo(s|\.php)[\/?].*$/gm.test(url)) {
@@ -746,10 +761,14 @@
       var embed_uri = Embedo.utils.replacer(Embedo.defaults.SOURCES.facebook.oEmbed, {
         type: type
       });
-      var query = Embedo.utils.merge({
-        url: encodeURI(url),
-        omitscript: true
-      }, options, Embedo.defaults.RESTRICTED);
+      var query = Embedo.utils.merge(
+        {
+          url: encodeURI(url),
+          omitscript: true
+        },
+        options,
+        Embedo.defaults.RESTRICTED
+      );
 
       if ('width' in options || 'maxwidth' in options) {
         query.maxwidth = options.maxwidth || options.width;
@@ -757,7 +776,7 @@
 
       embed_uri += '?' + Embedo.utils.querystring(query);
 
-      Embedo.utils.fetch(embed_uri, function (error, content) {
+      Embedo.utils.fetch(embed_uri, function(error, content) {
         if (error) {
           Embedo.log('error', 'facebook', error);
           return callback(error);
@@ -772,14 +791,21 @@
         fb_html_class = 'fb-comments';
       } else {
         fb_html_class = 'fb-page';
-        options['data-height'] = options['data-height'] || options.maxheight || options.height || 500;
+        options['data-height'] =
+          options['data-height'] || options.maxheight || options.height || 500;
       }
 
-      var fb_html = Embedo.utils.generateElement('div', Embedo.utils.merge({
-        'class': fb_html_class,
-        'data-href': url,
-        'data-width': options['data-width'] || options.maxwidth || options.width || 350
-      }, options));
+      var fb_html = Embedo.utils.generateElement(
+        'div',
+        Embedo.utils.merge(
+          {
+            class: fb_html_class,
+            'data-href': url,
+            'data-width': options['data-width'] || options.maxwidth || options.width || 350
+          },
+          options
+        )
+      );
 
       fb_html.removeAttribute('width');
       fb_html.removeAttribute('height');
@@ -790,24 +816,29 @@
       var container = Embedo.utils.generateEmbed(id, 'facebook', html);
       element.appendChild(container);
 
-      facebookify(element, container, {
-        id: id,
-        url: url,
-        strict: options.strict,
-        width: options.width,
-        height: options.height,
-        centerize: options.centerize
-      }, function (err, result) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null, {
+      facebookify(
+        element,
+        container,
+        {
           id: id,
-          el: element,
-          width: result.width,
-          height: result.height
-        });
-      });
+          url: url,
+          strict: options.strict,
+          width: options.width,
+          height: options.height,
+          centerize: options.centerize
+        },
+        function(err, result) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, {
+            id: id,
+            el: element,
+            width: result.width,
+            height: result.height
+          });
+        }
+      );
     }
   };
 
@@ -821,12 +852,16 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.twitter = function (id, element, url, options, callback) {
+  Embedo.prototype.twitter = function(id, element, url, options, callback) {
     var embed_uri = Embedo.defaults.SOURCES.twitter.oEmbed;
-    var query = Embedo.utils.merge({
-      url: encodeURI(url),
-      omit_script: 1
-    }, options, Embedo.defaults.RESTRICTED);
+    var query = Embedo.utils.merge(
+      {
+        url: encodeURI(url),
+        omit_script: 1
+      },
+      options,
+      Embedo.defaults.RESTRICTED
+    );
 
     if ('width' in options || 'maxwidth' in options) {
       query.maxwidth = options.maxwidth || options.width;
@@ -838,7 +873,7 @@
 
     embed_uri += '?' + Embedo.utils.querystring(query);
 
-    Embedo.utils.fetch(embed_uri, function (error, content) {
+    Embedo.utils.fetch(embed_uri, function(error, content) {
       if (error) {
         Embedo.log('error', 'twitter', error);
         return callback(error);
@@ -846,24 +881,29 @@
       var container = Embedo.utils.generateEmbed(id, 'twitter', content.html);
       element.appendChild(container);
 
-      twitterify(element, container, {
-        id: id,
-        url: url,
-        strict: options.strict,
-        width: options.width,
-        height: options.height,
-        centerize: options.centerize
-      }, function (err, result) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null, {
+      twitterify(
+        element,
+        container,
+        {
           id: id,
-          el: element,
-          width: result.width,
-          height: result.height
-        });
-      });
+          url: url,
+          strict: options.strict,
+          width: options.width,
+          height: options.height,
+          centerize: options.centerize
+        },
+        function(err, result) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, {
+            id: id,
+            el: element,
+            width: result.width,
+            height: result.height
+          });
+        }
+      );
     });
   };
 
@@ -877,13 +917,17 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.instagram = function (id, element, url, options, callback) {
+  Embedo.prototype.instagram = function(id, element, url, options, callback) {
     var embed_uri = Embedo.defaults.SOURCES.instagram.oEmbed;
-    var query = Embedo.utils.merge({
-      url: encodeURI(url),
-      omitscript: true,
-      hidecaption: true
-    }, options, Embedo.defaults.RESTRICTED);
+    var query = Embedo.utils.merge(
+      {
+        url: encodeURI(url),
+        omitscript: true,
+        hidecaption: true
+      },
+      options,
+      Embedo.defaults.RESTRICTED
+    );
 
     if ('width' in options || 'maxwidth' in options) {
       options.width = options.maxwidth ? options.maxwidth : options.width;
@@ -894,7 +938,7 @@
 
     embed_uri += '?' + Embedo.utils.querystring(query);
 
-    Embedo.utils.fetch(embed_uri, function (error, content) {
+    Embedo.utils.fetch(embed_uri, function(error, content) {
       if (error) {
         Embedo.log('error', 'instagram', error);
         return callback(error);
@@ -903,24 +947,29 @@
       var container = Embedo.utils.generateEmbed(id, 'instagram', content.html);
       element.appendChild(container);
 
-      instagramify(element, container, {
-        id: id,
-        url: url,
-        strict: options.strict,
-        width: options.width,
-        height: options.height,
-        centerize: options.centerize
-      }, function (err, result) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null, {
+      instagramify(
+        element,
+        container,
+        {
           id: id,
-          el: element,
-          width: result.width,
-          height: result.height
-        });
-      });
+          url: url,
+          strict: options.strict,
+          width: options.width,
+          height: options.height,
+          centerize: options.centerize
+        },
+        function(err, result) {
+          if (err) {
+            return callback(err);
+          }
+          callback(null, {
+            id: id,
+            el: element,
+            width: result.width,
+            height: result.height
+          });
+        }
+      );
     });
   };
 
@@ -934,18 +983,27 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.youtube = function (id, element, url, options, callback) {
+  Embedo.prototype.youtube = function(id, element, url, options, callback) {
     if (!getYTVideoID(url)) {
       Embedo.log('error', 'youtube', 'Unable to detect Youtube video id.');
       return callback('Unable to detect Youtube video id.');
     }
 
-    var youtube_uri = Embedo.defaults.SOURCES.youtube.oEmbed + getYTVideoID(url) + '?' +
-      Embedo.utils.querystring(Embedo.utils.merge({
-        modestbranding: 1,
-        autohide: 1,
-        showinfo: 0
-      }, options, Embedo.defaults.RESTRICTED));
+    var youtube_uri =
+      Embedo.defaults.SOURCES.youtube.oEmbed +
+      getYTVideoID(url) +
+      '?' +
+      Embedo.utils.querystring(
+        Embedo.utils.merge(
+          {
+            modestbranding: 1,
+            autohide: 1,
+            showinfo: 0
+          },
+          options,
+          Embedo.defaults.RESTRICTED
+        )
+      );
 
     this.iframe(id, element, youtube_uri, options, callback);
 
@@ -959,7 +1017,7 @@
     function getYTVideoID(url) {
       var regexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
       var match = url.match(regexp);
-      return (match && match.length === 2) ? match[1] : false;
+      return match && match.length === 2 ? match[1] : false;
     }
   };
 
@@ -973,17 +1031,22 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.vimeo = function (id, element, url, options, callback) {
+  Embedo.prototype.vimeo = function(id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
-    var embed_options = Embedo.utils.merge({
-      url: url,
-      width: size.width,
-      height: size.height,
-      autohide: 1
-    }, options, Embedo.defaults.RESTRICTED);
-    var embed_uri = Embedo.defaults.SOURCES.vimeo.oEmbed + '?' + Embedo.utils.querystring(embed_options);
+    var embed_options = Embedo.utils.merge(
+      {
+        url: url,
+        width: size.width,
+        height: size.height,
+        autohide: 1
+      },
+      options,
+      Embedo.defaults.RESTRICTED
+    );
+    var embed_uri =
+      Embedo.defaults.SOURCES.vimeo.oEmbed + '?' + Embedo.utils.querystring(embed_options);
 
-    Embedo.utils.fetch(embed_uri, function (error, content) {
+    Embedo.utils.fetch(embed_uri, function(error, content) {
       if (error) {
         Embedo.log('error', 'vimeo', error);
         return callback(error);
@@ -1010,38 +1073,49 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.pinterest = function (id, element, url, options, callback) {
+  Embedo.prototype.pinterest = function(id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
-    var pin_size = (size.width > 600 ? 'large' : (size.width < 345 ? 'small' : 'medium'));
-    var pin_el = Embedo.utils.generateElement('a', Embedo.utils.merge({
-      'href': url,
-      'data-pin-do': options['data-pin-do'] || 'embedPin',
-      'data-pin-lang': options['data-pin-lang'] || 'en',
-      'data-pin-width': pin_size
-    }, options));
+    var pin_size = size.width > 600 ? 'large' : size.width < 345 ? 'small' : 'medium';
+    var pin_el = Embedo.utils.generateElement(
+      'a',
+      Embedo.utils.merge(
+        {
+          href: url,
+          'data-pin-do': options['data-pin-do'] || 'embedPin',
+          'data-pin-lang': options['data-pin-lang'] || 'en',
+          'data-pin-width': pin_size
+        },
+        options
+      )
+    );
     var container = Embedo.utils.generateEmbed(id, 'pinterest', pin_el);
 
     element.appendChild(container);
 
-    pinterestify(element, container, {
-      id: id,
-      url: url,
-      strict: options.strict,
-      width: options.width,
-      height: options.height,
-      centerize: options.centerize
-    }, function (err, result) {
-      if (err) {
-        Embedo.log('error', 'pinterest', err);
-        return callback(err);
-      }
-      callback(null, {
+    pinterestify(
+      element,
+      container,
+      {
         id: id,
-        el: element,
-        width: result.width,
-        height: result.height
-      });
-    });
+        url: url,
+        strict: options.strict,
+        width: options.width,
+        height: options.height,
+        centerize: options.centerize
+      },
+      function(err, result) {
+        if (err) {
+          Embedo.log('error', 'pinterest', err);
+          return callback(err);
+        }
+        callback(null, {
+          id: id,
+          el: element,
+          width: result.width,
+          height: result.height
+        });
+      }
+    );
   };
 
   /**
@@ -1054,7 +1128,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.googlemaps = function (id, element, url, options, callback) {
+  Embedo.prototype.googlemaps = function(id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var cordinates = getCordinates(url);
     if (!cordinates) {
@@ -1064,38 +1138,43 @@
     var container = Embedo.utils.generateEmbed(id, 'googlemaps');
     element.appendChild(container);
 
-    gmapsify(element, container, {
-      url: url,
-      width: size.width,
-      height: size.height,
-      centerize: options.centerize
-    }, function (err) {
-      if (err) {
-        Embedo.log('error', 'googlemaps', err);
-        return callback(err);
-      }
-
-      var location = new window.google.maps.LatLng(cordinates.lat, cordinates.lng);
-      var map = new window.google.maps.Map(container, {
-        zoom: options.zoom || 12,
-        center: location,
-        mapTypeId: options.MapTypeId || window.google.maps.MapTypeId.ROADMAP
-      });
-      var marker = new window.google.maps.Marker({
-        map: map,
-        draggable: true,
-        animation: window.google.maps.Animation.DROP,
-        position: location
-      });
-
-      callback(null, {
-        id: id,
-        el: element,
+    gmapsify(
+      element,
+      container,
+      {
+        url: url,
         width: size.width,
         height: size.height,
-        marker: marker
-      });
-    });
+        centerize: options.centerize
+      },
+      function(err) {
+        if (err) {
+          Embedo.log('error', 'googlemaps', err);
+          return callback(err);
+        }
+
+        var location = new window.google.maps.LatLng(cordinates.lat, cordinates.lng);
+        var map = new window.google.maps.Map(container, {
+          zoom: options.zoom || 12,
+          center: location,
+          mapTypeId: options.MapTypeId || window.google.maps.MapTypeId.ROADMAP
+        });
+        var marker = new window.google.maps.Marker({
+          map: map,
+          draggable: true,
+          animation: window.google.maps.Animation.DROP,
+          position: location
+        });
+
+        callback(null, {
+          id: id,
+          el: element,
+          width: size.width,
+          height: size.height,
+          marker: marker
+        });
+      }
+    );
 
     /**
      * @func getCordinates
@@ -1105,10 +1184,12 @@
     function getCordinates(url) {
       var regex = /@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/;
       var match = url.match(regex);
-      return (match && match.length && match[1] && match[2]) ? {
-        lat: parseFloat(match[1], 0),
-        lng: parseFloat(match[2], 0)
-      } : null;
+      return match && match.length && match[1] && match[2]
+        ? {
+            lat: parseFloat(match[1], 0),
+            lng: parseFloat(match[2], 0)
+          }
+        : null;
     }
   };
 
@@ -1124,25 +1205,32 @@
    */
   Embedo.prototype.github = function github(id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
-    var iframe = Embedo.utils.generateElement('iframe', Embedo.utils.merge({
-      width: size.width,
-      height: size.height
-    }, options, Embedo.defaults.RESTRICTED));
+    var iframe = Embedo.utils.generateElement(
+      'iframe',
+      Embedo.utils.merge(
+        {
+          width: size.width,
+          height: size.height
+        },
+        options,
+        Embedo.defaults.RESTRICTED
+      )
+    );
     var container = Embedo.utils.generateEmbed(id, 'github', iframe);
 
     element.appendChild(container);
     iframe.contentWindow.document.open();
     iframe.contentWindow.document.write(
       '<body><style type="text/css">body,html{margin:0;padding:0;border-radius:3px;}' +
-      '.gist .gist-file{margin:0 !important;padding:0;}<\/style>' +
-      '<script src="' + url + '"><\/script>' +
-      '<\/body>'
+        '.gist .gist-file{margin:0 !important;padding:0;}</style>' +
+        '<script src="' + url + '"></script>' +
+        '</body>'
     );
     iframe.contentWindow.document.close();
-    iframe.onerror = function (err) {
+    iframe.onerror = function(err) {
       callback(err);
     };
-    iframe.onload = function () {
+    iframe.onload = function() {
       callback(null, {
         id: id,
         el: element,
@@ -1162,43 +1250,49 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.iframe = function (id, element, url, options, callback) {
+  Embedo.prototype.iframe = function(id, element, url, options, callback) {
     var fragment = document.createDocumentFragment();
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var extension = (url.substr(url.lastIndexOf('.')) || '').replace('.', '').toLowerCase();
     var mimes = {
-      csv: 'text\/csv',
-      doc: 'application\/msword',
-      docx: 'application\/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      pdf: 'application\/pdf',
-      gif: 'image\/gif',
-      js: 'application\/javascript',
-      json: 'application\/json',
-      xhtml: 'application\/xhtml+xml',
-      pps: 'application\/vnd.ms-powerpoint',
-      ppsx: 'application\/vnd.openxmlformats-officedocument.presentationml.slideshow',
-      xml: 'application\/xml',
-      ogg: 'video\/ogg',
-      mp4: 'video\/mp4',
-      webm: 'video\/webm',
-      html: 'text\/html'
+      csv: 'text/csv',
+      doc: 'application/msword',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      pdf: 'application/pdf',
+      gif: 'image/gif',
+      js: 'application/javascript',
+      json: 'application/json',
+      xhtml: 'application/xhtml+xml',
+      pps: 'application/vnd.ms-powerpoint',
+      ppsx: 'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+      xml: 'application/xml',
+      ogg: 'video/ogg',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
+      html: 'text/html'
     };
     var mimetype = mimes[extension] || mimes.html;
     var has_video = extension.match(/(mp4|ogg|webm|ogv|ogm)/);
-    var el_type = has_video ? 'video' : (options.tagName || 'embed');
+    var el_type = has_video ? 'video' : options.tagName || 'embed';
     var override = Embedo.utils.merge({}, options, Embedo.defaults.RESTRICTED);
-    var embed_el = Embedo.utils.generateElement(el_type, Embedo.utils.merge({
-      type: mimetype,
-      src: url,
-      width: size.width,
-      height: size.height
-    }, override));
+    var embed_el = Embedo.utils.generateElement(
+      el_type,
+      Embedo.utils.merge(
+        {
+          type: mimetype,
+          src: url,
+          width: size.width,
+          height: size.height
+        },
+        override
+      )
+    );
 
     fragment.appendChild(Embedo.utils.generateEmbed(id, 'iframe', embed_el));
     element.appendChild(fragment);
 
     if (el_type === 'video') {
-      setTimeout(function () {
+      setTimeout(function() {
         callback(null, {
           id: id,
           el: element,
@@ -1207,10 +1301,10 @@
         });
       }, 250);
     } else {
-      embed_el.onerror = function (err) {
+      embed_el.onerror = function(err) {
         callback(err);
       };
-      embed_el.onload = function () {
+      embed_el.onload = function() {
         callback(null, {
           id: id,
           el: element,
@@ -1231,10 +1325,10 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.render = function (element, url, options, callback) {
+  Embedo.prototype.render = function(element, url, options, callback) {
     Embedo.log('info', 'render', element, url, options);
     options = options || {};
-    callback = callback || function () {};
+    callback = callback || function() {};
 
     if (!element || !Embedo.utils.validateElement(element)) {
       Embedo.log('info', 'render', '`element` is either missing or invalid');
@@ -1283,8 +1377,12 @@
 
     this.emit('watch', 'load', request);
 
-    this[source](id, element, url, options,
-      function (err, data) {
+    this[source](
+      id,
+      element,
+      url,
+      options,
+      function(err, data) {
         if (err) {
           this.emit('error', err);
           return callback(err);
@@ -1313,11 +1411,13 @@
         return null;
       }
 
-      var matched_source = sources.filter(function (source) {
-        if (Embedo.defaults.SOURCES[source] && url.match(Embedo.defaults.SOURCES[source].REGEX)) {
-          return source;
-        }
-      }).filter(Boolean);
+      var matched_source = sources
+        .filter(function(source) {
+          if (Embedo.defaults.SOURCES[source] && url.match(Embedo.defaults.SOURCES[source].REGEX)) {
+            return source;
+          }
+        })
+        .filter(Boolean);
 
       return matched_source && matched_source.length ? matched_source[0] : 'iframe';
     }
@@ -1333,7 +1433,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.load = function (element, urls, options) {
+  Embedo.prototype.load = function(element, urls, options) {
     Embedo.log('info', 'load', element, urls, options);
     options = options || {};
     var observer = new Embedo.utils.observer();
@@ -1347,27 +1447,29 @@
           failed: [],
           finished: []
         };
-        var jobs = urls.map(function (url) {
-          return function (done) {
-            this.render(element, url, options, function (err, data) {
-              if (err) {
-                reqs.failed.push(err);
-                return done(err);
-              }
-              reqs.finished.push(data);
-              done(null, data);
-            });
-          }.bind(this);
-        }.bind(this));
+        var jobs = urls.map(
+          function(url) {
+            return function(done) {
+              this.render(element, url, options, function(err, data) {
+                if (err) {
+                  reqs.failed.push(err);
+                  return done(err);
+                }
+                reqs.finished.push(data);
+                done(null, data);
+              });
+            }.bind(this);
+          }.bind(this)
+        );
 
-        Embedo.utils.sequencer.apply(this, jobs).then(function () {
+        Embedo.utils.sequencer.apply(this, jobs).then(function() {
           if (reqs.failed.length > 0) {
             return observer.reject(reqs.failed);
           }
           observer.resolve(reqs.finished);
         });
       } else if (typeof urls === 'string') {
-        this.render(element, urls, options, function (err, data) {
+        this.render(element, urls, options, function(err, data) {
           if (err) {
             return observer.reject(err);
           }
@@ -1387,44 +1489,54 @@
    *
    * @param {object} element
    */
-  Embedo.prototype.refresh = function (element) {
+  Embedo.prototype.refresh = function(element) {
     Embedo.log('info', 'refresh', this.requests, element);
     if (this.requests.length === 0) {
       return;
     }
-    this.requests.forEach(function (request) {
-      if (!request.el) {
-        return;
-      }
-
-      if (request.source === 'iframe' || request.source === 'googlemaps') {
-        return this.emit('refresh', request, {
-          width: Embedo.utils.compute(request.el, 'width'),
-          height: Embedo.utils.compute(request.el, 'height')
-        });
-      }
-
-      if (element) {
-        if (!Embedo.utils.validateElement(element)) {
+    this.requests.forEach(
+      function(request) {
+        if (!request.el) {
           return;
         }
-        if (element === request.el) {
-          automagic(request.el, document.getElementById(request.id), request.attributes,
-            function (err, data) {
+
+        if (request.source === 'iframe' || request.source === 'googlemaps') {
+          return this.emit('refresh', request, {
+            width: Embedo.utils.compute(request.el, 'width'),
+            height: Embedo.utils.compute(request.el, 'height')
+          });
+        }
+
+        if (element) {
+          if (!Embedo.utils.validateElement(element)) {
+            return;
+          }
+          if (element === request.el) {
+            automagic(
+              request.el,
+              document.getElementById(request.id),
+              request.attributes,
+              function(err, data) {
+                if (data) {
+                  this.emit('refresh', request, data);
+                }
+              }.bind(this)
+            );
+          }
+        } else {
+          automagic(
+            request.el,
+            document.getElementById(request.id),
+            request.attributes,
+            function(err, data) {
               if (data) {
                 this.emit('refresh', request, data);
               }
-            }.bind(this));
+            }.bind(this)
+          );
         }
-      } else {
-        automagic(request.el, document.getElementById(request.id), request.attributes,
-          function (err, data) {
-            if (data) {
-              this.emit('refresh', request, data);
-            }
-          }.bind(this));
-      }
-    }.bind(this));
+      }.bind(this)
+    );
 
     return this;
   };
@@ -1435,38 +1547,40 @@
    *
    * @param {object} element
    */
-  Embedo.prototype.destroy = function (element) {
+  Embedo.prototype.destroy = function(element) {
     Embedo.log('warn', 'destroy', this.requests, element);
     if (this.requests.length === 0) {
       return;
     }
     var removed = [];
 
-    this.requests.forEach(function (request) {
-      if (!request.el || !Embedo.utils.validateElement(request.el)) {
-        return;
-      }
-      if (element) {
-        if (!Embedo.utils.validateElement(element)) {
+    this.requests.forEach(
+      function(request) {
+        if (!request.el || !Embedo.utils.validateElement(request.el)) {
           return;
         }
-        if (element === request.el) {
+        if (element) {
+          if (!Embedo.utils.validateElement(element)) {
+            return;
+          }
+          if (element === request.el) {
+            if (document.getElementById(request.id)) {
+              document.getElementById(request.id).remove();
+            }
+            removed.push(request.id);
+            this.emit('destroy', request);
+          }
+        } else {
           if (document.getElementById(request.id)) {
             document.getElementById(request.id).remove();
           }
           removed.push(request.id);
           this.emit('destroy', request);
         }
-      } else {
-        if (document.getElementById(request.id)) {
-          document.getElementById(request.id).remove();
-        }
-        removed.push(request.id);
-        this.emit('destroy', request);
-      }
-    }.bind(this));
+      }.bind(this)
+    );
 
-    this.requests = this.requests.filter(function (request) {
+    this.requests = this.requests.filter(function(request) {
       return removed.indexOf(request.id) < 0;
     });
 
@@ -1482,12 +1596,12 @@
    * @param {object} options
    */
   function facebookify(parentNode, childNode, options, callback) {
-    sdkReady('facebook', function (err) {
+    sdkReady('facebook', function(err) {
       if (err) {
         return callback(err);
       }
       window.FB.XFBML.parse(parentNode);
-      window.FB.Event.subscribe('xfbml.render', function () {
+      window.FB.Event.subscribe('xfbml.render', function() {
         // First state will be `parsed` and then `rendered` to acknowledge embed.
         if (childNode.firstChild) {
           if (options.centerize !== false) {
@@ -1510,13 +1624,16 @@
    * @param {object} options
    */
   function twitterify(parentNode, childNode, options, callback) {
-    sdkReady('twitter', function (err) {
+    sdkReady('twitter', function(err) {
       if (err) {
         return callback(err);
       }
       window.twttr.widgets.load(childNode);
-      window.twttr.events.bind('rendered', function (event) {
-        if (childNode.firstChild && childNode.firstChild.getAttribute('id') === event.target.getAttribute('id')) {
+      window.twttr.events.bind('rendered', function(event) {
+        if (
+          childNode.firstChild &&
+          childNode.firstChild.getAttribute('id') === event.target.getAttribute('id')
+        ) {
           if (options.centerize !== false) {
             Embedo.utils.centerize(parentNode, childNode, options);
           }
@@ -1535,7 +1652,7 @@
    * @param {object} options
    */
   function instagramify(parentNode, childNode, options, callback) {
-    sdkReady('instagram', function (err) {
+    sdkReady('instagram', function(err) {
       if (err) {
         return callback(err);
       }
@@ -1547,7 +1664,10 @@
       var instagram_embed_timer = setInterval(handleInstagramRendered, 250);
 
       function handleInstagramRendered() {
-        if (childNode.firstChild && childNode.firstChild.className.match(/instagram-media-rendered/)) {
+        if (
+          childNode.firstChild &&
+          childNode.firstChild.className.match(/instagram-media-rendered/)
+        ) {
           clearInterval(instagram_embed_timer);
           if (options.centerize !== false) {
             Embedo.utils.centerize(parentNode, childNode, options);
@@ -1567,7 +1687,7 @@
    * @param {object} options
    */
   function pinterestify(parentNode, childNode, options, callback) {
-    sdkReady('pinterest', function (err) {
+    sdkReady('pinterest', function(err) {
       if (err) {
         return callback(err);
       }
@@ -1575,13 +1695,13 @@
         return callback(new Error('pinterest_sdk_missing'));
       }
 
-      setTimeout(function () {
+      setTimeout(function() {
         if (!childNode.querySelector('[data-pin-href]')) {
           window.PinUtils.build(childNode);
         }
 
         var pinterest_embed_timer_count = 0;
-        var pinterest_embed_timer = setInterval(function () {
+        var pinterest_embed_timer = setInterval(function() {
           pinterest_embed_timer_count += 1;
           if (childNode.querySelector('[data-pin-href]')) {
             clearInterval(pinterest_embed_timer);
@@ -1594,9 +1714,7 @@
             return callback(new Error('pinterest_embed_failed'));
           }
         }, 250);
-
       }, 750);
-
     });
   }
 
@@ -1609,15 +1727,19 @@
    * @param {object} options
    */
   function gmapsify(parentNode, childNode, options, callback) {
-    sdkReady('googlemaps', function (err) {
+    sdkReady('googlemaps', function(err) {
       if (err) {
         return callback(err);
       }
       if (options.centerize !== false) {
         Embedo.utils.centerize(parentNode, childNode, options);
       }
-      childNode.style.width = options.width ? options.width + 'px' : Embedo.utils.compute(parentNode, 'width');
-      childNode.style.height = options.height ? options.height + 'px' : Embedo.utils.compute(parentNode, 'height');
+      childNode.style.width = options.width
+        ? options.width + 'px'
+        : Embedo.utils.compute(parentNode, 'width');
+      childNode.style.height = options.height
+        ? options.height + 'px'
+        : Embedo.utils.compute(parentNode, 'height');
       callback(null, {});
     });
   }
@@ -1633,53 +1755,57 @@
   function automagic(parentNode, childNode, options, callback) {
     Embedo.log('info', 'automagic', parentNode, childNode, options);
     options = options || {};
-    callback = callback || function () {};
+    callback = callback || function() {};
 
     if (!Embedo.utils.validateElement(parentNode) || !Embedo.utils.validateElement(childNode)) {
       return callback(new Error('HTMLElement does not exist in DOM.'));
     }
 
-    Embedo.utils.watcher(options.id || Embedo.utils.uuid(), function () {
-      var parent = {
-        width: options.width || Embedo.utils.compute(parentNode, 'width'),
-        height: options.height || Embedo.utils.compute(parentNode, 'height')
-      };
-      var child = {
-        width: Embedo.utils.compute(childNode, 'width'),
-        height: Embedo.utils.compute(childNode, 'height')
-      };
+    Embedo.utils.watcher(
+      options.id || Embedo.utils.uuid(),
+      function() {
+        var parent = {
+          width: options.width || Embedo.utils.compute(parentNode, 'width'),
+          height: options.height || Embedo.utils.compute(parentNode, 'height')
+        };
+        var child = {
+          width: Embedo.utils.compute(childNode, 'width'),
+          height: Embedo.utils.compute(childNode, 'height')
+        };
 
-      if (options.strict) {
-        return callback(null, {
+        if (options.strict) {
+          return callback(null, {
+            width: parent.width,
+            height: parent.height
+          });
+        }
+
+        // Odd case when requested height is beyond limit of third party
+        // Only apply when fixed width and heights are provided
+        if (options.width && options.height) {
+          var isOverflowing = child.width > parent.width || child.height > parent.height;
+
+          if (options.width) {
+            childNode.style.width = options.width + 'px';
+          }
+
+          if (options.height) {
+            childNode.style.height = options.height + 'px';
+          }
+
+          if (isOverflowing) {
+            var scale = Math.min(parent.width / child.width, parent.height / child.height);
+            Embedo.utils.transform(childNode, 'scale(' + scale + ')');
+          }
+        }
+
+        callback(null, {
           width: parent.width,
           height: parent.height
         });
-      }
-
-      // Odd case when requested height is beyond limit of third party
-      // Only apply when fixed width and heights are provided
-      if (options.width && options.height) {
-        var isOverflowing = (child.width > parent.width || child.height > parent.height);
-
-        if (options.width) {
-          childNode.style.width = options.width + 'px';
-        }
-
-        if (options.height) {
-          childNode.style.height = options.height + 'px';
-        }
-
-        if (isOverflowing) {
-          var scale = Math.min((parent.width / child.width), (parent.height / child.height));
-          Embedo.utils.transform(childNode, 'scale(' + scale + ')');
-        }
-      }
-
-      callback(null, {
-        width: parent.width,
-        height: parent.height
-      });
-    }, 500);
+      },
+      500
+    );
   }
 
   /**
@@ -1690,7 +1816,7 @@
    * @param {function} callback
    */
   function sdkReady(type, callback) {
-    callback = callback || function () {};
+    callback = callback || function() {};
     if (!Embedo.defaults.SOURCES[type]) {
       return callback(new Error('unsupported_sdk_type'));
     }
