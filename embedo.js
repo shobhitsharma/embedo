@@ -1575,26 +1575,28 @@
         return callback(new Error('pinterest_sdk_missing'));
       }
 
-      var pinterest_embed_timer = setInterval(handlePinterestEmbed, 250);
-
       setTimeout(function () {
         if (!childNode.querySelector('[data-pin-href]')) {
           window.PinUtils.build(childNode);
         }
+
+        var pinterest_embed_timer_count = 0;
+        var pinterest_embed_timer = setInterval(function () {
+          pinterest_embed_timer_count += 1;
+          if (childNode.querySelector('[data-pin-href]')) {
+            clearInterval(pinterest_embed_timer);
+            if (options.centerize !== false) {
+              Embedo.utils.centerize(parentNode, childNode, options);
+            }
+            return automagic(parentNode, childNode, options, callback);
+          } else if (pinterest_embed_timer_count >= 20) {
+            clearInterval(pinterest_embed_timer);
+            return callback(new Error('pinterest_embed_failed'));
+          }
+        }, 250);
+
       }, 750);
 
-      function handlePinterestEmbed() {
-        if (childNode.querySelector('[data-pin-href]')) {
-          clearInterval(pinterest_embed_timer);
-          if (options.centerize !== false) {
-            Embedo.utils.centerize(parentNode, childNode, options);
-          }
-          return automagic(parentNode, childNode, options, callback);
-        } else if (pinterest_embed_timer >= 100) {
-          clearInterval(pinterest_embed_timer);
-          return callback(new Error('pinterest_embed_failed'));
-        }
-      }
     });
   }
 
