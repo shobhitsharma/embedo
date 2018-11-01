@@ -9,7 +9,7 @@
  * @author Shobhit Sharma <hi@shobh.it>
  */
 
-(function(global, factory) {
+(function (global, factory) {
   'use strict';
 
   if (typeof define === 'function' && define.amd) {
@@ -19,7 +19,7 @@
   } else {
     global.Embedo = window.Embedo = factory();
   }
-})(this, function() {
+})(this, function () {
   'use strict';
 
   /**
@@ -123,7 +123,7 @@
         PARAMS: {}
       }
     },
-    RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize']
+    RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize', 'jsonp']
   };
 
   /**
@@ -196,7 +196,7 @@
     sequencer: function sequencer() {
       var args = arguments;
       return {
-        then: function(done) {
+        then: function (done) {
           var counter = 0;
           for (var i = 0; i < args.length; i++) {
             args[i](callme);
@@ -238,30 +238,30 @@
      *
      * Deferred Implementation for Object
      */
-    observer: (function() {
+    observer: (function () {
       function Deferred() {
         this.resolved = [];
         this.rejected = [];
       }
       Deferred.prototype = {
-        execute: function(list, args) {
+        execute: function (list, args) {
           var i = list.length;
           args = Array.prototype.slice.call(args);
           while (i--) {
             list[i].apply(null, args);
           }
         },
-        resolve: function() {
+        resolve: function () {
           this.execute(this.resolved, arguments);
         },
-        reject: function() {
+        reject: function () {
           this.execute(this.rejected, arguments);
         },
-        done: function(callback) {
+        done: function (callback) {
           this.resolved.push(callback);
           return this;
         },
-        fail: function(callback) {
+        fail: function (callback) {
           this.rejected.push(callback);
           return this;
         }
@@ -292,7 +292,7 @@
     generateElement: function generateElement(type, attributes) {
       var el = document.createElement(type);
 
-      Object.keys(attributes || {}).forEach(function(type) {
+      Object.keys(attributes || {}).forEach(function (type) {
         el.setAttribute(type, attributes[type]);
       });
 
@@ -348,13 +348,13 @@
      * @returns HTMLElement
      */
     validateElement: function validateElement(obj) {
-      return typeof HTMLElement === 'object'
-        ? obj instanceof window.HTMLElement
-        : obj &&
-            typeof obj === 'object' &&
-            obj !== null &&
-            obj.nodeType === 1 &&
-            typeof obj.nodeName === 'string';
+      return typeof HTMLElement === 'object' ?
+        obj instanceof window.HTMLElement :
+        obj &&
+        typeof obj === 'object' &&
+        obj !== null &&
+        obj.nodeType === 1 &&
+        typeof obj.nodeName === 'string';
     },
 
     /**
@@ -392,18 +392,19 @@
       options = options || {};
       var target = document.head || document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
-      var jsonpCallback = 'embedoFetch_' + Embedo.utils.uuid();
+      var jsonpCallback = 'embedo_fetch_' + Embedo.utils.uuid();
       url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
       url = url.replace('?&', '?');
 
-      window[jsonpCallback] = function(data) {
+      window[jsonpCallback] = function (data) {
         clear(jsonpCallback, script);
         callback(null, data);
       };
 
       script.type = 'text/javascript';
+      script.defer = true;
       script.charset = 'UTF-8';
-      script.onerror = function(err) {
+      script.onerror = function (err) {
         clear(jsonpCallback, script);
         return callback(err);
       };
@@ -421,6 +422,39 @@
           script = undefined;
         }
       }
+    },
+
+    /**
+     * XHR HTTP Requests
+     *
+     * @param {string} url
+     * @param {object} options
+     * @param {Function} callback
+     */
+    ajax: function ajax(url, options, callback) {
+      if (typeof options === 'function') {
+        callback = options;
+        options = {};
+      }
+      callback = callback || function () {};
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE || xhr.readyState === 4) {
+          if (xhr.status >= 400) {
+            return callback(new Error(xhr.responseText || xhr.statusText));
+          }
+          try {
+            return callback(null, JSON.parse(xhr.responseText));
+          } catch (e) {
+            return callback(new Error('invalid_response'));
+          }
+        }
+      };
+      xhr.onerror = function (err) {
+        return callback(error);
+      };
+      xhr.open('GET', url);
+      xhr.send();
     },
 
     /**
@@ -462,7 +496,7 @@
         if (document.defaultView && document.defaultView.getComputedStyle) {
           value = document.defaultView.getComputedStyle(el, '').getPropertyValue(prop);
         } else if (el.currentStyle) {
-          prop = prop.replace(/\-(\w)/g, function(m, p) {
+          prop = prop.replace(/\-(\w)/g, function (m, p) {
             return p.toUpperCase();
           });
           value = el.currentStyle[prop];
@@ -542,7 +576,7 @@
       }
 
       window.EMBEDO_WATCHER[id].count += 1;
-      window.EMBEDO_WATCHER[id].request = setTimeout(function() {
+      window.EMBEDO_WATCHER[id].request = setTimeout(function () {
         window.EMBEDO_WATCHER[id].count -= 1;
         if (window.EMBEDO_WATCHER[id].count === 0) {
           fn.call();
@@ -563,16 +597,16 @@
      */
     dimensions: function dimensions(el, width, height) {
       var el_width = Embedo.utils.compute(el, 'width');
-      width = width
-        ? width
-        : el_width > 0
-          ? el_width
-          : Embedo.utils.compute(el.parentNode, 'width');
-      height = height
-        ? height
-        : el_width > 0
-          ? el_width / 1.5
-          : Embedo.utils.compute(el.parentNode, 'height');
+      width = width ?
+        width :
+        el_width > 0 ?
+        el_width :
+        Embedo.utils.compute(el.parentNode, 'width');
+      height = height ?
+        height :
+        el_width > 0 ?
+        el_width / 1.5 :
+        Embedo.utils.compute(el.parentNode, 'height');
       return {
         width: width,
         height: height
@@ -629,7 +663,7 @@
       }
       url = url.split('#')[0];
       var scripts = document.getElementsByTagName('script');
-      for (var i = scripts.length; i--; ) {
+      for (var i = scripts.length; i--;) {
         if (scripts[i].src === url) {
           return true;
         }
@@ -659,13 +693,13 @@
    * @implements emit
    */
   Embedo.prototype = Object.create({
-    on: function(event, listener) {
+    on: function (event, listener) {
       if (typeof this.events[event] !== 'object') {
         this.events[event] = [];
       }
       this.events[event].push(listener);
     },
-    off: function(event, listener) {
+    off: function (event, listener) {
       var index;
       if (typeof this.events[event] === 'object') {
         index = this.events[event].indexOf(listener);
@@ -674,7 +708,7 @@
         }
       }
     },
-    emit: function(event) {
+    emit: function (event) {
       var i,
         listeners,
         length,
@@ -688,7 +722,7 @@
         }
       }
     },
-    once: function(event, listener) {
+    once: function (event, listener) {
       this.on(event, function g() {
         this.off(event, g);
         listener.apply(this, arguments);
@@ -703,7 +737,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.init = function(options) {
+  Embedo.prototype.init = function (options) {
     Embedo.log('info', 'init', this.requests, options);
 
     // Append SDK's to parent's body
@@ -748,7 +782,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.facebook = function(id, element, url, options, callback) {
+  Embedo.prototype.facebook = function (id, element, url, options, callback) {
     var type, fb_html_class;
 
     if (/^([^\/?].+\/)?post|photo(s|\.php)[\/?].*$/gm.test(url)) {
@@ -761,8 +795,7 @@
       var embed_uri = Embedo.utils.replacer(Embedo.defaults.SOURCES.facebook.oEmbed, {
         type: type
       });
-      var query = Embedo.utils.merge(
-        {
+      var query = Embedo.utils.merge({
           url: encodeURI(url),
           omitscript: true
         },
@@ -776,7 +809,7 @@
 
       embed_uri += '?' + Embedo.utils.querystring(query);
 
-      Embedo.utils.fetch(embed_uri, function(error, content) {
+      Embedo.utils.fetch(embed_uri, function (error, content) {
         if (error) {
           Embedo.log('error', 'facebook', error);
           return callback(error);
@@ -797,8 +830,7 @@
 
       var fb_html = Embedo.utils.generateElement(
         'div',
-        Embedo.utils.merge(
-          {
+        Embedo.utils.merge({
             class: fb_html_class,
             'data-href': url,
             'data-width': options['data-width'] || options.maxwidth || options.width || 350
@@ -818,8 +850,7 @@
 
       facebookify(
         element,
-        container,
-        {
+        container, {
           id: id,
           url: url,
           strict: options.strict,
@@ -827,7 +858,7 @@
           height: options.height,
           centerize: options.centerize
         },
-        function(err, result) {
+        function (err, result) {
           if (err) {
             return callback(err);
           }
@@ -852,10 +883,9 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.twitter = function(id, element, url, options, callback) {
+  Embedo.prototype.twitter = function (id, element, url, options, callback) {
     var embed_uri = Embedo.defaults.SOURCES.twitter.oEmbed;
-    var query = Embedo.utils.merge(
-      {
+    var query = Embedo.utils.merge({
         url: encodeURI(url),
         omit_script: 1
       },
@@ -873,7 +903,7 @@
 
     embed_uri += '?' + Embedo.utils.querystring(query);
 
-    Embedo.utils.fetch(embed_uri, function(error, content) {
+    Embedo.utils.fetch(embed_uri, function (error, content) {
       if (error) {
         Embedo.log('error', 'twitter', error);
         return callback(error);
@@ -883,8 +913,7 @@
 
       twitterify(
         element,
-        container,
-        {
+        container, {
           id: id,
           url: url,
           strict: options.strict,
@@ -892,7 +921,7 @@
           height: options.height,
           centerize: options.centerize
         },
-        function(err, result) {
+        function (err, result) {
           if (err) {
             return callback(err);
           }
@@ -917,10 +946,9 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.instagram = function(id, element, url, options, callback) {
+  Embedo.prototype.instagram = function (id, element, url, options, callback) {
     var embed_uri = Embedo.defaults.SOURCES.instagram.oEmbed;
-    var query = Embedo.utils.merge(
-      {
+    var query = Embedo.utils.merge({
         url: encodeURI(url),
         omitscript: true,
         hidecaption: true
@@ -938,7 +966,9 @@
 
     embed_uri += '?' + Embedo.utils.querystring(query);
 
-    Embedo.utils.fetch(embed_uri, function(error, content) {
+    var method = options.jsonp ? 'jsonp' : 'ajax';
+
+    Embedo.utils[method](embed_uri, function (error, content) {
       if (error) {
         Embedo.log('error', 'instagram', error);
         return callback(error);
@@ -949,8 +979,7 @@
 
       instagramify(
         element,
-        container,
-        {
+        container, {
           id: id,
           url: url,
           strict: options.strict,
@@ -958,7 +987,7 @@
           height: options.height,
           centerize: options.centerize
         },
-        function(err, result) {
+        function (err, result) {
           if (err) {
             return callback(err);
           }
@@ -983,7 +1012,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.youtube = function(id, element, url, options, callback) {
+  Embedo.prototype.youtube = function (id, element, url, options, callback) {
     if (!getYTVideoID(url)) {
       Embedo.log('error', 'youtube', 'Unable to detect Youtube video id.');
       return callback('Unable to detect Youtube video id.');
@@ -994,8 +1023,7 @@
       getYTVideoID(url) +
       '?' +
       Embedo.utils.querystring(
-        Embedo.utils.merge(
-          {
+        Embedo.utils.merge({
             modestbranding: 1,
             autohide: 1,
             showinfo: 0
@@ -1031,10 +1059,9 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.vimeo = function(id, element, url, options, callback) {
+  Embedo.prototype.vimeo = function (id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
-    var embed_options = Embedo.utils.merge(
-      {
+    var embed_options = Embedo.utils.merge({
         url: url,
         width: size.width,
         height: size.height,
@@ -1046,7 +1073,7 @@
     var embed_uri =
       Embedo.defaults.SOURCES.vimeo.oEmbed + '?' + Embedo.utils.querystring(embed_options);
 
-    Embedo.utils.fetch(embed_uri, function(error, content) {
+    Embedo.utils.fetch(embed_uri, function (error, content) {
       if (error) {
         Embedo.log('error', 'vimeo', error);
         return callback(error);
@@ -1073,13 +1100,12 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.pinterest = function(id, element, url, options, callback) {
+  Embedo.prototype.pinterest = function (id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var pin_size = size.width > 600 ? 'large' : size.width < 345 ? 'small' : 'medium';
     var pin_el = Embedo.utils.generateElement(
       'a',
-      Embedo.utils.merge(
-        {
+      Embedo.utils.merge({
           href: url,
           'data-pin-do': options['data-pin-do'] || 'embedPin',
           'data-pin-lang': options['data-pin-lang'] || 'en',
@@ -1094,8 +1120,7 @@
 
     pinterestify(
       element,
-      container,
-      {
+      container, {
         id: id,
         url: url,
         strict: options.strict,
@@ -1103,7 +1128,7 @@
         height: options.height,
         centerize: options.centerize
       },
-      function(err, result) {
+      function (err, result) {
         if (err) {
           Embedo.log('error', 'pinterest', err);
           return callback(err);
@@ -1128,7 +1153,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.googlemaps = function(id, element, url, options, callback) {
+  Embedo.prototype.googlemaps = function (id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var cordinates = getCordinates(url);
     if (!cordinates) {
@@ -1140,14 +1165,13 @@
 
     gmapsify(
       element,
-      container,
-      {
+      container, {
         url: url,
         width: size.width,
         height: size.height,
         centerize: options.centerize
       },
-      function(err) {
+      function (err) {
         if (err) {
           Embedo.log('error', 'googlemaps', err);
           return callback(err);
@@ -1184,12 +1208,11 @@
     function getCordinates(url) {
       var regex = /@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/;
       var match = url.match(regex);
-      return match && match.length && match[1] && match[2]
-        ? {
-            lat: parseFloat(match[1], 0),
-            lng: parseFloat(match[2], 0)
-          }
-        : null;
+      return match && match.length && match[1] && match[2] ? {
+          lat: parseFloat(match[1], 0),
+          lng: parseFloat(match[2], 0)
+        } :
+        null;
     }
   };
 
@@ -1207,8 +1230,7 @@
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var iframe = Embedo.utils.generateElement(
       'iframe',
-      Embedo.utils.merge(
-        {
+      Embedo.utils.merge({
           width: size.width,
           height: size.height
         },
@@ -1222,15 +1244,15 @@
     iframe.contentWindow.document.open();
     iframe.contentWindow.document.write(
       '<body><style type="text/css">body,html{margin:0;padding:0;border-radius:3px;}' +
-        '.gist .gist-file{margin:0 !important;padding:0;}</style>' +
-        '<script src="' + url + '"></script>' +
-        '</body>'
+      '.gist .gist-file{margin:0 !important;padding:0;}</style>' +
+      '<script src="' + url + '"></script>' +
+      '</body>'
     );
     iframe.contentWindow.document.close();
-    iframe.onerror = function(err) {
+    iframe.onerror = function (err) {
       callback(err);
     };
-    iframe.onload = function() {
+    iframe.onload = function () {
       callback(null, {
         id: id,
         el: element,
@@ -1250,7 +1272,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.iframe = function(id, element, url, options, callback) {
+  Embedo.prototype.iframe = function (id, element, url, options, callback) {
     var fragment = document.createDocumentFragment();
     var size = Embedo.utils.dimensions(element, options.width, options.height);
     var extension = (url.substr(url.lastIndexOf('.')) || '').replace('.', '').toLowerCase();
@@ -1277,8 +1299,7 @@
     var override = Embedo.utils.merge({}, options, Embedo.defaults.RESTRICTED);
     var embed_el = Embedo.utils.generateElement(
       el_type,
-      Embedo.utils.merge(
-        {
+      Embedo.utils.merge({
           type: mimetype,
           src: url,
           width: size.width,
@@ -1292,7 +1313,7 @@
     element.appendChild(fragment);
 
     if (el_type === 'video') {
-      setTimeout(function() {
+      setTimeout(function () {
         callback(null, {
           id: id,
           el: element,
@@ -1301,10 +1322,10 @@
         });
       }, 250);
     } else {
-      embed_el.onerror = function(err) {
+      embed_el.onerror = function (err) {
         callback(err);
       };
-      embed_el.onload = function() {
+      embed_el.onload = function () {
         callback(null, {
           id: id,
           el: element,
@@ -1325,10 +1346,10 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.render = function(element, url, options, callback) {
+  Embedo.prototype.render = function (element, url, options, callback) {
     Embedo.log('info', 'render', element, url, options);
     options = options || {};
-    callback = callback || function() {};
+    callback = callback || function () {};
 
     if (!element || !Embedo.utils.validateElement(element)) {
       Embedo.log('info', 'render', '`element` is either missing or invalid');
@@ -1382,7 +1403,7 @@
       element,
       url,
       options,
-      function(err, data) {
+      function (err, data) {
         if (err) {
           this.emit('error', err);
           return callback(err);
@@ -1412,7 +1433,7 @@
       }
 
       var matched_source = sources
-        .filter(function(source) {
+        .filter(function (source) {
           if (Embedo.defaults.SOURCES[source] && url.match(Embedo.defaults.SOURCES[source].REGEX)) {
             return source;
           }
@@ -1433,7 +1454,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.load = function(element, urls, options) {
+  Embedo.prototype.load = function (element, urls, options) {
     Embedo.log('info', 'load', element, urls, options);
     options = options || {};
     var observer = new Embedo.utils.observer();
@@ -1448,9 +1469,9 @@
           finished: []
         };
         var jobs = urls.map(
-          function(url) {
-            return function(done) {
-              this.render(element, url, options, function(err, data) {
+          function (url) {
+            return function (done) {
+              this.render(element, url, options, function (err, data) {
                 if (err) {
                   reqs.failed.push(err);
                   return done(err);
@@ -1462,14 +1483,14 @@
           }.bind(this)
         );
 
-        Embedo.utils.sequencer.apply(this, jobs).then(function() {
+        Embedo.utils.sequencer.apply(this, jobs).then(function () {
           if (reqs.failed.length > 0) {
             return observer.reject(reqs.failed);
           }
           observer.resolve(reqs.finished);
         });
       } else if (typeof urls === 'string') {
-        this.render(element, urls, options, function(err, data) {
+        this.render(element, urls, options, function (err, data) {
           if (err) {
             return observer.reject(err);
           }
@@ -1489,13 +1510,13 @@
    *
    * @param {object} element
    */
-  Embedo.prototype.refresh = function(element) {
+  Embedo.prototype.refresh = function (element) {
     Embedo.log('info', 'refresh', this.requests, element);
     if (this.requests.length === 0) {
       return;
     }
     this.requests.forEach(
-      function(request) {
+      function (request) {
         if (!request.el) {
           return;
         }
@@ -1516,7 +1537,7 @@
               request.el,
               document.getElementById(request.id),
               request.attributes,
-              function(err, data) {
+              function (err, data) {
                 if (data) {
                   this.emit('refresh', request, data);
                 }
@@ -1528,7 +1549,7 @@
             request.el,
             document.getElementById(request.id),
             request.attributes,
-            function(err, data) {
+            function (err, data) {
               if (data) {
                 this.emit('refresh', request, data);
               }
@@ -1547,7 +1568,7 @@
    *
    * @param {object} element
    */
-  Embedo.prototype.destroy = function(element) {
+  Embedo.prototype.destroy = function (element) {
     Embedo.log('warn', 'destroy', this.requests, element);
     if (this.requests.length === 0) {
       return;
@@ -1555,7 +1576,7 @@
     var removed = [];
 
     this.requests.forEach(
-      function(request) {
+      function (request) {
         if (!request.el || !Embedo.utils.validateElement(request.el)) {
           return;
         }
@@ -1580,7 +1601,7 @@
       }.bind(this)
     );
 
-    this.requests = this.requests.filter(function(request) {
+    this.requests = this.requests.filter(function (request) {
       return removed.indexOf(request.id) < 0;
     });
 
@@ -1596,12 +1617,12 @@
    * @param {object} options
    */
   function facebookify(parentNode, childNode, options, callback) {
-    sdkReady('facebook', function(err) {
+    sdkReady('facebook', function (err) {
       if (err) {
         return callback(err);
       }
       window.FB.XFBML.parse(parentNode);
-      window.FB.Event.subscribe('xfbml.render', function() {
+      window.FB.Event.subscribe('xfbml.render', function () {
         // First state will be `parsed` and then `rendered` to acknowledge embed.
         if (childNode.firstChild) {
           if (options.centerize !== false) {
@@ -1624,12 +1645,12 @@
    * @param {object} options
    */
   function twitterify(parentNode, childNode, options, callback) {
-    sdkReady('twitter', function(err) {
+    sdkReady('twitter', function (err) {
       if (err) {
         return callback(err);
       }
       window.twttr.widgets.load(childNode);
-      window.twttr.events.bind('rendered', function(event) {
+      window.twttr.events.bind('rendered', function (event) {
         if (
           childNode.firstChild &&
           childNode.firstChild.getAttribute('id') === event.target.getAttribute('id')
@@ -1652,7 +1673,7 @@
    * @param {object} options
    */
   function instagramify(parentNode, childNode, options, callback) {
-    sdkReady('instagram', function(err) {
+    sdkReady('instagram', function (err) {
       if (err) {
         return callback(err);
       }
@@ -1687,7 +1708,7 @@
    * @param {object} options
    */
   function pinterestify(parentNode, childNode, options, callback) {
-    sdkReady('pinterest', function(err) {
+    sdkReady('pinterest', function (err) {
       if (err) {
         return callback(err);
       }
@@ -1695,13 +1716,13 @@
         return callback(new Error('pinterest_sdk_missing'));
       }
 
-      setTimeout(function() {
+      setTimeout(function () {
         if (!childNode.querySelector('[data-pin-href]')) {
           window.PinUtils.build(childNode);
         }
 
         var pinterest_embed_timer_count = 0;
-        var pinterest_embed_timer = setInterval(function() {
+        var pinterest_embed_timer = setInterval(function () {
           pinterest_embed_timer_count += 1;
           if (childNode.querySelector('[data-pin-href]')) {
             clearInterval(pinterest_embed_timer);
@@ -1727,19 +1748,19 @@
    * @param {object} options
    */
   function gmapsify(parentNode, childNode, options, callback) {
-    sdkReady('googlemaps', function(err) {
+    sdkReady('googlemaps', function (err) {
       if (err) {
         return callback(err);
       }
       if (options.centerize !== false) {
         Embedo.utils.centerize(parentNode, childNode, options);
       }
-      childNode.style.width = options.width
-        ? options.width + 'px'
-        : Embedo.utils.compute(parentNode, 'width');
-      childNode.style.height = options.height
-        ? options.height + 'px'
-        : Embedo.utils.compute(parentNode, 'height');
+      childNode.style.width = options.width ?
+        options.width + 'px' :
+        Embedo.utils.compute(parentNode, 'width');
+      childNode.style.height = options.height ?
+        options.height + 'px' :
+        Embedo.utils.compute(parentNode, 'height');
       callback(null, {});
     });
   }
@@ -1755,7 +1776,7 @@
   function automagic(parentNode, childNode, options, callback) {
     Embedo.log('info', 'automagic', parentNode, childNode, options);
     options = options || {};
-    callback = callback || function() {};
+    callback = callback || function () {};
 
     if (!Embedo.utils.validateElement(parentNode) || !Embedo.utils.validateElement(childNode)) {
       return callback(new Error('HTMLElement does not exist in DOM.'));
@@ -1763,7 +1784,7 @@
 
     Embedo.utils.watcher(
       options.id || Embedo.utils.uuid(),
-      function() {
+      function () {
         var parent = {
           width: options.width || Embedo.utils.compute(parentNode, 'width'),
           height: options.height || Embedo.utils.compute(parentNode, 'height')
@@ -1816,7 +1837,7 @@
    * @param {function} callback
    */
   function sdkReady(type, callback) {
-    callback = callback || function() {};
+    callback = callback || function () {};
     if (!Embedo.defaults.SOURCES[type]) {
       return callback(new Error('unsupported_sdk_type'));
     }
