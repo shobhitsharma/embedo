@@ -315,6 +315,21 @@ describe("Embedo", function() {
       });
   });
 
+  it("should embed a soundcloud track", function(done) {
+    embedo
+      .load(
+        document.getElementById("embedo-soundcloud"),
+        "https://soundcloud.com/uiceheidd/lucid-dreams-forget-me"
+      )
+      .done(function(data) {
+        expect(data).to.be.a("object");
+        done();
+      })
+      .fail(function(err) {
+        done(err);
+      });
+  });
+
   it("should have requests stored after calling .load()", function(done) {
     expect(embedo.requests).to.be.an("array");
     done();

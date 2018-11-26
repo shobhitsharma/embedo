@@ -45,10 +45,11 @@ function render() {
           window.ga('send', 'event', '[done] ' + url, data.url, dimensions);
         }
       }).fail(function (err) {
+        document.getElementById('test-container').innerHTML = '<code>' + err.message + '</code>';
         if (window.ga) {
-          window.ga('send', 'event', '[error] '+ url, err.message, dimensions);
+          window.ga('send', 'event', '[error] ' + url, err.message, dimensions);
         }
       });
-    }, 300);
+    }, 500);
   }
 }
