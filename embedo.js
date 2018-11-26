@@ -121,6 +121,13 @@
         oEmbed: null,
         REGEX: /https:\/\/gist\.github\.com\/(\w+)\/(\w+)/,
         PARAMS: {}
+      },
+      soundcloud: {
+        GLOBAL: null,
+        SDK: null,
+        oEmbed: 'https://soundcloud.com/oembed',
+        REGEX: /^https:\/\/soundcloud\.com\/(\w+)\/.*$/,
+        PARAMS: {}
       }
     },
     RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize', 'jsonp']
@@ -1260,6 +1267,45 @@
         height: Embedo.utils.compute(container, 'height')
       });
     };
+  };
+
+  /**
+   * @method soundcloud
+   * SoundCloud Embed Player (api-web) prototype
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.soundcloud = function(id, element, url, options, callback) {
+    var size = Embedo.utils.dimensions(element, options.width, options.height);
+    var embed_options = Embedo.utils.merge({
+        url: encodeURI(url),
+        format: 'js'
+      },
+      options,
+      Embedo.defaults.RESTRICTED
+    );
+    var embed_uri =
+      Embedo.defaults.SOURCES.soundcloud.oEmbed + '?' + Embedo.utils.querystring(embed_options);
+
+    Embedo.utils.fetch(embed_uri, function(error, content) {
+      if (error) {
+        Embedo.log('error', 'soundcloud', error);
+        return callback(error);
+      }
+      var container = Embedo.utils.generateEmbed(id, 'soundcloud', content.html);
+      element.appendChild(container);
+
+      callback(null, {
+        id: id,
+        el: element,
+        width: size.width,
+        height: size.height
+      });
+    });
   };
 
   /**
