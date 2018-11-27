@@ -216,11 +216,15 @@ function run() {
     'http://jsfiddle.net/skelly/FX44w/embedded/'
   );
 
-  embedo
-    .load(
-      document.getElementById("embedo-soundcloud"),
-      "https://soundcloud.com/uiceheidd/lucid-dreams-forget-me"
-    );
+  embedo.load(
+    document.getElementById("embedo-soundcloud"),
+    "https://soundcloud.com/uiceheidd/lucid-dreams-forget-me"
+  );
+
+  embedo.load(
+    document.getElementById("embedo-spotify"),
+    "https://open.spotify.com/track/1K95m0tusqzkVum2PmzeIk"
+  );
 
   // Loads google maps URL
   // embedo.load(

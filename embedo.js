@@ -128,6 +128,13 @@
         oEmbed: 'https://soundcloud.com/oembed',
         REGEX: /^https:\/\/soundcloud\.com\/(\w+)\/.*$/,
         PARAMS: {}
+      },
+      spotify: {
+        GLOBAL: null,
+        SDK: null,
+        oEmbed: 'https://embed.spotify.com/oembed',
+        REGEX: /^https:\/\/open\.spotify\.com\/(track|album)\/(\w+)$/,
+        PARAMS: {}
       }
     },
     RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize', 'jsonp']
@@ -399,7 +406,7 @@
       options = options || {};
       var target = document.head || document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
-      var jsonpCallback = 'embedo_fetch_' + Embedo.utils.uuid();
+      var jsonpCallback = 'embedofetch' + Embedo.utils.uuid();
       url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
       url = url.replace('?&', '?');
 
@@ -1304,6 +1311,44 @@
         return callback(error);
       }
       var container = Embedo.utils.generateEmbed(id, 'soundcloud', content.html);
+      element.appendChild(container);
+
+      callback(null, {
+        id: id,
+        el: element,
+        width: size.width,
+        height: size.height
+      });
+    });
+  };
+
+  /**
+   * @method spotify
+   * Spotify oEmbed prototype (Undocumented)
+   *
+   * @param {number} id
+   * @param {HTMLElement} element
+   * @param {string} url
+   * @param {object} options Optional parameters.
+   * @return callback
+   */
+  Embedo.prototype.spotify = function (id, element, url, options, callback) {
+    var size = Embedo.utils.dimensions(element, options.width, options.height);
+    var embed_options = Embedo.utils.merge({
+        url: url
+      },
+      options,
+      Embedo.defaults.RESTRICTED
+    );
+    var embed_uri =
+      Embedo.defaults.SOURCES.spotify.oEmbed + '?' + Embedo.utils.querystring(embed_options);
+
+    Embedo.utils.fetch(embed_uri, function (error, content) {
+      if (error) {
+        Embedo.log('error', 'spotify', error);
+        return callback(error);
+      }
+      var container = Embedo.utils.generateEmbed(id, 'spotify', content.html);
       element.appendChild(container);
 
       callback(null, {

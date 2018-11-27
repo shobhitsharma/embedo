@@ -330,6 +330,21 @@ describe("Embedo", function() {
       });
   });
 
+  it("should embed a spotify track", function(done) {
+    embedo
+      .load(
+        document.getElementById("embedo-spotify"),
+        "https://open.spotify.com/track/1K95m0tusqzkVum2PmzeIk"
+      )
+      .done(function(data) {
+        expect(data).to.be.a("object");
+        done();
+      })
+      .fail(function(err) {
+        done(err);
+      });
+  });
+
   it("should have requests stored after calling .load()", function(done) {
     expect(embedo.requests).to.be.an("array");
     done();
