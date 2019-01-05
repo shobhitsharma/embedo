@@ -1,5 +1,6 @@
-@import "https://fonts.googleapis.com/css?family=Karla:400,700";
+@import "https://fonts.googleapis.com/css?family=Rubik:400,700";
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+
 html,
 body,
 div,
@@ -123,6 +124,15 @@ ul {
   list-style: none;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
 blockquote,
 q {
   quotes: none;
@@ -143,7 +153,7 @@ table {
 
 body,
 html {
-  font-family: 'Karla', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Rubik', sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -156,14 +166,14 @@ body {
   line-height: 1.5;
   color: white;
   overflow-x: hidden;
-  background: #57a2d4;
+  background: #51a3d9;
   -webkit-overflow-scrolling: touch;
   font-weight: 500;
 }
 
 *,
- :after,
- :before {
+:after,
+:before {
   zoom: 1;
   margin: 0;
   padding: 0;
@@ -238,6 +248,10 @@ header a:hover {
   color: white;
 }
 
+.has-shadow {
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 8px;
+}
+
 #embedo-app {
   position: relative;
   display: block;
@@ -282,13 +296,14 @@ header a:hover {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  border-radius: 30px;
 }
 
 #embedo-app form>input {
   float: left;
   color: rgb(0, 0, 0);
-  margin-bottom: 15px;
-  margin-top: 4px;
+  margin-bottom: 0;
+  margin-top: 0;
   width: 100%;
   max-width: 100%;
   font-size: 14px;
@@ -333,9 +348,9 @@ header a:hover {
 
 .buttons>a {
   color: white;
-  border-radius: 2px;
+  border-radius: 3px;
   padding: 7px 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   background-color: rgba(0, 0, 0, 0.21);
   -webkit-box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
@@ -343,6 +358,10 @@ header a:hover {
   -o-transition: all 0.2s ease;
   transition: all 0.2s ease;
   -webkit-transition: all 0.2s ease;
+}
+
+.buttons>a i {
+  margin-right: 5px;
 }
 
 .buttons>a:hover {
@@ -385,7 +404,6 @@ header a:hover {
 #embedo-app.test>section .code-demo h2 {
   text-align: left;
   font-size: 1.6em;
-  font-weight: 600;
   margin-bottom: 15px;
 }
 
@@ -405,7 +423,7 @@ section.readme {
   text-align: center;
 }
 
-[data-embedo-source="facebook"] > div {
+[data-embedo-source="facebook"]>div {
   background-color: white;
   border-radius: 3px;
 }
@@ -564,18 +582,22 @@ body #superman {
     -webkit-transform: translateX(0) scale(0.5);
     transform: translateX(0) scale(0.5);
   }
+
   20% {
     -webkit-transform: translateX(100px) scale(0.65);
     transform: translateX(100px) scale(0.65);
   }
+
   60% {
     -webkit-transform: translateX(-50px) scale(0.6);
     transform: translateX(-50px) scale(0.6);
   }
+
   80% {
     -webkit-transform: translateX(50px) scale(0.65);
     transform: translateX(50px) scale(0.65);
   }
+
   100% {
     -webkit-transform: translateX(0) scale(0.5);
     transform: translateX(0) scale(0.5);
@@ -587,18 +609,22 @@ body #superman {
     -webkit-transform: translateX(0) scale(0.5);
     transform: translateX(0) scale(0.5);
   }
+
   20% {
     -webkit-transform: translateX(100px) scale(0.65);
     transform: translateX(100px) scale(0.65);
   }
+
   60% {
     -webkit-transform: translateX(-50px) scale(0.6);
     transform: translateX(-50px) scale(0.6);
   }
+
   80% {
     -webkit-transform: translateX(50px) scale(0.65);
     transform: translateX(50px) scale(0.65);
   }
+
   100% {
     -webkit-transform: translateX(0) scale(0.5);
     transform: translateX(0) scale(0.5);
@@ -624,6 +650,7 @@ body #superman .cape {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(-2deg);
     transform: rotate(-2deg);
@@ -635,6 +662,7 @@ body #superman .cape {
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(-2deg);
     transform: rotate(-2deg);
@@ -662,6 +690,7 @@ body #superman .cape .inner {
     -webkit-transform: scaleX(1.1) skewX(-10deg);
     transform: scaleX(1.1) skewX(-10deg);
   }
+
   100% {
     border-radius: 0 0 150% 0 / 0 0 80% 0;
     -webkit-transform: scaleX(1.2);
@@ -675,6 +704,7 @@ body #superman .cape .inner {
     -webkit-transform: scaleX(1.1) skewX(-10deg);
     transform: scaleX(1.1) skewX(-10deg);
   }
+
   100% {
     border-radius: 0 0 150% 0 / 0 0 80% 0;
     -webkit-transform: scaleX(1.2);
@@ -1274,7 +1304,7 @@ body #superman .leg:before {
 }
 
 .markdown-body strong {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .markdown-body hr {
@@ -1873,6 +1903,7 @@ pre[class*="language-"] {
     -webkit-transform: translateX(0);
     transform: translateX(0);
   }
+
   100% {
     -webkit-transform: translateX(-110vw);
     transform: translateX(-110vw);
@@ -1884,6 +1915,7 @@ pre[class*="language-"] {
     -webkit-transform: translateX(0);
     transform: translateX(0);
   }
+
   100% {
     -webkit-transform: translateX(-110vw);
     transform: translateX(-110vw);
@@ -1895,10 +1927,12 @@ pre[class*="language-"] {
     -webkit-transform: translateY(0px) rotate();
     transform: translateY(0px) rotate();
   }
+
   50% {
     -webkit-transform: translateY(-20px) rotate(-3deg);
     transform: translateY(-20px) rotate(-3deg);
   }
+
   100% {
     -webkit-transform: translateY(0px) rotate();
     transform: translateY(0px) rotate();
@@ -1910,10 +1944,12 @@ pre[class*="language-"] {
     -webkit-transform: translateY(0px) rotate();
     transform: translateY(0px) rotate();
   }
+
   50% {
     -webkit-transform: translateY(-20px) rotate(-3deg);
     transform: translateY(-20px) rotate(-3deg);
   }
+
   100% {
     -webkit-transform: translateY(0px) rotate();
     transform: translateY(0px) rotate();
@@ -1924,31 +1960,39 @@ pre[class*="language-"] {
   section#action-hero {
     display: none;
   }
+
   #embedo-app {
     padding: 0;
   }
+
   #embedo-app>section.teaser {
     padding: 25px;
   }
+
   #embedo-app>section.teaser>p {
     font-size: 13px;
   }
+
   #embedo-app form>input {
     font-size: 11px;
     padding: 15px 10px;
   }
+
   .code-editor-container {
     max-width: 320px;
     font-size: 11px;
     margin: 3% auto;
   }
+
   footer div span {
     display: block;
     width: 100%;
   }
+
   footer .supported-sites {
     padding: 25px;
   }
+
   footer .supported-sites .supports {
     width: 98%;
   }

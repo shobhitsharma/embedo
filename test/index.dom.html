@@ -1,0 +1,72 @@
+<html>
+
+<head>
+  <title>Embedo - DOM Suite</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="icon" type="image/png" href="https://github.com/fluidicon.png">
+  <link href="../docs/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="mocha"></div>
+  <main>
+    <div id="embedo-app" class="test">
+      <h1>Embedo DOM Demo</h1>
+      <section class="samples">
+        <div class="code-editor code-demo">
+          <h2>Twitter Embed</h2>
+          <div data-embedo-url="https://twitter.com/Sh0bhit/status/797584590214926340"></div>
+          <div data-embedo-url="https://twitter.com/TwitterDev/timelines/539487832448843776" data-embedo-widget_type="grid"></div>
+          <div data-embedo-url="https://twitter.com/TwitterDev/timelines/539487832448843776" data-embedo-height="500"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>YouTube Embed</h2>
+          <div data-embedo-url="https://www.youtube.com/watch?v=cwQgjq0mCdE" data-embedo-height="400"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Vimeo Embed</h2>
+          <div data-embedo-url="https://vimeo.com/212603149" data-embedo-height="400"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Facebook Embed</h2>
+          <div data-embedo-url="https://www.facebook.com/facebook"></div>
+          <div data-embedo-url="https://www.facebook.com/9gag/photos/a.109041001839.105995.21785951839/10156236707186840"></div>
+          <div data-embedo-url="https://www.facebook.com/9gag/videos/10156133478761840"></div>
+        </div>
+        <div class="code-editor code-demo">
+          <h2>Pinterest Embed</h2>
+          <div data-embedo-url="https://www.pinterest.com/pin/99360735500167749" data-embedo-strict="true"></div>
+          <div data-embedo-url="https://www.pinterest.com/pinterest/official-news"></div>
+          <div data-embedo-url="https://www.pinterest.com/pinterest" data-embedo-data-pin-do="embedBoard" data-embedo-data-pin-board-width="750" data-embedo-data-pin-scale-height="600" data-embedo-data-pin-scale-width="80"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <!--[if IE]>
+  <script src="https://cdn01.onzu.com/assets/IE7.min.js"></script>
+  <script src="https://cdn01.onzu.com/assets/IE8.min.js"></script>
+  <script src="https://cdn01.onzu.com/assets/IE9.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.1/core.min.js"></script>
+  <![endif]-->
+  <!-- Here is how embedo.js get declared on top of your implementation -->
+  <script src="../embedo.js"></script>
+  <script src="../plugins/gmaps/gmaps.embedo.js"></script>
+  <script>
+    new Embedo({
+      facebook: {
+        version: 'v3.2',
+        appId: '269918776508696',
+        xfbml: true
+      },
+      twitter: true,
+      instagram: true,
+      pinterest: true,
+      googlemaps: {
+        key: 'AIzaSew32534t43kjlth43isWQeZze5wXiuHgUy580s'
+      }
+    });
+
+  </script>
+</body>
+
+</html>

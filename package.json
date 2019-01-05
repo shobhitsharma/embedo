@@ -8,7 +8,9 @@
     "start": "http-server ./ -ssl -o",
     "lint": "jshint embedo.js",
     "test": "mocha test/*.spec.js",
-    "build": "uglifyjs embedo.js --compress --comments --mangle --output=embedo.min.js"
+    "build:embedo": "uglifyjs embedo.js --compress --comments --mangle -o embedo.min.js",
+    "build:embedo:gmaps": "uglifyjs plugins/gmaps/gmaps.embedo.js --compress --comments --mangle -o plugins/gmaps/gmaps.embedo.min.js",
+    "build": "npm run build:embedo && npm run build:embedo:gmaps"
   },
   "repository": {
     "type": "git",
@@ -34,15 +36,6 @@
     "jsdom": "^13.1.0",
     "jshint": "^2.9.7",
     "mocha": "^5.2.0",
-    "prettier": "^1.15.3",
     "uglify-js": "^3.4.9"
-  },
-  "prettier": {
-    "tabWidth": 2,
-    "bracketSpacing": true,
-    "singleQuote": true,
-    "trailingComma": "none",
-    "printWidth": 100,
-    "arrowParens": "avoid"
   }
 }

@@ -1,12 +1,12 @@
 /**
- * @file Embedo JS
+ * @file embedo.js
  *
  * Embedo is third party content embed plugin with features having events and resizing.
  * It provides a layer above popular social media sites native embed snippets
  * making it easier to hook content without modifying much code.
  *
- * @license MIT
  * @author Shobhit Sharma <hi@shobh.it>
+ * @license MIT
  */
 
 (function (global, factory) {
@@ -37,20 +37,6 @@
     return this;
   }
 
-  Object.defineProperty(Embedo, 'log', {
-    value: function log(type) {
-      if (!Embedo.debug) {
-        return;
-      }
-      if (typeof console !== 'undefined' && typeof console[type] !== 'undefined') {
-        console[type].apply(console, Array.prototype.slice.call(arguments, 1));
-      }
-    },
-    writable: false,
-    enumerable: true,
-    configurable: false
-  });
-
   /**
    * @constant
    * Embedo defaults
@@ -63,8 +49,7 @@
         facebook: null,
         twitter: false,
         instagram: false,
-        pinterest: false,
-        googlemaps: null
+        pinterest: false
       },
       SOURCES: {
         facebook: {
@@ -114,13 +99,6 @@
           REGEX: /(http|https)?:\/\/(www\.)?vimeo(\.[a-z]+)\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
           PARAMS: {}
         },
-        googlemaps: {
-          GLOBAL: 'google',
-          SDK: 'https://maps.googleapis.com/maps/api/js',
-          oEmbed: null,
-          REGEX: /(http|https)?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*/i,
-          PARAMS: {}
-        },
         github: {
           GLOBAL: null,
           SDK: null,
@@ -143,10 +121,25 @@
     configurable: false
   });
 
+  // Logger
+  Object.defineProperty(Embedo, 'log', {
+    value: function log(type) {
+      if (!Embedo.debug) {
+        return;
+      }
+      if (typeof console !== 'undefined' && typeof console[type] !== 'undefined') {
+        console[type].apply(console, Array.prototype.slice.call(arguments, 1));
+      }
+    },
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
+
   /**
+   * Helper utlities
    * @method utils
    *
-   * Helper functions
    * @private
    */
   Object.defineProperty(Embedo, 'utils', {
@@ -287,6 +280,10 @@
         return Deferred;
       })(),
 
+      camelToSnake: function camelToSnake(str) {
+        return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+      },
+
       /**
        * @function validateURL
        *
@@ -373,6 +370,31 @@
           obj !== null &&
           obj.nodeType === 1 &&
           typeof obj.nodeName === 'string';
+      },
+
+      /**
+       * @function sdkReady
+       * Checks when SDK global object is ready
+       *
+       * @param {string} type
+       * @param {function} callback
+       */
+      sdkReady: function sdkReady(type, callback) {
+        callback = callback || function () {};
+        if (!Embedo.defaults.SOURCES[type]) {
+          return callback(new Error('unsupported_sdk_type'));
+        }
+        var counter = 0;
+        (function check() {
+          counter++;
+          if (counter > 15) {
+            return callback(new Error(type + ':sdk_not_available'));
+          }
+          if (window[Embedo.defaults.SOURCES[type].GLOBAL]) {
+            return callback(null, window[Embedo.defaults.SOURCES[type].GLOBAL]);
+          }
+          setTimeout(check, 10 * counter);
+        })(type);
       },
 
       /**
@@ -766,12 +788,14 @@
   Embedo.prototype.init = function (options) {
     Embedo.log('info', 'init', this.requests, options);
 
-    // Append SDK's to parent's body
-    appendSDK('facebook', options.facebook);
-    appendSDK('twitter', options.twitter);
-    appendSDK('instagram', options.instagram);
-    appendSDK('pinterest', options.pinterest);
-    appendSDK('googlemaps', options.googlemaps);
+    // Append enabled SDKs to DOM
+    Object.keys(Embedo.defaults.SOURCES).forEach(function (source) {
+      if (Embedo.defaults.SOURCES[source].SDK) {
+        appendSDK(source, options[source]);
+      }
+    });
+
+    this.domify();
 
     /**
      * @func appendSDK
@@ -799,6 +823,25 @@
   };
 
   /**
+   * @method domify
+   * Replaces "data-embedo-*" elements during initialization.
+   */
+  Embedo.prototype.domify = function domify() {
+    var embedos = document.querySelectorAll('[data-embedo-url]');
+    [].forEach.call(embedos, function (embedo_el) {
+      var options = Object.keys(embedo_el.dataset || {}).reduce(function (acc, cur) {
+        if (cur.indexOf('embedo') !== -1) {
+          var option = Embedo.utils.camelToSnake(cur).replace('embedo-', '');
+          acc[option] = embedo_el.dataset[cur];
+        }
+        return acc;
+      }, {});
+
+      this.render(embedo_el, options.url, options);
+    }.bind(this));
+  };
+
+  /**
    * @method facebook
    * Facebook embed prototype
    *
@@ -808,7 +851,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.facebook = function (id, element, url, options, callback) {
+  Embedo.prototype.facebook = function facebook(id, element, url, options, callback) {
     var type, fb_html_class;
 
     if (/^([^\/?].+\/)?post|photo(s|\.php)[\/?].*$/gm.test(url)) {
@@ -900,8 +943,8 @@
   };
 
   /**
-   * @method twitter
    * Twitter embed prototype
+   * @method twitter
    *
    * @param {number} id
    * @param {HTMLElement} element
@@ -909,7 +952,7 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.twitter = function (id, element, url, options, callback) {
+  Embedo.prototype.twitter = function twitter(id, element, url, options, callback) {
     var embed_uri = Embedo.defaults.SOURCES.twitter.oEmbed;
     var query = Embedo.utils.merge({
         url: encodeURI(url),
@@ -1167,79 +1210,6 @@
         });
       }
     );
-  };
-
-  /**
-   * @method googlemaps
-   * Google Maps Embed
-   *
-   * @param {number} id
-   * @param {HTMLElement} element
-   * @param {string} url
-   * @param {object} options Optional parameters.
-   * @return callback
-   */
-  Embedo.prototype.googlemaps = function (id, element, url, options, callback) {
-    var size = Embedo.utils.dimensions(element, options.width, options.height);
-    var cordinates = getCordinates(url);
-    if (!cordinates) {
-      return callback(new Error('unable_to_find_cordinates'));
-    }
-
-    var container = Embedo.utils.generateEmbed(id, 'googlemaps');
-    element.appendChild(container);
-
-    gmapsify(
-      element,
-      container, {
-        url: url,
-        width: size.width,
-        height: size.height,
-        centerize: options.centerize
-      },
-      function (err) {
-        if (err) {
-          Embedo.log('error', 'googlemaps', err);
-          return callback(err);
-        }
-
-        var location = new window.google.maps.LatLng(cordinates.lat, cordinates.lng);
-        var map = new window.google.maps.Map(container, {
-          zoom: options.zoom || 12,
-          center: location,
-          mapTypeId: options.MapTypeId || window.google.maps.MapTypeId.ROADMAP
-        });
-        var marker = new window.google.maps.Marker({
-          map: map,
-          draggable: true,
-          animation: window.google.maps.Animation.DROP,
-          position: location
-        });
-
-        callback(null, {
-          id: id,
-          el: element,
-          width: size.width,
-          height: size.height,
-          marker: marker
-        });
-      }
-    );
-
-    /**
-     * @func getCordinates
-     *
-     * @param {string} url
-     */
-    function getCordinates(url) {
-      var regex = /@(-?\d+\.\d+),(-?\d+\.\d+),(\d+\.?\d?)+z/;
-      var match = url.match(regex);
-      return match && match.length && match[1] && match[2] ? {
-          lat: parseFloat(match[1], 0),
-          lng: parseFloat(match[2], 0)
-        } :
-        null;
-    }
   };
 
   /**
@@ -1593,7 +1563,7 @@
           return;
         }
 
-        if (request.source === 'iframe' || request.source === 'googlemaps') {
+        if (request.source === 'iframe') {
           return this.emit('refresh', request, {
             width: Embedo.utils.compute(request.el, 'width'),
             height: Embedo.utils.compute(request.el, 'height')
@@ -1689,7 +1659,7 @@
    * @param {object} options
    */
   function facebookify(parentNode, childNode, options, callback) {
-    sdkReady('facebook', function (err) {
+    Embedo.utils.sdkReady('facebook', function (err) {
       if (err) {
         return callback(err);
       }
@@ -1717,7 +1687,7 @@
    * @param {object} options
    */
   function twitterify(parentNode, childNode, options, callback) {
-    sdkReady('twitter', function (err) {
+    Embedo.utils.sdkReady('twitter', function (err) {
       if (err) {
         return callback(err);
       }
@@ -1745,7 +1715,7 @@
    * @param {object} options
    */
   function instagramify(parentNode, childNode, options, callback) {
-    sdkReady('instagram', function (err) {
+    Embedo.utils.sdkReady('instagram', function (err) {
       if (err) {
         return callback(err);
       }
@@ -1780,7 +1750,7 @@
    * @param {object} options
    */
   function pinterestify(parentNode, childNode, options, callback) {
-    sdkReady('pinterest', function (err) {
+    Embedo.utils.sdkReady('pinterest', function (err) {
       if (err) {
         return callback(err);
       }
@@ -1808,32 +1778,6 @@
           }
         }, 250);
       }, 750);
-    });
-  }
-
-  /**
-   * @function gmapsify
-   * Parses Google Maps SDK
-   *
-   * @param {HTMLElement} parentNode
-   * @param {HTMLElement} childNode
-   * @param {object} options
-   */
-  function gmapsify(parentNode, childNode, options, callback) {
-    sdkReady('googlemaps', function (err) {
-      if (err) {
-        return callback(err);
-      }
-      if (options.centerize !== false) {
-        Embedo.utils.centerize(parentNode, childNode, options);
-      }
-      childNode.style.width = options.width ?
-        options.width + 'px' :
-        Embedo.utils.compute(parentNode, 'width');
-      childNode.style.height = options.height ?
-        options.height + 'px' :
-        Embedo.utils.compute(parentNode, 'height');
-      callback(null, {});
     });
   }
 
@@ -1899,31 +1843,6 @@
       },
       500
     );
-  }
-
-  /**
-   * @function sdkReady
-   * Checks when SDK global object is ready
-   *
-   * @param {string} type
-   * @param {function} callback
-   */
-  function sdkReady(type, callback) {
-    callback = callback || function () {};
-    if (!Embedo.defaults.SOURCES[type]) {
-      return callback(new Error('unsupported_sdk_type'));
-    }
-    var counter = 0;
-    (function check() {
-      counter++;
-      if (counter > 15) {
-        return callback(new Error(type + ':sdk_not_available'));
-      }
-      if (window[Embedo.defaults.SOURCES[type].GLOBAL]) {
-        return callback(null, window[Embedo.defaults.SOURCES[type].GLOBAL]);
-      }
-      setTimeout(check, 10 * counter);
-    })(type);
   }
 
   return Embedo;
