@@ -6,8 +6,9 @@
   "scripts": {
     "prestart": "npm install",
     "start": "http-server ./ -ssl -o",
+    "lint": "jshint embedo.js",
     "test": "mocha test/*.spec.js",
-    "build": "uglifyjs embedo.js --compress --mangle --output=embedo.min.js"
+    "build": "uglifyjs embedo.js --compress --comments --mangle --output=embedo.min.js"
   },
   "repository": {
     "type": "git",
@@ -30,8 +31,18 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "http-server": "^0.11.1",
-    "jsdom": "^13.0.0",
+    "jsdom": "^13.1.0",
+    "jshint": "^2.9.7",
     "mocha": "^5.2.0",
+    "prettier": "^1.15.3",
     "uglify-js": "^3.4.9"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "bracketSpacing": true,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "printWidth": 100,
+    "arrowParens": "avoid"
   }
 }

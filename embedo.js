@@ -37,14 +37,19 @@
     return this;
   }
 
-  Embedo.log = function log(type) {
-    if (!Embedo.debug) {
-      return;
-    }
-    if (typeof console !== 'undefined' && typeof console[type] !== 'undefined') {
-      console[type].apply(console, Array.prototype.slice.call(arguments, 1));
-    }
-  };
+  Object.defineProperty(Embedo, 'log', {
+    value: function log(type) {
+      if (!Embedo.debug) {
+        return;
+      }
+      if (typeof console !== 'undefined' && typeof console[type] !== 'undefined') {
+        console[type].apply(console, Array.prototype.slice.call(arguments, 1));
+      }
+    },
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
 
   /**
    * @constant
@@ -52,86 +57,91 @@
    *
    * @description Embedo defaults contains basic configuration and values required to build internal engine.
    */
-  Embedo.defaults = {
-    OPTIONS: {
-      facebook: null,
-      twitter: false,
-      instagram: false,
-      pinterest: false,
-      googlemaps: null
-    },
-    SOURCES: {
-      facebook: {
-        GLOBAL: 'FB',
-        SDK: 'https://connect.facebook.net/${locale}/all.js',
-        oEmbed: 'https://www.facebook.com/plugins/${type}/oembed.json',
-        REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
-        PARAMS: {
-          version: 'v3.1',
-          cookie: true,
-          appId: null,
-          xfbml: true
+  Object.defineProperty(Embedo, 'defaults', {
+    value: {
+      OPTIONS: {
+        facebook: null,
+        twitter: false,
+        instagram: false,
+        pinterest: false,
+        googlemaps: null
+      },
+      SOURCES: {
+        facebook: {
+          GLOBAL: 'FB',
+          SDK: 'https://connect.facebook.net/${locale}/all.js',
+          oEmbed: 'https://www.facebook.com/plugins/${type}/oembed.json',
+          REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
+          PARAMS: {
+            version: 'v3.2',
+            cookie: true,
+            appId: null,
+            xfbml: true
+          }
+        },
+        twitter: {
+          GLOBAL: 'twttr',
+          SDK: 'https://platform.twitter.com/widgets.js',
+          oEmbed: 'https://publish.twitter.com/oembed',
+          REGEX: /^http[s]*:\/\/[www.]*twitter(\.[a-z]+).*/i,
+          PARAMS: {}
+        },
+        instagram: {
+          GLOBAL: 'instgrm',
+          SDK: 'https://platform.instagram.com/en_US/embeds.js',
+          oEmbed: 'https://api.instagram.com/oembed',
+          REGEX: /instagram.com\/p\/[a-zA-Z0-9_\/\?\-\=]+/gi,
+          PARAMS: {}
+        },
+        youtube: {
+          GLOBAL: null,
+          SDK: null,
+          oEmbed: 'https://www.youtube.com/embed/',
+          REGEX: /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/,
+          PARAMS: null
+        },
+        pinterest: {
+          GLOBAL: 'PinUtils',
+          SDK: 'https://assets.pinterest.com/js/pinit.js',
+          oEmbed: null,
+          REGEX: /(https?:\/\/(ww.)?)?pinterest(\.[a-z]+).*/i,
+          PARAMS: {}
+        },
+        vimeo: {
+          GLOBAL: null,
+          SDK: null,
+          oEmbed: 'https://vimeo.com/api/oembed.json',
+          REGEX: /(http|https)?:\/\/(www\.)?vimeo(\.[a-z]+)\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
+          PARAMS: {}
+        },
+        googlemaps: {
+          GLOBAL: 'google',
+          SDK: 'https://maps.googleapis.com/maps/api/js',
+          oEmbed: null,
+          REGEX: /(http|https)?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*/i,
+          PARAMS: {}
+        },
+        github: {
+          GLOBAL: null,
+          SDK: null,
+          oEmbed: null,
+          REGEX: /https:\/\/gist\.github\.com\/(\w+)\/(\w+)/,
+          PARAMS: {}
+        },
+        soundcloud: {
+          GLOBAL: null,
+          SDK: null,
+          oEmbed: 'https://soundcloud.com/oembed',
+          REGEX: /^https:\/\/soundcloud\.com\/(\w+)\/.*$/,
+          PARAMS: {}
         }
       },
-      twitter: {
-        GLOBAL: 'twttr',
-        SDK: 'https://platform.twitter.com/widgets.js',
-        oEmbed: 'https://publish.twitter.com/oembed',
-        REGEX: /^http[s]*:\/\/[www.]*twitter(\.[a-z]+).*/i,
-        PARAMS: {}
-      },
-      instagram: {
-        GLOBAL: 'instgrm',
-        SDK: 'https://platform.instagram.com/en_US/embeds.js',
-        oEmbed: 'https://api.instagram.com/oembed',
-        REGEX: /instagram.com\/p\/[a-zA-Z0-9_\/\?\-\=]+/gi,
-        PARAMS: {}
-      },
-      youtube: {
-        GLOBAL: null,
-        SDK: null,
-        oEmbed: 'https://www.youtube.com/embed/',
-        REGEX: /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/,
-        PARAMS: null
-      },
-      pinterest: {
-        GLOBAL: 'PinUtils',
-        SDK: 'https://assets.pinterest.com/js/pinit.js',
-        oEmbed: null,
-        REGEX: /(https?:\/\/(ww.)?)?pinterest(\.[a-z]+).*/i,
-        PARAMS: {}
-      },
-      vimeo: {
-        GLOBAL: null,
-        SDK: null,
-        oEmbed: 'https://vimeo.com/api/oembed.json',
-        REGEX: /(http|https)?:\/\/(www\.)?vimeo(\.[a-z]+)\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
-        PARAMS: {}
-      },
-      googlemaps: {
-        GLOBAL: 'google',
-        SDK: 'https://maps.googleapis.com/maps/api/js',
-        oEmbed: null,
-        REGEX: /(http|https)?:\/\/(www\.|maps\.)?google(\.[a-z]+){1,2}\/maps\/.*/i,
-        PARAMS: {}
-      },
-      github: {
-        GLOBAL: null,
-        SDK: null,
-        oEmbed: null,
-        REGEX: /https:\/\/gist\.github\.com\/(\w+)\/(\w+)/,
-        PARAMS: {}
-      },
-      soundcloud: {
-        GLOBAL: null,
-        SDK: null,
-        oEmbed: 'https://soundcloud.com/oembed',
-        REGEX: /^https:\/\/soundcloud\.com\/(\w+)\/.*$/,
-        PARAMS: {}
-      }
+      RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize', 'jsonp']
     },
-    RESTRICTED: ['url', 'strict', 'height', 'width', 'centerize', 'jsonp']
-  };
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
 
   /**
    * @method utils
@@ -139,557 +149,550 @@
    * Helper functions
    * @private
    */
-  Embedo.utils = Object.create({
-    /**
-     * @function uuid
-     */
-    uuid: function uuid() {
-      var primary = (Math.random() * 46656) | 0;
-      var secondary = (Math.random() * 46656) | 0;
+  Object.defineProperty(Embedo, 'utils', {
+    value: Object.create({
+      /**
+       * @function uuid
+       */
+      uuid: function uuid() {
+        var primary = (Math.random() * 46656) | 0;
+        var secondary = (Math.random() * 46656) | 0;
 
-      primary = ('000' + primary.toString(36)).slice(-3);
-      secondary = ('000' + secondary.toString(36)).slice(-3);
+        primary = ('000' + primary.toString(36)).slice(-3);
+        secondary = ('000' + secondary.toString(36)).slice(-3);
 
-      return primary + secondary;
-    },
+        return primary + secondary;
+      },
 
-    /**
-     * @function extend
-     * @returns {object}
-     */
-    extend: function extend(obj) {
-      obj = obj || {};
-      for (var i = 1; i < arguments.length; i++) {
-        if (!arguments[i]) {
-          continue;
-        }
-        for (var key in arguments[i]) {
-          if (arguments[i].hasOwnProperty(key)) {
-            obj[key] = arguments[i][key];
+      /**
+       * @function extend
+       * @returns {object}
+       */
+      extend: function extend(obj) {
+        obj = obj || {};
+        for (var i = 1; i < arguments.length; i++) {
+          if (!arguments[i]) {
+            continue;
           }
-        }
-      }
-      return obj;
-    },
-
-    /**
-     * @function merge
-     *
-     * @param {object} destination
-     * @param {object} source
-     * @param {array} preserve
-     * @returns
-     */
-    merge: function merge(destination, source, preserve) {
-      preserve = preserve || [];
-
-      for (var property in source) {
-        if (preserve.indexOf(property) === -1) {
-          destination[property] = source[property];
-        }
-      }
-
-      return destination;
-    },
-
-    /**
-     * @func sequencer
-     * Breaks down array into sequencer
-     *
-     * @param {Array} array
-     * @param {Number} size
-     * @returns
-     */
-    sequencer: function sequencer() {
-      var args = arguments;
-      return {
-        then: function (done) {
-          var counter = 0;
-          for (var i = 0; i < args.length; i++) {
-            args[i](callme);
-          }
-
-          function callme() {
-            counter++;
-            if (counter === args.length) {
-              done();
+          for (var key in arguments[i]) {
+            if (arguments[i].hasOwnProperty(key)) {
+              obj[key] = arguments[i][key];
             }
           }
         }
-      };
-    },
+        return obj;
+      },
 
-    /**
-     * @func replacer
-     * Replaces ${entity} with object key/value pair
-     *
-     * @param {string} str
-     * @param {object} obj
-     */
-    replacer: function replacer(str, obj) {
-      if (!str || !obj) {
-        return;
-      }
-      if (obj) {
-        for (var key in obj) {
-          if (str) {
-            str = str.split('${' + key + '}').join(obj[key]);
+      /**
+       * @function merge
+       *
+       * @param {object} destination
+       * @param {object} source
+       * @param {array} preserve
+       * @returns
+       */
+      merge: function merge(destination, source, preserve) {
+        preserve = preserve || [];
+
+        for (var property in source) {
+          if (preserve.indexOf(property) === -1) {
+            destination[property] = source[property];
           }
         }
-      }
-      return str;
-    },
 
-    /**
-     * @func observer
-     *
-     * Deferred Implementation for Object
-     */
-    observer: (function () {
-      function Deferred() {
-        this.resolved = [];
-        this.rejected = [];
-      }
-      Deferred.prototype = {
-        execute: function (list, args) {
-          var i = list.length;
-          args = Array.prototype.slice.call(args);
-          while (i--) {
-            list[i].apply(null, args);
+        return destination;
+      },
+
+      /**
+       * @func sequencer
+       * Breaks down array into sequencer
+       *
+       * @param {Array} array
+       * @param {Number} size
+       * @returns
+       */
+      sequencer: function sequencer() {
+        var args = arguments;
+        return {
+          then: function (done) {
+            var counter = 0;
+            for (var i = 0; i < args.length; i++) {
+              args[i](callme);
+            }
+
+            function callme() {
+              counter++;
+              if (counter === args.length) {
+                done();
+              }
+            }
           }
-        },
-        resolve: function () {
-          this.execute(this.resolved, arguments);
-        },
-        reject: function () {
-          this.execute(this.rejected, arguments);
-        },
-        done: function (callback) {
-          this.resolved.push(callback);
-          return this;
-        },
-        fail: function (callback) {
-          this.rejected.push(callback);
-          return this;
+        };
+      },
+
+      /**
+       * @func replacer
+       * Replaces ${entity} with object key/value pair
+       *
+       * @param {string} str
+       * @param {object} obj
+       */
+      replacer: function replacer(str, obj) {
+        if (!str || !obj) {
+          return;
         }
-      };
-      return Deferred;
-    })(),
-
-    /**
-     * @function validateURL
-     *
-     * @param {string} url
-     * @returns
-     */
-    validateURL: function validateURL(url) {
-      return /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(
-        url
-      );
-    },
-
-    /**
-     * @function generateElement
-     * Generates DOM element
-     *
-     * @param {string} source
-     * @param {object} attributes
-     * @returns HTMLElement
-     */
-    generateElement: function generateElement(type, attributes) {
-      var el = document.createElement(type);
-
-      Object.keys(attributes || {}).forEach(function (type) {
-        el.setAttribute(type, attributes[type]);
-      });
-
-      return el;
-    },
-
-    /**
-     * @function generateEmbed
-     * Generates Embed Container
-     *
-     * @param {string} source
-     * @param {string} html
-     * @returns
-     */
-    generateEmbed: function generateEmbed(id, source, html) {
-      id = id || Embedo.utils.uuid();
-      var container = document.createElement('div');
-
-      container.setAttribute('id', id);
-      container.setAttribute('data-embedo-id', id);
-      container.setAttribute('data-embedo-source', source);
-
-      if (Embedo.utils.validateElement(html)) {
-        container.appendChild(html);
-      } else {
-        container.innerHTML = html || '';
-      }
-
-      return container;
-    },
-
-    /**
-     * @function generateScript
-     * Generates script tag element
-     *
-     * @param {string} source
-     * @returns HTMLElement
-     */
-    generateScript: function generateScript(source) {
-      var script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = encodeURI(source);
-      script.setAttribute('async', '');
-      script.setAttribute('charset', 'utf-8');
-      return script;
-    },
-
-    /**
-     * @function validateElement
-     * Validates if passed argument is valid DOM element
-     *
-     * @param {object} obj
-     * @returns HTMLElement
-     */
-    validateElement: function validateElement(obj) {
-      return typeof HTMLElement === 'object' ?
-        obj instanceof window.HTMLElement :
-        obj &&
-        typeof obj === 'object' &&
-        obj !== null &&
-        obj.nodeType === 1 &&
-        typeof obj.nodeName === 'string';
-    },
-
-    /**
-     * @function querystring
-     * Object to Query String
-     *
-     * @param {object} obj
-     * @returns {string}
-     */
-    querystring: function querystring(obj) {
-      var parts = [];
-
-      for (var i in obj) {
-        if (obj.hasOwnProperty(i)) {
-          parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]));
-        }
-      }
-
-      return parts.join('&');
-    },
-
-    /**
-     * @function fetch
-     * JSONP XHR fetch
-     *
-     * @param {string} url
-     * @param {object} options
-     * @param {function} callback
-     */
-    fetch: function fetch(url, options, callback) {
-      if (typeof options === 'function') {
-        callback = options;
-        options = {};
-      }
-      options = options || {};
-      var target = document.head || document.getElementsByTagName('head')[0];
-      var script = document.createElement('script');
-      var jsonpCallback = 'embedo_fetch_' + Embedo.utils.uuid();
-      url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
-      url = url.replace('?&', '?');
-
-      window[jsonpCallback] = function (data) {
-        clear(jsonpCallback, script);
-        callback(null, data);
-      };
-
-      script.type = 'text/javascript';
-      script.defer = true;
-      script.charset = 'UTF-8';
-      script.onerror = function (err) {
-        clear(jsonpCallback, script);
-        return callback(err);
-      };
-      target.appendChild(script);
-      script.src = url;
-
-      function clear(jsonpCallback, script) {
-        try {
-          delete window[jsonpCallback];
-        } catch (e) {
-          window[jsonpCallback] = undefined;
-        }
-        if (script) {
-          target.removeChild(script);
-          script = undefined;
-        }
-      }
-    },
-
-    /**
-     * XHR HTTP Requests
-     *
-     * @param {string} url
-     * @param {object} options
-     * @param {Function} callback
-     */
-    ajax: function ajax(url, options, callback) {
-      if (typeof options === 'function') {
-        callback = options;
-        options = {};
-      }
-      callback = callback || function () {};
-      var xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE || xhr.readyState === 4) {
-          if (xhr.status >= 400) {
-            return callback(new Error(xhr.responseText || xhr.statusText));
-          }
-          try {
-            return callback(null, JSON.parse(xhr.responseText));
-          } catch (e) {
-            return callback(new Error('invalid_response'));
+        if (obj) {
+          for (var key in obj) {
+            if (str) {
+              str = str.split('${' + key + '}').join(obj[key]);
+            }
           }
         }
-      };
-      xhr.onerror = function (err) {
-        return callback(error);
-      };
-      xhr.open('GET', url);
-      xhr.send();
-    },
+        return str;
+      },
 
-    /**
-     * @function transform
-     * Cross Browser CSS Transformation
-     *
-     * @param {HTMLElement} element
-     * @param {string} props
-     */
-    transform: function transform(element, props) {
-      if (!Embedo.utils.validateElement(element)) {
-        return;
-      }
-      element.style.webkitTransform = props;
-      element.style.MozTransform = props;
-      element.style.msTransform = props;
-      element.style.OTransform = props;
-      element.style.transform = props;
-    },
-
-    /**
-     * @function compute
-     * Computes property value of HTMLElement
-     *
-     * @param {HTMLElement} el
-     * @param {string} prop
-     * @param {Boolean} stylesheet
-     * @returns {Number}
-     */
-    compute: function compute(el, prop, is_computed) {
-      if (!Embedo.utils.validateElement(el) || !prop) {
-        return;
-      }
-
-      var bounds = el.getBoundingClientRect();
-      var value = bounds[prop];
-
-      if (is_computed || !value) {
-        if (document.defaultView && document.defaultView.getComputedStyle) {
-          value = document.defaultView.getComputedStyle(el, '').getPropertyValue(prop);
-        } else if (el.currentStyle) {
-          prop = prop.replace(/\-(\w)/g, function (m, p) {
-            return p.toUpperCase();
-          });
-          value = el.currentStyle[prop];
+      /**
+       * @func observer
+       *
+       * Deferred Implementation for Object
+       */
+      observer: (function () {
+        function Deferred() {
+          this.resolved = [];
+          this.rejected = [];
         }
-      }
+        Deferred.prototype = {
+          execute: function (list, args) {
+            var i = list.length;
+            args = Array.prototype.slice.call(args);
+            while (i--) {
+              list[i].apply(null, args);
+            }
+          },
+          resolve: function () {
+            this.execute(this.resolved, arguments);
+          },
+          reject: function () {
+            this.execute(this.rejected, arguments);
+          },
+          done: function (callback) {
+            this.resolved.push(callback);
+            return this;
+          },
+          fail: function (callback) {
+            this.rejected.push(callback);
+            return this;
+          }
+        };
+        return Deferred;
+      })(),
 
-      if (typeof value === 'string' && !/^\d+(\.\d+)?%$/.test(value)) {
-        value = value.replace(/[^\d.-]/g, '');
-      }
+      /**
+       * @function validateURL
+       *
+       * @param {string} url
+       * @returns
+       */
+      validateURL: function validateURL(url) {
+        return /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(
+          url
+        );
+      },
 
-      return isNaN(Number(value)) ? value : Number(value);
-    },
+      /**
+       * @function generateElement
+       * Generates DOM element
+       *
+       * @param {string} source
+       * @param {object} attributes
+       * @returns HTMLElement
+       */
+      generateElement: function generateElement(type, attributes) {
+        var el = document.createElement(type);
 
-    /**
-     * @method convertToPx
-     * Calculates approximate pixel value for vw, vh or % values
-     *
-     * @implements relative_px
-     * @implements percent_px
-     */
-    convertToPx: function convertToPx(el, prop, value) {
-      if (!isNaN(Number(value))) {
-        return Number(value);
-      } else if (/^\d+(\.\d+)?%$/.test(value)) {
-        return percent_px(el, prop, value);
-      } else if (value.match(/(vh|vw)/)) {
-        var dimension = value.replace(/[0-9]/g, '');
-        return relative_px(dimension, value);
-      }
+        Object.keys(attributes || {}).forEach(function (type) {
+          el.setAttribute(type, attributes[type]);
+        });
 
-      // Converts vw or vh to PX
-      function relative_px(type, value) {
-        var w = window,
-          d = document,
-          e = d.documentElement,
-          g = d.body,
-          x = w.innerWidth || e.clientWidth || g.clientWidth,
-          y = w.innerHeight || e.clientHeight || g.clientHeight;
+        return el;
+      },
 
-        if (type === 'vw') {
-          return (x * parseFloat(value)) / 100;
-        } else if (type === 'vh') {
-          return (y * parseFloat(value)) / 100;
+      /**
+       * @function generateEmbed
+       * Generates Embed Container
+       *
+       * @param {string} source
+       * @param {string} html
+       * @returns
+       */
+      generateEmbed: function generateEmbed(id, source, html) {
+        id = id || Embedo.utils.uuid();
+        var container = document.createElement('div');
+
+        container.setAttribute('id', id);
+        container.setAttribute('data-embedo-id', id);
+        container.setAttribute('data-embedo-source', source);
+
+        if (Embedo.utils.validateElement(html)) {
+          container.appendChild(html);
         } else {
-          return undefined;
+          container.innerHTML = html || '';
         }
-      }
 
-      // Converts % to PX
-      function percent_px(el, prop, percent) {
-        var parent_width = Embedo.utils.compute(el.parentNode, prop, true);
-        percent = parseFloat(percent);
-        return parent_width * (percent / 100);
-      }
-    },
+        return container;
+      },
 
-    /**
-     * @function watcher
-     *
-     * @param {string} Identifer
-     * @param {Function} Function to Trigger
-     * @param {integer} timer
-     *
-     * @returns {Function}
-     */
-    watcher: function watcher(id, fn, timer) {
-      window.EMBEDO_WATCHER = window.EMBEDO_WATCHER || {};
-      window.EMBEDO_WATCHER[id] = window.EMBEDO_WATCHER[id] || {
-        id: id,
-        count: 0,
-        request: null
-      };
+      /**
+       * @function generateScript
+       * Generates script tag element
+       *
+       * @param {string} source
+       * @returns HTMLElement
+       */
+      generateScript: function generateScript(source) {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = encodeURI(source);
+        script.setAttribute('async', '');
+        script.setAttribute('charset', 'utf-8');
+        return script;
+      },
 
-      if (window.EMBEDO_WATCHER[id].count > 0 && window.EMBEDO_WATCHER[id].request) {
-        window.EMBEDO_WATCHER[id].count -= 1;
-        clearTimeout(window.EMBEDO_WATCHER[id].request);
-      }
+      /**
+       * @function validateElement
+       * Validates if passed argument is valid DOM element
+       *
+       * @param {object} obj
+       * @returns HTMLElement
+       */
+      validateElement: function validateElement(obj) {
+        return typeof HTMLElement === 'object' ?
+          obj instanceof window.HTMLElement :
+          obj &&
+          typeof obj === 'object' &&
+          obj !== null &&
+          obj.nodeType === 1 &&
+          typeof obj.nodeName === 'string';
+      },
 
-      window.EMBEDO_WATCHER[id].count += 1;
-      window.EMBEDO_WATCHER[id].request = setTimeout(function () {
-        window.EMBEDO_WATCHER[id].count -= 1;
-        if (window.EMBEDO_WATCHER[id].count === 0) {
-          fn.call();
+      /**
+       * @function querystring
+       * Object to Query String
+       *
+       * @param {object} obj
+       * @returns {string}
+       */
+      querystring: function querystring(obj) {
+        var parts = [];
+
+        for (var i in obj) {
+          if (obj.hasOwnProperty(i)) {
+            parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]));
+          }
         }
-      }, timer);
 
-      return null;
-    },
+        return parts.join('&');
+      },
 
-    /**
-     * @function dimensions
-     *
-     * @param {HTMLElement} el
-     * @param {string} width
-     * @param {string} height
-     *
-     * @returns {object{width,height}}
-     */
-    dimensions: function dimensions(el, width, height) {
-      var el_width = Embedo.utils.compute(el, 'width');
-      width = width ?
-        width :
-        el_width > 0 ?
-        el_width :
-        Embedo.utils.compute(el.parentNode, 'width');
-      height = height ?
-        height :
-        el_width > 0 ?
-        el_width / 1.5 :
-        Embedo.utils.compute(el.parentNode, 'height');
-      return {
-        width: width,
-        height: height
-      };
-    },
-
-    /**
-     * @function centerize
-     * Align an element center in relation to parent div
-     *
-     * @param {HTMLElement} parent_el
-     * @param {HTMLElement} child_el
-     * @param {object} options
-     * @returns
-     */
-    centerize: function centerize(parent_el, child_el, options) {
-      Embedo.log('info', 'centerize', parent_el, child_el, options);
-      if (!Embedo.utils.validateElement(parent_el) || !Embedo.utils.validateElement(child_el)) {
-        return;
-      }
-      options = options || {};
-
-      if (options.width) {
-        parent_el.style.width = options.width;
-        parent_el.style.maxWidth = options.width;
-        parent_el.style.marginLeft = 'auto';
-        parent_el.style.marginRight = 'auto';
-      }
-
-      if (options.height) {
-        parent_el.style.height = options.height;
-        parent_el.style.maxHeight = options.height;
-      }
-
-      child_el.style.display = '-moz-box';
-      child_el.style.display = '-ms-flexbox';
-      child_el.style.display = '-webkit-flex';
-      child_el.style.display = '-webkit-box';
-      child_el.style.display = 'flex';
-      child_el.style.textAlign = 'center';
-      child_el.style['justify-content'] = 'center';
-      child_el.style['align-items'] = 'center';
-      child_el.style.margin = '0 auto';
-    },
-
-    /**
-     * @function handleScriptValidation
-     *
-     * @param {string} url
-     */
-    handleScriptValidation: function handleScriptValidation(url) {
-      if (!url) {
-        return;
-      }
-      url = url.split('#')[0];
-      var scripts = document.getElementsByTagName('script');
-      for (var i = scripts.length; i--;) {
-        if (scripts[i].src === url) {
-          return true;
+      /**
+       * @function fetch
+       * JSONP XHR fetch
+       *
+       * @param {string} url
+       * @param {object} options
+       * @param {function} callback
+       */
+      fetch: function fetch(url, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options = {};
         }
+        options = options || {};
+        var target = document.head || document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        var jsonpCallback = 'embedo_fetch_' + Embedo.utils.uuid();
+        url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
+        url = url.replace('?&', '?');
+
+        window[jsonpCallback] = function (data) {
+          clear(jsonpCallback, script);
+          callback(null, data);
+        };
+
+        script.type = 'text/javascript';
+        script.defer = true;
+        script.charset = 'UTF-8';
+        script.onerror = function (err) {
+          clear(jsonpCallback, script);
+          return callback(err);
+        };
+        target.appendChild(script);
+        script.src = url;
+
+        function clear(jsonpCallback, script) {
+          try {
+            delete window[jsonpCallback];
+          } catch (e) {
+            window[jsonpCallback] = undefined;
+          }
+          if (script) {
+            target.removeChild(script);
+            script = undefined;
+          }
+        }
+      },
+
+      /**
+       * XHR HTTP Requests
+       *
+       * @param {string} url
+       * @param {object} options
+       * @param {Function} callback
+       */
+      ajax: function ajax(url, options, callback) {
+        if (typeof options === 'function') {
+          callback = options;
+          options = {};
+        }
+        callback = callback || function () {};
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE || xhr.readyState === 4) {
+            if (xhr.status >= 400) {
+              return callback(new Error(xhr.responseText || xhr.statusText));
+            }
+            try {
+              return callback(null, JSON.parse(xhr.responseText));
+            } catch (e) {
+              return callback(new Error('invalid_response'));
+            }
+          }
+        };
+        xhr.onerror = function (err) {
+          return callback(err);
+        };
+        xhr.open('GET', url);
+        xhr.send();
+      },
+
+      /**
+       * @function transform
+       * Cross Browser CSS Transformation
+       *
+       * @param {HTMLElement} element
+       * @param {string} props
+       */
+      transform: function transform(element, props) {
+        if (!Embedo.utils.validateElement(element)) {
+          return;
+        }
+        element.style.webkitTransform = props;
+        element.style.MozTransform = props;
+        element.style.msTransform = props;
+        element.style.OTransform = props;
+        element.style.transform = props;
+      },
+
+      /**
+       * @function compute
+       * Computes property value of HTMLElement
+       *
+       * @param {HTMLElement} el
+       * @param {string} prop
+       * @param {Boolean} stylesheet
+       * @returns {Number}
+       */
+      compute: function compute(el, prop, is_computed) {
+        if (!Embedo.utils.validateElement(el) || !prop) {
+          return;
+        }
+
+        var bounds = el.getBoundingClientRect();
+        var value = bounds[prop];
+
+        if (is_computed || !value) {
+          if (document.defaultView && document.defaultView.getComputedStyle) {
+            value = document.defaultView.getComputedStyle(el, '').getPropertyValue(prop);
+          } else if (el.currentStyle) {
+            prop = prop.replace(/\-(\w)/g, function (m, p) {
+              return p.toUpperCase();
+            });
+            value = el.currentStyle[prop];
+          }
+        }
+
+        if (typeof value === 'string' && !/^\d+(\.\d+)?%$/.test(value)) {
+          value = value.replace(/[^\d.-]/g, '');
+        }
+
+        return isNaN(Number(value)) ? value : Number(value);
+      },
+
+      /**
+       * @method convertToPx
+       * Calculates approximate pixel value for vw, vh or % values
+       *
+       * @implements relative_px
+       * @implements percent_px
+       */
+      convertToPx: function convertToPx(el, prop, value) {
+        if (!isNaN(Number(value))) {
+          return Number(value);
+        } else if (/^\d+(\.\d+)?%$/.test(value)) {
+          return percent_px(el, prop, value);
+        } else if (value.match(/(vh|vw)/)) {
+          var dimension = value.replace(/[0-9]/g, '');
+          return relative_px(dimension, value);
+        }
+
+        // Converts vw or vh to PX
+        function relative_px(type, value) {
+          var w = window,
+            d = document,
+            e = d.documentElement,
+            g = d.body,
+            x = w.innerWidth || e.clientWidth || g.clientWidth,
+            y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+          if (type === 'vw') {
+            return (x * parseFloat(value)) / 100;
+          } else if (type === 'vh') {
+            return (y * parseFloat(value)) / 100;
+          } else {
+            return undefined;
+          }
+        }
+
+        // Converts % to PX
+        function percent_px(el, prop, percent) {
+          var parent_width = Embedo.utils.compute(el.parentNode, prop, true);
+          percent = parseFloat(percent);
+          return parent_width * (percent / 100);
+        }
+      },
+
+      /**
+       * @function watcher
+       *
+       * @param {string} Identifer
+       * @param {Function} Function to Trigger
+       * @param {integer} timer
+       *
+       * @returns {Function}
+       */
+      watcher: function watcher(id, fn, timer) {
+        window.EMBEDO_WATCHER = window.EMBEDO_WATCHER || {};
+        window.EMBEDO_WATCHER[id] = window.EMBEDO_WATCHER[id] || {
+          id: id,
+          count: 0,
+          request: null
+        };
+
+        if (window.EMBEDO_WATCHER[id].count > 0 && window.EMBEDO_WATCHER[id].request) {
+          window.EMBEDO_WATCHER[id].count -= 1;
+          clearTimeout(window.EMBEDO_WATCHER[id].request);
+        }
+
+        window.EMBEDO_WATCHER[id].count += 1;
+        window.EMBEDO_WATCHER[id].request = setTimeout(function () {
+          window.EMBEDO_WATCHER[id].count -= 1;
+          if (window.EMBEDO_WATCHER[id].count === 0) {
+            fn.call();
+          }
+        }, timer);
+
+        return null;
+      },
+
+      /**
+       * @function dimensions
+       *
+       * @param {HTMLElement} el
+       * @param {string} width
+       * @param {string} height
+       *
+       * @returns {object{width,height}}
+       */
+      dimensions: function dimensions(el, width, height) {
+        var el_width = Embedo.utils.compute(el, 'width');
+        width = width ?
+          width :
+          el_width > 0 ?
+          el_width :
+          Embedo.utils.compute(el.parentNode, 'width');
+        height = height ?
+          height :
+          el_width > 0 ?
+          el_width / 1.5 :
+          Embedo.utils.compute(el.parentNode, 'height');
+        return {
+          width: width,
+          height: height
+        };
+      },
+
+      /**
+       * @function centerize
+       * Align an element center in relation to parent div
+       *
+       * @param {HTMLElement} parent_el
+       * @param {HTMLElement} child_el
+       * @param {object} options
+       * @returns
+       */
+      centerize: function centerize(parent_el, child_el, options) {
+        Embedo.log('info', 'centerize', parent_el, child_el, options);
+        if (!Embedo.utils.validateElement(parent_el) || !Embedo.utils.validateElement(child_el)) {
+          return;
+        }
+        options = options || {};
+
+        if (options.width) {
+          parent_el.style.width = options.width;
+          parent_el.style.maxWidth = options.width;
+          parent_el.style.marginLeft = 'auto';
+          parent_el.style.marginRight = 'auto';
+        }
+
+        if (options.height) {
+          parent_el.style.height = options.height;
+          parent_el.style.maxHeight = options.height;
+        }
+
+        child_el.style.display = '-moz-box';
+        child_el.style.display = '-ms-flexbox';
+        child_el.style.display = '-webkit-flex';
+        child_el.style.display = '-webkit-box';
+        child_el.style.display = 'flex';
+        child_el.style.textAlign = 'center';
+        child_el.style['justify-content'] = 'center';
+        child_el.style['align-items'] = 'center';
+        child_el.style.margin = '0 auto';
+      },
+
+      /**
+       * @function handleScriptValidation
+       *
+       * @param {string} url
+       */
+      handleScriptValidation: function handleScriptValidation(url) {
+        if (!url) {
+          return;
+        }
+        url = url.split('#')[0];
+        var scripts = document.getElementsByTagName('script');
+        for (var i = scripts.length; i--;) {
+          if (scripts[i].src === url) {
+            return true;
+          }
+        }
+        return false;
       }
-      return false;
-    }
+    }),
+    writable: false,
+    enumerable: true,
+    configurable: false
   });
-
-  /**
-   * Mixin will delegate all private events to extended object
-   *
-   * @param {object} obj
-   */
-  Embedo.mixin = function mixin(obj) {
-    var props = ['on', 'off', 'once', 'emit'];
-    for (var i = 0; i < props.length; i++) {
-      obj.prototype[props[i]] = Embedo.prototype[props[i]];
-    }
-  };
 
   /**
    * Embedo Event Listeners
@@ -699,41 +702,57 @@
    * @implements off
    * @implements emit
    */
-  Embedo.prototype = Object.create({
-    on: function (event, listener) {
-      if (typeof this.events[event] !== 'object') {
-        this.events[event] = [];
-      }
-      this.events[event].push(listener);
-    },
-    off: function (event, listener) {
-      var index;
-      if (typeof this.events[event] === 'object') {
-        index = this.events[event].indexOf(listener);
-        if (index > -1) {
-          this.events[event].splice(index, 1);
+  Object.defineProperties(Embedo.prototype, {
+    on: {
+      value: function (event, listener) {
+        if (typeof this.events[event] !== 'object') {
+          this.events[event] = [];
         }
-      }
+        this.events[event].push(listener);
+      },
+      writable: false,
+      configurable: false
     },
-    emit: function (event) {
-      var i,
-        listeners,
-        length,
-        args = [].slice.call(arguments, 1);
-      if (typeof this.events[event] === 'object') {
-        listeners = this.events[event].slice();
-        length = listeners.length;
+    off: {
+      value: function (event, listener) {
+        var index;
+        if (typeof this.events[event] === 'object') {
+          index = this.events[event].indexOf(listener);
+          if (index > -1) {
+            this.events[event].splice(index, 1);
+          }
+        }
+      },
+      writable: false,
+      configurable: false
+    },
+    emit: {
+      value: function (event) {
+        var i,
+          listeners,
+          length,
+          args = [].slice.call(arguments, 1);
+        if (typeof this.events[event] === 'object') {
+          listeners = this.events[event].slice();
+          length = listeners.length;
 
-        for (i = 0; i < length; i++) {
-          listeners[i].apply(this, args);
+          for (i = 0; i < length; i++) {
+            listeners[i].apply(this, args);
+          }
         }
-      }
+      },
+      writable: false,
+      configurable: false
     },
-    once: function (event, listener) {
-      this.on(event, function g() {
-        this.off(event, g);
-        listener.apply(this, arguments);
-      });
+    once: {
+      value: function (event, listener) {
+        this.on(event, function g() {
+          this.off(event, g);
+          listener.apply(this, arguments);
+        });
+      },
+      writable: false,
+      configurable: false
     }
   });
 
@@ -1898,7 +1917,7 @@
     (function check() {
       counter++;
       if (counter > 15) {
-        return callback(new Error('sdk_not_available'));
+        return callback(new Error(type + ':sdk_not_available'));
       }
       if (window[Embedo.defaults.SOURCES[type].GLOBAL]) {
         return callback(null, window[Embedo.defaults.SOURCES[type].GLOBAL]);
