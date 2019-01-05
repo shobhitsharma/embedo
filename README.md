@@ -15,7 +15,7 @@
 - Pinterest URLs containing board, profile and pins
 - Github URLs containing gists
 - Google Maps URLs containing cordinates to a location
-- Embeds other urls like soundcloud, spotidy or .pdf, .mp4, .webm, etc as `iframe`
+- Embeds other urls like Soundcloud, Spotify or PDF, MP4, Webm, ... as `iframe`
 - Embeds any URL that fulfils HTTP access control (CORS) policy
 - Supports IE10+ and all modern browsers.
 
