@@ -17,16 +17,16 @@ function run() {
 
   var embedo = new Embedo({
     facebook: {
-      version: 'v2.8',
+      version: 'v3.2',
       appId: '269918776508696',
       xfbml: true
     },
     twitter: true,
     instagram: true,
-    pinterest: true
-    // , googlemaps: {
-    //   key: 'AIzaSyDDmeVWuW86QT0JPikPas0BeWxbpVBlFy8'
-    // }
+    pinterest: true,
+    googlemaps: {
+      key: 'AIzaSew32534t43kjlth43isWQeZze5wXiuHgUy580s'
+    }
   });
 
   /**
@@ -69,7 +69,7 @@ function run() {
 
   embedo.load(
     document.getElementById('embedo-facebook-video'),
-    'https://www.facebook.com/9gag/videos/10156133478761840/'
+    'https://www.facebook.com/9gag/videos/10156133478761840'
   );
 
   embedo.load(
@@ -222,15 +222,14 @@ function run() {
       "https://soundcloud.com/uiceheidd/lucid-dreams-forget-me"
     );
 
-  // Loads google maps URL
-  // embedo.load(
-  //   document.getElementById('embedo-googlemaps'),
-  //   'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
-  //     width: 640,
-  //     height: 480,
-  //     zoom: 10
-  //   }
-  // );
+  embedo.load(
+    document.getElementById('embedo-googlemaps'),
+    'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
+      width: 640,
+      height: 480,
+      zoom: 10
+    }
+  );
 
   // // Refresh All Embedo instances
   // setTimeout(function () {
