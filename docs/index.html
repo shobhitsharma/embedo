@@ -36,14 +36,15 @@
         <a class="active">Setup</a>
         <a href="https://shobhitsharma.github.io/embedo/usage">Usage</a>
         <a href="https://github.com/shobhitsharma/embedo/wiki">Docs</a>
-        <a class="github-link" href="https://github.com/shobhitsharma/embedo" target="_blank"><i class="fa fa-github"></i></a>
+        <a class="github-link" href="https://github.com/shobhitsharma/embedo" target="_blank"><i class="fab fa-github"></i></a>
       </header>
       <section class="teaser">
         <h1>embedo</h1>
         <p>A simple, lightweight and standalone content embed plugin for web</p>
         <div class="buttons">
-          <a href="https://github.com/shobhitsharma/embedo"><i class="fa fa-star"></i> Star</a>
-          <a href="https://github.com/shobhitsharma/embedo/archive/master.zip"><i class="fa fa-cloud-download"></i> Download</a>
+          <a href="https://github.com/shobhitsharma/embedo"><i class="fas fa-star"></i> Star</a>
+          <a href="https://github.com/shobhitsharma/embedo/wiki"><i class="fab fa-readme"></i>
+            Documentation</a>
         </div>
       </section>
       <section class="test-case" id="test-case">
@@ -144,42 +145,55 @@
         <div class="supported-sites">
           <h4>What's currently supported?</h4>
           <div class="supports">
-            <span class="site fa fa-facebook"></span>
+            <span class="site fab fa-facebook-square"></span>
             <span class="site-description">Facebook URLs containing page, post, photos, videos or comments</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-twitter"></span>
+            <span class="site fab fa-twitter"></span>
             <span class="site-description">Twitter URLs containing user timeline and tweets</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-youtube"></span>
+            <span class="site fab fa-youtube"></span>
             <span class="site-description">YouTube videos URLs, playlists will play in loop</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-instagram"></span>
+            <span class="site fab fa-instagram"></span>
             <span class="site-description">Instagram URLs containing posts and videos</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-pinterest"></span>
+            <span class="site fab fa-pinterest"></span>
             <span class="site-description">Pinterest URLs containing boards, profile and pins</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-vimeo"></span>
+            <span class="site fab fa-vimeo"></span>
             <span class="site-description">Vimeo URLs containing videos</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-google"></span>
+            <span class="site fab fa-soundcloud"></span>
+            <span class="site-description">SoundCloud URLs containing videos</span>
+          </div>
+          <div class="supports">
+            <span class="site fab fa-reddit-alien"></span>
+            <span class="site-description">Vimeo URLs containing videos</span>
+          </div>
+          <div class="supports">
+            <span class="site fab fa-google"></span>
             <span class="site-description">Google Maps URLs containing cordinates to a location</span>
           </div>
           <div class="supports">
-            <span class="site fa fa-link"></span>
-            <span class="site-description">Embeds third party URLs, gists or formats like .pdf, .webm, .ppsx etc.</span>
+            <span class="site fas fa-code"></span>
+            <span class="site-description">Fallback to iframe for allowed CORS urls or formats like .pdf, .webm, etc.</span>
           </div>
         </div>
         <div class="copyrights">
           <a href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md" target="_blank">
-            <i class="fa fa-copyright"></i> Distributed under MIT License
+            <i class="fas fa-copyright"></i> Distributed under MIT License
           </a>
+        </div>
+        <div class="donate-me">
+          <p>Does this help you?</p>
+          <button class="buyme-button"><a href="https://www.paypal.me/shobhitsharma" target="_blank">Buy me a
+              generous coffee <i class="fas fa-mug-hot"></i> via PayPal</a></button>
         </div>
       </footer>
     </div>
@@ -229,6 +243,7 @@
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
     ga('create', 'UA-80234662-2', 'auto');
     ga('send', 'pageview');
+
   </script>
   <!-- Here is how embedo.js get declared on top of your implementation -->
   <script src="https://unpkg.com/embedo/embedo.min.js"></script>

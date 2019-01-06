@@ -13,11 +13,11 @@
 - YouTube and Vimeo videos URLs
 - Instagram URLs containing posts and videos
 - Pinterest URLs containing board, profile and pins
-- Github URLs containing gists
 - Google Maps URLs containing cordinates to a location
-- Embeds other urls like Soundcloud, Spotify or PDF, MP4, Webm, ... as `iframe`
+- Embeds other urls like Github Gists, Soundcloud, Spotify or PDF, MP4, Webm, ... as `iframe`
 - Embeds any URL that fulfils HTTP access control (CORS) policy
-- Supports IE10+ and all modern browsers.
+- Extended plugin support for additonal oembed services
+- Supports IE10+ and all modern browsers
 
 ---
 

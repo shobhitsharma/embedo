@@ -9,19 +9,17 @@
  * @license MIT
  */
 
-(function (global, factory) {
-  'use strict';
+'use strict';
 
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
-  } else {
-    global.Embedo = window.Embedo = factory();
+  } else if (root) {
+    root.Embedo = window.Embedo = factory();
   }
 })(this, function () {
-  'use strict';
-
   /**
    * @class Embedo Prototype
    *
@@ -54,8 +52,8 @@
       SOURCES: {
         facebook: {
           GLOBAL: 'FB',
-          SDK: 'https://connect.facebook.net/${locale}/all.js',
-          oEmbed: 'https://www.facebook.com/plugins/${type}/oembed.json',
+          SDK: '//connect.facebook.net/${locale}/all.js',
+          oEmbed: '//www.facebook.com/plugins/${type}/oembed.json',
           REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
           PARAMS: {
             version: 'v3.2',
@@ -66,28 +64,28 @@
         },
         twitter: {
           GLOBAL: 'twttr',
-          SDK: 'https://platform.twitter.com/widgets.js',
-          oEmbed: 'https://publish.twitter.com/oembed',
+          SDK: '//platform.twitter.com/widgets.js',
+          oEmbed: '//publish.twitter.com/oembed',
           REGEX: /^http[s]*:\/\/[www.]*twitter(\.[a-z]+).*/i,
           PARAMS: {}
         },
         instagram: {
           GLOBAL: 'instgrm',
-          SDK: 'https://platform.instagram.com/en_US/embeds.js',
-          oEmbed: 'https://api.instagram.com/oembed',
+          SDK: '//www.instagram.com/embed.js',
+          oEmbed: '//api.instagram.com/oembed',
           REGEX: /instagram.com\/p\/[a-zA-Z0-9_\/\?\-\=]+/gi,
           PARAMS: {}
         },
         youtube: {
           GLOBAL: null,
           SDK: null,
-          oEmbed: 'https://www.youtube.com/embed/',
+          oEmbed: '//www.youtube.com/embed/',
           REGEX: /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/,
           PARAMS: null
         },
         pinterest: {
           GLOBAL: 'PinUtils',
-          SDK: 'https://assets.pinterest.com/js/pinit.js',
+          SDK: '//assets.pinterest.com/js/pinit.js',
           oEmbed: null,
           REGEX: /(https?:\/\/(ww.)?)?pinterest(\.[a-z]+).*/i,
           PARAMS: {}
@@ -95,7 +93,7 @@
         vimeo: {
           GLOBAL: null,
           SDK: null,
-          oEmbed: 'https://vimeo.com/api/oembed.json',
+          oEmbed: '//vimeo.com/api/oembed.json',
           REGEX: /(http|https)?:\/\/(www\.)?vimeo(\.[a-z]+)\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)/,
           PARAMS: {}
         },
@@ -103,14 +101,14 @@
           GLOBAL: null,
           SDK: null,
           oEmbed: null,
-          REGEX: /https:\/\/gist\.github\.com\/(\w+)\/(\w+)/,
+          REGEX: /(http|https):\/\/gist\.github\.com\/(\w+)\/(\w+)/,
           PARAMS: {}
         },
         soundcloud: {
           GLOBAL: null,
           SDK: null,
-          oEmbed: 'https://soundcloud.com/oembed',
-          REGEX: /^https:\/\/soundcloud\.com\/(\w+)\/.*$/,
+          oEmbed: '//soundcloud.com/oembed',
+          REGEX: /^(http|https):\/\/soundcloud\.com\/(\w+)\/.*$/,
           PARAMS: {}
         }
       },
@@ -148,13 +146,11 @@
        * @function uuid
        */
       uuid: function uuid() {
-        var primary = (Math.random() * 46656) | 0;
-        var secondary = (Math.random() * 46656) | 0;
-
+        var primary = (Math.random() * 0x10000) | 0;
+        var secondary = (Math.random() * 0x10000) | 0;
         primary = ('000' + primary.toString(36)).slice(-3);
         secondary = ('000' + secondary.toString(36)).slice(-3);
-
-        return primary + secondary;
+        return 'embedo__' + primary + secondary;
       },
 
       /**
@@ -302,15 +298,17 @@
        *
        * @param {string} source
        * @param {object} attributes
+       * @param {string} html
        * @returns HTMLElement
        */
-      generateElement: function generateElement(type, attributes) {
+      generateElement: function generateElement(type, attributes, html) {
         var el = document.createElement(type);
-
         Object.keys(attributes || {}).forEach(function (type) {
           el.setAttribute(type, attributes[type]);
         });
-
+        if (html) {
+          el.innerHTML = html;
+        }
         return el;
       },
 
@@ -432,7 +430,7 @@
         options = options || {};
         var target = document.head || document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
-        var jsonpCallback = 'embedo_fetch_' + Embedo.utils.uuid();
+        var jsonpCallback = 'fetch__' + Embedo.utils.uuid();
         url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
         url = url.replace('?&', '?');
 
@@ -1087,20 +1085,17 @@
       return callback('Unable to detect Youtube video id.');
     }
 
-    var youtube_uri =
-      Embedo.defaults.SOURCES.youtube.oEmbed +
-      getYTVideoID(url) +
-      '?' +
-      Embedo.utils.querystring(
-        Embedo.utils.merge({
-            modestbranding: 1,
-            autohide: 1,
-            showinfo: 0
-          },
-          options,
-          Embedo.defaults.RESTRICTED
-        )
-      );
+    var youtube_uri = Embedo.defaults.SOURCES.youtube.oEmbed + getYTVideoID(url);
+    youtube_uri += '?' + Embedo.utils.querystring(
+      Embedo.utils.merge({
+          modestbranding: 1,
+          autohide: 1,
+          showinfo: 0
+        },
+        options,
+        Embedo.defaults.RESTRICTED
+      )
+    );
 
     this.iframe(id, element, youtube_uri, options, callback);
 
@@ -1224,8 +1219,7 @@
    */
   Embedo.prototype.github = function github(id, element, url, options, callback) {
     var size = Embedo.utils.dimensions(element, options.width, options.height);
-    var iframe = Embedo.utils.generateElement(
-      'iframe',
+    var iframe = Embedo.utils.generateElement('iframe',
       Embedo.utils.merge({
           width: size.width,
           height: size.height
@@ -1320,8 +1314,6 @@
     var extension = (url.substr(url.lastIndexOf('.')) || '').replace('.', '').toLowerCase();
     var mimes = {
       csv: 'text/csv',
-      doc: 'application/msword',
-      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       pdf: 'application/pdf',
       gif: 'image/gif',
       js: 'application/javascript',
@@ -1339,8 +1331,7 @@
     var has_video = extension.match(/(mp4|ogg|webm|ogv|ogm)/);
     var el_type = has_video ? 'video' : options.tagName || 'embed';
     var override = Embedo.utils.merge({}, options, Embedo.defaults.RESTRICTED);
-    var embed_el = Embedo.utils.generateElement(
-      el_type,
+    var embed_el = Embedo.utils.generateElement(el_type,
       Embedo.utils.merge({
           type: mimetype,
           src: url,
@@ -1440,11 +1431,7 @@
 
     this.emit('watch', 'load', request);
 
-    this[source](
-      id,
-      element,
-      url,
-      options,
+    this[source](id, element, url, options,
       function (err, data) {
         if (err) {
           this.emit('error', err);

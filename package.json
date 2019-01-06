@@ -5,12 +5,13 @@
   "main": "embedo.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "http-server ./ -ssl -o",
-    "lint": "jshint embedo.js",
+    "start": "http-server ./ -ssl -o -p 8081",
+    "lint": "jshint embedo.js plugins/**/**.embedo.js",
     "test": "mocha test/*.spec.js",
     "build:embedo": "uglifyjs embedo.js --compress --comments --mangle -o embedo.min.js",
     "build:embedo:gmaps": "uglifyjs plugins/gmaps/gmaps.embedo.js --compress --comments --mangle -o plugins/gmaps/gmaps.embedo.min.js",
-    "build": "npm run build:embedo && npm run build:embedo:gmaps"
+    "build:embedo:reddit": "uglifyjs plugins/reddit/reddit.embedo.js --compress --comments --mangle -o plugins/reddit/reddit.embedo.min.js",
+    "build": "npm run build:embedo && npm run build:embedo:gmaps && npm run build:embedo:reddit"
   },
   "repository": {
     "type": "git",
