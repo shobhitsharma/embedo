@@ -1,2 +1,2 @@
-module.exports.Embedo = require('./embedo');
+exports.default = require('./embedo');
 module.exports.Plugins = require('./plugins');
