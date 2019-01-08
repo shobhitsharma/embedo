@@ -73,7 +73,7 @@
           GLOBAL: 'instgrm',
           SDK: '//www.instagram.com/embed.js',
           oEmbed: '//api.instagram.com/oembed',
-          REGEX: /instagram.com\/p\/[a-zA-Z0-9_\/\?\-\=]+/gi,
+          REGEX: /(http|https)?:\/\/(www\.)?instagram.com\/p\/[a-zA-Z0-9_\/\?\-\=]+/gi,
           PARAMS: {}
         },
         youtube: {
@@ -119,7 +119,7 @@
     configurable: false
   });
 
-  // Logger
+  // Application Logger
   Object.defineProperty(Embedo, 'log', {
     value: function log(type) {
       if (!Embedo.debug) {
@@ -127,6 +127,27 @@
       }
       if (typeof console !== 'undefined' && typeof console[type] !== 'undefined') {
         console[type].apply(console, Array.prototype.slice.call(arguments, 1));
+      }
+    },
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
+
+  // Plugins Loader
+  Object.defineProperty(Embedo, 'plugins', {
+    value: function load(plugins) {
+      if (!plugins) {
+        return;
+      }
+      if (plugins instanceof Array) {
+        plugins.forEach(function (plugin) {
+          if (typeof plugin === 'function') {
+            plugin(Embedo);
+          }
+        });
+      } else if (plugins === 'fuction') {
+        plugins(Embedo);
       }
     },
     writable: false,
@@ -1031,6 +1052,13 @@
       }
     }
 
+    // If oembed or instagram embed script is unavailable.
+    if (options.jsonp === undefined || options.jsonp === null) {
+      var extracted_url = url.match(Embedo.defaults.SOURCES.instagram.REGEX);
+      url = extracted_url && extracted_url.length > 0 ? extracted_url[0].replace(/\/$/, '') : url;
+      return this.iframe(id, element, url + '/embed/', options, callback);
+    }
+
     embed_uri += '?' + Embedo.utils.querystring(query);
 
     var method = options.jsonp ? 'jsonp' : 'ajax';
@@ -1242,14 +1270,14 @@
     iframe.onerror = function (err) {
       callback(err);
     };
-    iframe.onload = function () {
+    iframe.addEventListener("load", function (event) {
       callback(null, {
         id: id,
         el: element,
         width: Embedo.utils.compute(container, 'width'),
         height: Embedo.utils.compute(container, 'height')
       });
-    };
+    });
   };
 
   /**
@@ -1336,7 +1364,7 @@
           type: mimetype,
           src: url,
           width: size.width,
-          height: size.height
+          height: options.autoheight ? '100%' : size.height
         },
         override
       )
@@ -1358,14 +1386,14 @@
       embed_el.onerror = function (err) {
         callback(err);
       };
-      embed_el.onload = function () {
+      embed_el.addEventListener("load", function (event) {
         callback(null, {
           id: id,
           el: element,
           width: Embedo.utils.compute(embed_el, 'width'),
           height: Embedo.utils.compute(embed_el, 'height')
         });
-      };
+      });
     }
   };
 

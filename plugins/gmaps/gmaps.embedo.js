@@ -28,6 +28,10 @@
    * @param {object} Embedo Class Instance
    */
   function EmbedoGMaps(Embedo) {
+    if (!Embedo) {
+      throw Error('Embedo instance as argument is missing.');
+    }
+
     // Add `googlemaps` as source
     Embedo.defaults.SOURCES.googlemaps = {
       GLOBAL: 'google',
@@ -94,7 +98,10 @@
             });
           }
         );
-      }
+      },
+      writable: false,
+      enumerable: true,
+      configurable: true
     });
 
     /**

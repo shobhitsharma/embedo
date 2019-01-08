@@ -52,6 +52,16 @@ function run() {
     }, 250);
   }
 
+  // Loads instagram photo
+  embedo.load(
+    document.getElementById('embedo-instagram'),
+    'https://www.instagram.com/p/BsUZJNjl9Is/', {
+      jsonp: undefined,
+      autoheight: true,
+      hidecaption: false
+    }
+  );
+
   // Loads facebook post
   embedo.load(
     document.getElementById('embedo-facebook-post'),
@@ -181,14 +191,6 @@ function run() {
       "data-pin-scale-height": 500,
       "data-pin-scale-width": 80,
       "strict": true
-    }
-  );
-
-  // Loads instagram photo
-  embedo.load(
-    document.getElementById('embedo-instagram'),
-    'https://www.instagram.com/p/BJA9BB-B46A', {
-      hidecaption: false
     }
   );
 

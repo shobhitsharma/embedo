@@ -1,5 +1,5 @@
 /**
- * @file gmaps.reddit.js
+ * @file reddit.embedo.js
  *
  * Embedo plugin to embed Reddit.
  *
@@ -28,6 +28,10 @@
    * @param {object} Embedo Class Instance
    */
   function EmbedoReddit(Embedo) {
+    if (!Embedo) {
+      throw Error('Embedo instance as argument is missing.');
+    }
+
     // Add `reddit` as source
     Embedo.defaults.SOURCES.reddit = {
       GLOBAL: 'reddit',
@@ -77,7 +81,10 @@
           width: size.width,
           height: size.height
         });
-      }
+      },
+      writable: false,
+      enumerable: true,
+      configurable: true
     });
   }
 
