@@ -2,16 +2,17 @@
   "name": "embedo",
   "version": "1.10.2",
   "description": "Embeds third party content to DOM with perks",
-  "main": "embedo.js",
+  "main": "index.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "http-server ./ -ssl -o -p 8081",
+    "start": "http-server ./ -p 8081 -S -o",
     "lint": "jshint embedo.js plugins/**/**.embedo.js",
     "test": "mocha test/*.spec.js",
     "build:embedo": "uglifyjs embedo.js --compress --comments --mangle -o embedo.min.js",
     "build:embedo:gmaps": "uglifyjs plugins/gmaps/gmaps.embedo.js --compress --comments --mangle -o plugins/gmaps/gmaps.embedo.min.js",
     "build:embedo:reddit": "uglifyjs plugins/reddit/reddit.embedo.js --compress --comments --mangle -o plugins/reddit/reddit.embedo.min.js",
-    "build": "npm run build:embedo && npm run build:embedo:gmaps && npm run build:embedo:reddit"
+    "build:embedo:flickr": "uglifyjs plugins/flickr/flickr.embedo.js --compress --comments --mangle -o plugins/flickr/flickr.embedo.min.js",
+    "build": "npm run build:embedo && npm run build:embedo:gmaps && npm run build:embedo:reddit && npm run build:embedo:flickr"
   },
   "repository": {
     "type": "git",

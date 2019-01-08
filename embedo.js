@@ -171,7 +171,7 @@
         var secondary = (Math.random() * 0x10000) | 0;
         primary = ('000' + primary.toString(36)).slice(-3);
         secondary = ('000' + secondary.toString(36)).slice(-3);
-        return 'embedo__' + primary + secondary;
+        return 'embedo_' + primary + secondary;
       },
 
       /**
@@ -449,10 +449,11 @@
           options = {};
         }
         options = options || {};
+        options.callback = options.callback || 'callback';
         var target = document.head || document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
-        var jsonpCallback = 'fetch__' + Embedo.utils.uuid();
-        url += (~url.indexOf('?') ? '&' : '?') + 'callback=' + encodeURIComponent(jsonpCallback);
+        var jsonpCallback = 'jsonp_' + Embedo.utils.uuid();
+        url += (~url.indexOf('?') ? '&' : '?') + options.callback + '=' + encodeURIComponent(jsonpCallback);
         url = url.replace('?&', '?');
 
         window[jsonpCallback] = function (data) {
@@ -497,16 +498,14 @@
         }
         callback = callback || function () {};
         var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === XMLHttpRequest.DONE || xhr.readyState === 4) {
-            if (xhr.status >= 400) {
-              return callback(new Error(xhr.responseText || xhr.statusText));
-            }
-            try {
-              return callback(null, JSON.parse(xhr.responseText));
-            } catch (e) {
-              return callback(new Error('invalid_response'));
-            }
+        xhr.onload = function () {
+          if (xhr.status >= 400) {
+            return callback(new Error(xhr.responseText || xhr.statusText));
+          }
+          try {
+            return callback(null, JSON.parse(xhr.responseText));
+          } catch (e) {
+            return callback(new Error('invalid_response'));
           }
         };
         xhr.onerror = function (err) {
@@ -1052,21 +1051,20 @@
       }
     }
 
-    // If oembed or instagram embed script is unavailable.
-    if (options.jsonp === undefined || options.jsonp === null) {
-      var extracted_url = url.match(Embedo.defaults.SOURCES.instagram.REGEX);
-      url = extracted_url && extracted_url.length > 0 ? extracted_url[0].replace(/\/$/, '') : url;
-      return this.iframe(id, element, url + '/embed/', options, callback);
-    }
-
     embed_uri += '?' + Embedo.utils.querystring(query);
 
     var method = options.jsonp ? 'jsonp' : 'ajax';
 
-    Embedo.utils[method](embed_uri, function (error, content) {
-      if (error) {
-        Embedo.log('error', 'instagram', error);
-        return callback(error);
+    Embedo.utils[method](embed_uri, function (err, content) {
+      if (err) {
+        Embedo.log('error', 'instagram', err);
+        // If oembed or instagram embed script is unavailable.
+        if (options.jsonp === undefined || options.jsonp === null) {
+          var extracted_url = url.match(Embedo.defaults.SOURCES.instagram.REGEX);
+          url = extracted_url && extracted_url.length > 0 ? extracted_url[0].replace(/\/$/, '') : url;
+          return this.iframe(id, element, url + '/embed/', options, callback);
+        }
+        return callback(err);
       }
 
       var container = Embedo.utils.generateEmbed(id, 'instagram', content.html);
@@ -1094,7 +1092,7 @@
           });
         }
       );
-    });
+    }.bind(this));
   };
 
   /**
@@ -1274,6 +1272,7 @@
       callback(null, {
         id: id,
         el: element,
+        event: event,
         width: Embedo.utils.compute(container, 'width'),
         height: Embedo.utils.compute(container, 'height')
       });
@@ -1364,7 +1363,7 @@
           type: mimetype,
           src: url,
           width: size.width,
-          height: options.autoheight ? '100%' : size.height
+          height: size.height
         },
         override
       )
@@ -1390,6 +1389,7 @@
         callback(null, {
           id: id,
           el: element,
+          event: event,
           width: Embedo.utils.compute(embed_el, 'width'),
           height: Embedo.utils.compute(embed_el, 'height')
         });

@@ -35,7 +35,7 @@
     // Add `reddit` as source
     Embedo.defaults.SOURCES.reddit = {
       GLOBAL: 'reddit',
-      SDK: 'https://embed.redditmedia.com/widgets/platform.js',
+      SDK: '//embed.redditmedia.com/widgets/platform.js',
       oEmbed: null,
       REGEX: /(https?:\/\/(ww.)?)?reddit(\.[a-z]+).*/i,
       PARAMS: {}

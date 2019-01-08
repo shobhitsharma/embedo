@@ -24,8 +24,10 @@ function run() {
     twitter: true,
     instagram: true,
     pinterest: true,
+    reddit: true,
+    flickr: true,
     googlemaps: {
-      key: 'AIzaSew32534t43kjlth43isWQeZze5wXiuHgUy580s'
+      key: 'ENTER_TEST_KEY_HERE'
     }
   });
 
@@ -56,8 +58,7 @@ function run() {
   embedo.load(
     document.getElementById('embedo-instagram'),
     'https://www.instagram.com/p/BsUZJNjl9Is/', {
-      jsonp: undefined,
-      autoheight: true,
+      height: 800,
       hidecaption: false
     }
   );

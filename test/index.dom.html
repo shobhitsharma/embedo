@@ -10,7 +10,7 @@
 <body>
   <div id="mocha"></div>
   <header class="header">
-      <a href="./index.html">CommonJS + AMD</a>
+    <a href="./index.html">CommonJS + AMD</a>
   </header>
   <main>
     <div id="embedo-app" class="test">
@@ -18,15 +18,17 @@
       <section class="samples">
         <div class="code-editor code-demo">
           <div class="code-editor code-demo">
+            <h2>Flickr Embed</h2>
+            <div data-embedo-url="https://www.flickr.com/photos/9somboon/35071348993/" data-embedo-width="100%"></div>
+            <div data-embedo-url="https://www.flickr.com/photos/lntrullin/7619817246" data-embedo-width="100%"></div>
+          </div>
+          <div class="code-editor code-demo">
             <h2>Reddit Embed</h2>
-            <div data-embedo-url="https://www.reddit.com/r/totalwar/comments/4ha8bq/tww_how_are_sequels_going_to_work" data-embedo-width="360" data-embed-height="480"></div>
+            <div data-embedo-url="https://www.reddit.com/r/totalwar/comments/4ha8bq/tww_how_are_sequels_going_to_work"
+              data-embedo-width="360" data-embed-height="480"></div>
             <div data-embedo-url="https://www.reddit.com/r/Cricket/comments/ad2r9b/differences_between_australia_and_indias_first/"></div>
             <div data-embedo-url="https://www.redditmedia.com/r/IAmA/comments/2zdzik/tommy_wiseau_creator_of_the_room_and_the_new_tv/cpi1p7f/?embed=true"></div>
             <div data-embedo-url="https://www.redditmedia.com/r/IAmA/comments/2ykyht/i_am_sir_tim_bernerslee_inventor_of_the_web_join/cpahone/?embed=true"></div>
-          </div>
-          <div class="code-editor code-demo">
-            <h2>GMaps Embed</h2>
-            <div data-embedo-url="https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954"></div>
           </div>
           <h2>Twitter Embed</h2>
           <div data-embedo-url="https://twitter.com/Sh0bhit/status/797584590214926340"></div>
@@ -68,6 +70,7 @@
   <script src="../embedo.js"></script>
   <script src="../plugins/gmaps/gmaps.embedo.js"></script>
   <script src="../plugins/reddit/reddit.embedo.js"></script>
+  <script src="../plugins/flickr/flickr.embedo.js"></script>
   <script>
     new Embedo({
       facebook: {
@@ -79,9 +82,7 @@
       instagram: true,
       pinterest: true,
       reddit: true,
-      googlemaps: {
-        key: 'AIzaSew32534t43kjlth43isWQeZze5wXiuHgUy580s'
-      }
+      flickr: true
     });
 
   </script>
