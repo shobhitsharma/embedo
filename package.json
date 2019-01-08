@@ -2,7 +2,7 @@
   "name": "embedo",
   "version": "1.11.1",
   "description": "Embeds third party content to DOM with perks",
-  "main": "index.js",
+  "main": "embedo.js",
   "scripts": {
     "prestart": "npm install",
     "start": "http-server ./ -p 8081 -S -o",
