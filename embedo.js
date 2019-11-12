@@ -827,7 +827,7 @@
       if (!type || !props) {
         return;
       }
-      var sdk = Embedo.utils.replacer(Embedo.defaults.SOURCES[type.toLowerCase()].SDK, {
+      var sdk = props.SDK || Embedo.utils.replacer(Embedo.defaults.SOURCES[type.toLowerCase()].SDK, {
         locale: props.locale || window.navigator.language || 'en_US'
       });
 
