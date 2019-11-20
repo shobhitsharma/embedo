@@ -53,7 +53,7 @@ Alternatively, import using CDN while updating `version` as per requirements fro
 ```js
 import Embedo from '/path/to/vendor';
 
-// Initialize once (prefer globally)
+// Initialize Embedo class object
 const embedo = new Embedo({
  facebook: {
     appId: 'my_app_id', // Enable facebook SDK
