@@ -52,7 +52,7 @@
       SOURCES: {
         facebook: {
           GLOBAL: 'FB',
-          SDK: '//connect.facebook.net/${locale}/all.js',
+          SDK: '//connect.facebook.net/${locale}/sdk.js',
           oEmbed: '//www.facebook.com/plugins/${type}/oembed.json',
           REGEX: /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?([\w\-]*)?/g,
           PARAMS: {
@@ -827,7 +827,7 @@
       if (!type || !props) {
         return;
       }
-      var sdk = props.SDK || Embedo.utils.replacer(Embedo.defaults.SOURCES[type.toLowerCase()].SDK, {
+      var sdk = props.sdk || Embedo.utils.replacer(Embedo.defaults.SOURCES[type.toLowerCase()].SDK, {
         locale: props.locale || window.navigator.language || 'en_US'
       });
 
