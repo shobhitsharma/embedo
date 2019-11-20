@@ -35,9 +35,9 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "http-server": "^0.11.1",
-    "jsdom": "^13.1.0",
-    "jshint": "^2.9.7",
-    "mocha": "^5.2.0",
-    "uglify-js": "^3.4.9"
+    "jsdom": "^15.2.1",
+    "jshint": "^2.10.3",
+    "mocha": "^6.2.2",
+    "uglify-js": "^3.6.9"
   }
 }
