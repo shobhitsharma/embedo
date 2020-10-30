@@ -57,10 +57,11 @@ import Embedo from '/path/to/vendor';
 const embedo = new Embedo({
  facebook: {
     appId: 'my_app_id', // Enable facebook SDK
-    version: 'v2.10'
+    version: 'v8.0',
+    access_token: 'app_id_with_client_token_here'
   },
   twitter: true,  // Enable twitter SDK
-  instagram: true,  // Enable instagram SDK
+  instagram: { access_token: 'app_id_with_client_token_here' } // Enable instagram SDK
   pinterest: true  // Enable pinterest SDK,
   googlemaps: {
     key: 'my_api_key' // Enables google maps API
@@ -99,11 +100,14 @@ Also, an example can be [found here](https://codepen.io/shobhitsharma/pen/yojJZp
 <script>
   new Embedo({
     facebook: {
-      appId: 'my_app_id', // Enable facebook SDK
-      version: 'v2.10'
+      appId: 'my_app_id_here', // Enable facebook SDK
+      access_token: 'app_id_with_client_token_here', // Client-side token via Graph API
+      version: 'v8.10'
     },
     twitter: true,  // Enable twitter SDK
-    instagram: true,  // Enable instagram SDK
+    instagram: {
+      access_token: 'app_id_with_client_token_here', // Client-side token via Graph API
+    },  // Enable instagram SDK
     pinterest: true  // Enable pinterest SDK,
     googlemaps: {
       key: 'my_api_key' // Enables google maps API
