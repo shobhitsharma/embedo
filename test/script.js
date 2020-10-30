@@ -1,9 +1,9 @@
 'use strict';
 
 if (window.addEventListener) {
-  window.addEventListener("load", run, false);
+  window.addEventListener('load', run, false);
 } else if (window.attachEvent) {
-  window.attachEvent("onload", run);
+  window.attachEvent('onload', run);
 } else {
   window.onload = run;
 }
@@ -17,12 +17,14 @@ function run() {
 
   var embedo = new Embedo({
     facebook: {
-      version: 'v3.2',
+      version: 'v8.0',
       appId: '269918776508696',
-      xfbml: true
+      access_token: '{app-id}|{client-token}'
     },
     twitter: true,
-    instagram: true,
+    instagram: {
+      access_token: '{app-id}|{client-token}'
+    },
     pinterest: true,
     reddit: true,
     flickr: true,
@@ -41,37 +43,43 @@ function run() {
   function build() {
     document.getElementById('test-container').innerHTML = '';
 
-    Embedo.utils.watcher('demo', function () {
-      embedo.load(document.getElementById('test-container'),
-        document.getElementById('test-url').value, {
-          width: document.getElementById('test-width').value || null,
-          height: document.getElementById('test-height').value || null
-        }).done(function (data) {
-        Embedo.log('info', 'build', 'onDoneEvent', data);
-      }).fail(function (err) {
-        Embedo.log('error', 'build', 'onErrorEvent', err);
-      });
-    }, 250);
+    Embedo.utils.watcher(
+      'demo',
+      function () {
+        embedo
+          .load(document.getElementById('test-container'), document.getElementById('test-url').value, {
+            width: document.getElementById('test-width').value || null,
+            height: document.getElementById('test-height').value || null
+          })
+          .done(function (data) {
+            Embedo.log('info', 'build', 'onDoneEvent', data);
+          })
+          .fail(function (err) {
+            Embedo.log('error', 'build', 'onErrorEvent', err);
+          });
+      },
+      250
+    );
   }
 
   // Loads instagram photo
-  embedo.load(
-    document.getElementById('embedo-instagram'),
-    'https://www.instagram.com/p/BsUZJNjl9Is/', {
-      height: 800,
-      hidecaption: false
-    }
-  );
+  embedo.load(document.getElementById('embedo-instagram'), 'https://www.instagram.com/p/BsUZJNjl9Is/', {
+    height: 800,
+    hidecaption: false
+  });
 
   // Loads facebook post
-  embedo.load(
-    document.getElementById('embedo-facebook-post'),
-    'https://www.facebook.com/9gag/posts/10156278718151840'
-  ).fail(function (err) {
-    Embedo.log('error', 'TESTING', 'Embedo instance error', err);
-  }).done(function (data) {
-    Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
-  });
+  embedo
+    .load(
+      document.getElementById('embedo-facebook-post'),
+      'https://www.facebook.com/9gag/posts/10156278718151840'
+    )
+    .fail(function (err) {
+      Embedo.log('error', 'TESTING', 'Embedo instance error', err);
+    })
+    .done(function (data) {
+      Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
+    });
 
   embedo.load(
     document.getElementById('embedo-facebook-photo'),
@@ -83,10 +91,7 @@ function run() {
     'https://www.facebook.com/9gag/videos/10156133478761840'
   );
 
-  embedo.load(
-    document.getElementById('embedo-facebook-page'),
-    'https://www.facebook.com/facebook'
-  );
+  embedo.load(document.getElementById('embedo-facebook-page'), 'https://www.facebook.com/facebook');
 
   embedo.load(
     document.getElementById('embedo-facebook-comment'),
@@ -107,7 +112,8 @@ function run() {
   // Loads twitter timeline grid
   embedo.load(
     document.getElementById('embedo-twitter-grid'),
-    'https://twitter.com/TwitterDev/timelines/539487832448843776', {
+    'https://twitter.com/TwitterDev/timelines/539487832448843776',
+    {
       widget_type: 'grid'
     }
   );
@@ -115,119 +121,134 @@ function run() {
   // Loads twitter timeline
   embedo.load(
     document.getElementById('embedo-twitter-timeline'),
-    'https://twitter.com/TwitterDev/timelines/539487832448843776', {
+    'https://twitter.com/TwitterDev/timelines/539487832448843776',
+    {
       height: 500
     }
   );
 
   // Multiple URLs
-  embedo.load(document.getElementById('embedo-multiple'), [
-    'https://www.instagram.com/p/BX3fMnRjHpZ',
-    'https://www.instagram.com/p/BX3ejdJHmkD',
-    'https://www.instagram.com/p/BX3VEDqFvmg'
-  ], {
-    hidecaption: false
-  }).fail(function (err) {
-    Embedo.log('error', 'TESTING', 'Embedo instance error', err);
-  }).done(function (data) {
-    Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
-  });
+  embedo
+    .load(
+      document.getElementById('embedo-multiple'),
+      [
+        'https://www.instagram.com/p/BX3fMnRjHpZ',
+        'https://www.instagram.com/p/BX3ejdJHmkD',
+        'https://www.instagram.com/p/BX3VEDqFvmg'
+      ],
+      {
+        hidecaption: false
+      }
+    )
+    .fail(function (err) {
+      Embedo.log('error', 'TESTING', 'Embedo instance error', err);
+    })
+    .done(function (data) {
+      Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
+    });
 
-  embedo.load(document.getElementById('embedo-multiple-mixed'), [
-    'https://twitter.com/samccone/status/918142052927291392',
-    'https://www.instagram.com/p/BX3ejdJHmkD',
-    'https://www.youtube.com/watch?v=iKzRIweSBLA'
-  ], {
-    width: 640
-  }).fail(function (err) {
-    Embedo.log('error', 'TESTING', 'Embedo instance error', err);
-  }).done(function (data) {
-    Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
-  });
+  embedo
+    .load(
+      document.getElementById('embedo-multiple-mixed'),
+      [
+        'https://twitter.com/samccone/status/918142052927291392',
+        'https://www.instagram.com/p/BX3ejdJHmkD',
+        'https://www.youtube.com/watch?v=iKzRIweSBLA'
+      ],
+      {
+        width: 640
+      }
+    )
+    .fail(function (err) {
+      Embedo.log('error', 'TESTING', 'Embedo instance error', err);
+    })
+    .done(function (data) {
+      Embedo.log('info', 'TESTING', 'Embedo instance watch', data);
+    });
 
-  embedo.load(document.getElementById('embedo-gist'),
-    'https://gist.github.com/brandonb927/4149074.js');
+  embedo.load(document.getElementById('embedo-gist'), 'https://gist.github.com/brandonb927/4149074.js');
 
-  embedo.load(document.getElementById('embedo-codepen'),
-    'https://codepen.io/PavelDoGreat/embed/zdWzEL/?height=265&theme-id=0&default-tab=js,result&embed-version=2');
+  embedo.load(
+    document.getElementById('embedo-codepen'),
+    'https://codepen.io/PavelDoGreat/embed/zdWzEL/?height=265&theme-id=0&default-tab=js,result&embed-version=2'
+  );
 
   // Embed file test
-  embedo.load(document.getElementById('embedo-file'),
-    'http://www.a3ts.org/wp-content/uploads/2014/07/PREVAC.pdf');
+  embedo.load(
+    document.getElementById('embedo-file'),
+    'http://www.a3ts.org/wp-content/uploads/2014/07/PREVAC.pdf'
+  );
 
   // Embed external URL test
-  embedo.load(document.getElementById('embedo-website'),
-    'https://static01.nyt.com/video/players/offsite/index.html?videoId=100000005363413');
+  embedo.load(
+    document.getElementById('embedo-website'),
+    'https://static01.nyt.com/video/players/offsite/index.html?videoId=100000005363413'
+  );
 
   // Embed video URL
-  embedo.load(document.getElementById('embedo-video'),
-    'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm', {
+  embedo.load(
+    document.getElementById('embedo-video'),
+    'https://archive.org/download/WebmVp8Vorbis/webmvp8.webm',
+    {
       controls: 'contorls'
-    });
+    }
+  );
 
   // Loads pinterest post
   embedo.load(
-    document.getElementById("embedo-pinterest-pin"),
-    "https://www.pinterest.com/pin/99360735500167749", {
+    document.getElementById('embedo-pinterest-pin'),
+    'https://www.pinterest.com/pin/99360735500167749',
+    {
       strict: true
     }
   );
 
   embedo.load(
-    document.getElementById("embedo-pinterest-board"),
-    "https://www.pinterest.com/pinterest/official-news/", {
-      "data-pin-do": "embedBoard",
-      "data-pin-board-width": 750,
-      "data-pin-scale-height": 600,
-      "data-pin-scale-width": 80,
-      "strict": true
+    document.getElementById('embedo-pinterest-board'),
+    'https://www.pinterest.com/pinterest/official-news/',
+    {
+      'data-pin-do': 'embedBoard',
+      'data-pin-board-width': 750,
+      'data-pin-scale-height': 600,
+      'data-pin-scale-width': 80,
+      strict: true
     }
   );
 
-  embedo.load(
-    document.getElementById("embedo-pinterest-profile"),
-    "https://www.pinterest.com/pinterest/", {
-      "data-pin-do": "embedUser",
-      "data-pin-board-width": 750,
-      "data-pin-scale-height": 500,
-      "data-pin-scale-width": 80,
-      "strict": true
-    }
-  );
+  embedo.load(document.getElementById('embedo-pinterest-profile'), 'https://www.pinterest.com/pinterest/', {
+    'data-pin-do': 'embedUser',
+    'data-pin-board-width': 750,
+    'data-pin-scale-height': 500,
+    'data-pin-scale-width': 80,
+    strict: true
+  });
 
   // Loads youtube video
   embedo.load(
-    document.getElementById('embedo-youtube'), [
-      'https://www.youtube.com/watch?v=JGwWNGJdvx8',
-      'https://www.youtube.com/embed/vn2qXpcon-s'
-    ], {
+    document.getElementById('embedo-youtube'),
+    ['https://www.youtube.com/watch?v=JGwWNGJdvx8', 'https://www.youtube.com/embed/vn2qXpcon-s'],
+    {
       width: 640,
       height: 480
     }
   );
 
   // Loads vimeo video
-  embedo.load(
-    document.getElementById('embedo-vimeo'),
-    'https://vimeo.com/212603149', {
-      height: 500
-    }
-  );
+  embedo.load(document.getElementById('embedo-vimeo'), 'https://vimeo.com/212603149', {
+    height: 500
+  });
+
+  embedo.load(document.getElementById('embedo-jsfiddle'), 'http://jsfiddle.net/skelly/FX44w/embedded/');
 
   embedo.load(
-    document.getElementById('embedo-jsfiddle'),
-    'http://jsfiddle.net/skelly/FX44w/embedded/'
+    document.getElementById('embedo-soundcloud'),
+    'https://soundcloud.com/uiceheidd/lucid-dreams-forget-me'
   );
-
-  embedo
-    .load(
-      document.getElementById("embedo-soundcloud"),
-      "https://soundcloud.com/uiceheidd/lucid-dreams-forget-me"
-    );
 
   embedo.load(
     document.getElementById('embedo-googlemaps'),
-    'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954', {
+    'https://www.google.de/maps/place/Berlin/@52.5076682,13.286064,11z/data=!3m1!4b1!4m5!3m4!1s0x47a84e373f035901:0x42120465b5e3b70!8m2!3d52.5200066!4d13.404954',
+    {
       width: 640,
       height: 480,
       zoom: 10
@@ -275,15 +296,19 @@ function run() {
    * postMessage Event Tracking
    */
   // Create IE + others compatible event handler
-  var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+  var eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
   var eventer = window[eventMethod];
-  var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+  var messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
 
   // Decoding mesage posted on each successful render
-  eventer(messageEvent, function (event) {
-    if (event.data && Array.isArray(event.data) && event.data.indexOf('embedo') !== -1) {
-      var decoded_message = JSON.parse(event.data[2]);
-      Embedo.log('warn', event, decoded_message);
-    }
-  }, false);
+  eventer(
+    messageEvent,
+    function (event) {
+      if (event.data && Array.isArray(event.data) && event.data.indexOf('embedo') !== -1) {
+        var decoded_message = JSON.parse(event.data[2]);
+        Embedo.log('warn', event, decoded_message);
+      }
+    },
+    false
+  );
 }

@@ -5,8 +5,8 @@
   "main": "embedo.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "http-server ./ -p 8081 -S -o",
-    "lint": "jshint embedo.js plugins/**/**.embedo.js",
+    "start": "http-server ./ -p 8081 -o",
+    "lint": "eslint embedo.js plugins/**/**.embedo.js",
     "test": "mocha test/*.spec.js",
     "build:embedo": "uglifyjs embedo.js --compress --comments --mangle -o embedo.min.js",
     "build:embedo:gmaps": "uglifyjs plugins/gmaps/gmaps.embedo.js --compress --comments --mangle -o plugins/gmaps/gmaps.embedo.min.js",
@@ -34,10 +34,23 @@
   "homepage": "https://github.com/shobhitsharma/embedo",
   "devDependencies": {
     "chai": "^4.2.0",
-    "http-server": "^0.11.1",
-    "jsdom": "^15.2.1",
-    "jshint": "^2.10.3",
-    "mocha": "^6.2.2",
-    "uglify-js": "^3.6.9"
+    "eslint": "^7.12.1",
+    "http-server": "^0.12.3",
+    "jsdom": "^16.4.0",
+    "mocha": "^8.2.0",
+    "prettier": "^2.1.2",
+    "uglify-js": "^3.11.4"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "printWidth": 110
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 5
+    }
   }
 }
