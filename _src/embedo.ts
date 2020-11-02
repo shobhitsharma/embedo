@@ -15,7 +15,7 @@
   if (typeof define === 'function' && define.amd) {
     // @ts-expect-error ts-migrate(2304) FIXME: Cannot find name 'define'.
     define(factory);
-  // @ts-expect-error ts-migrate(2580) FIXME: Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
+    // @ts-expect-error ts-migrate(2580) FIXME: Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
   } else if (typeof module === 'object' && module.exports) {
     // @ts-expect-error ts-migrate(2580) FIXME: Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
     module.exports = factory();
@@ -435,7 +435,7 @@
             return callback(null, window[Embedo.defaults.SOURCES[type].GLOBAL]);
           }
           setTimeout(check, 10 * counter);
-        // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 1.
+          // @ts-expect-error ts-migrate(2554) FIXME: Expected 0 arguments, but got 1.
         })(type);
       },
 
@@ -700,8 +700,8 @@
           ? height
           : el_width > 0
           ? el_width / 1.5
-          // @ts-expect-error ts-migrate(2339) FIXME: Property 'utils' does not exist on type '(options:... Remove this comment to see the full error message
-          : Embedo.utils.compute(el.parentNode, 'height');
+          : // @ts-expect-error ts-migrate(2339) FIXME: Property 'utils' does not exist on type '(options:... Remove this comment to see the full error message
+            Embedo.utils.compute(el.parentNode, 'height');
         return {
           width: width,
           height: height
@@ -925,7 +925,13 @@
    * @param {object} options Optional parameters.
    * @return callback
    */
-  Embedo.prototype.facebook = function facebook(id: any, element: any, url: any, options: any, callback: any) {
+  Embedo.prototype.facebook = function facebook(
+    id: any,
+    element: any,
+    url: any,
+    options: any,
+    callback: any
+  ) {
     var type, fb_html_class;
     var globalOptions = this.options.facebook || {};
 
@@ -1710,7 +1716,7 @@
                 reqs.finished.push(data);
                 done(null, data);
               });
-            // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
+              // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
             }.bind(this);
           }.bind(this)
         );
@@ -1780,7 +1786,7 @@
                   // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
                   this.emit('refresh', request, data);
                 }
-              // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
+                // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
               }.bind(this)
             );
           }
@@ -1794,7 +1800,7 @@
                 // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
                 this.emit('refresh', request, data);
               }
-            // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
+              // @ts-expect-error ts-migrate(2683) FIXME: 'this' implicitly has type 'any' because it does n... Remove this comment to see the full error message
             }.bind(this)
           );
         }
