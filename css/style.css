@@ -90,7 +90,6 @@ video {
   vertical-align: baseline;
 }
 
-
 /* HTML5 display-role reset for older browsers */
 
 article,
@@ -142,7 +141,7 @@ blockquote:before,
 blockquote:after,
 q:before,
 q:after {
-  content: '';
+  content: "";
   content: none;
 }
 
@@ -153,7 +152,7 @@ table {
 
 body,
 html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Rubik', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Rubik", sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -265,18 +264,18 @@ header a:hover {
   padding: 5% 0;
 }
 
-#embedo-app>section.teaser {
+#embedo-app > section.teaser {
   position: relative;
   margin: 15% auto;
   font-size: 2.6em;
 }
 
-#embedo-app>section.teaser h1 {
+#embedo-app > section.teaser h1 {
   font-weight: 700;
   font-size: 130%;
 }
 
-#embedo-app>section.teaser>p {
+#embedo-app > section.teaser > p {
   font-size: 60%;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
@@ -285,7 +284,7 @@ header a:hover {
   max-width: 330px;
 }
 
-#embedo-app>section {
+#embedo-app > section {
   max-width: 750px;
   margin: 1% auto;
 }
@@ -299,7 +298,7 @@ header a:hover {
   border-radius: 30px;
 }
 
-#embedo-app form>input {
+#embedo-app form > input {
   float: left;
   color: rgb(0, 0, 0);
   margin-bottom: 0;
@@ -346,69 +345,71 @@ header a:hover {
   line-height: 60px;
 }
 
-.buttons>a {
+.buttons > a {
   color: white;
   border-radius: 3px;
   padding: 7px 10px;
   font-size: 14px;
   font-weight: 600;
   background-color: rgba(0, 0, 0, 0.21);
-  -webkit-box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
-  box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
+  -webkit-box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12),
+    0 10px 36px -4px rgba(77, 96, 232, 0.3);
+  box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12),
+    0 10px 36px -4px rgba(77, 96, 232, 0.3);
   -o-transition: all 0.2s ease;
   transition: all 0.2s ease;
   -webkit-transition: all 0.2s ease;
 }
 
-.buttons>a i {
+.buttons > a i {
   margin-right: 5px;
 }
 
-.buttons>a:hover {
+.buttons > a:hover {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-#embedo-app form>input#test-url {
+#embedo-app form > input#test-url {
   width: 70%;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   border-right: 1px solid rgba(173, 173, 173, 0.32);
 }
 
-#embedo-app form>input#test-width {
+#embedo-app form > input#test-width {
   width: 15%;
   border-right: 1px solid rgba(173, 173, 173, 0.32);
 }
 
-#embedo-app form>input#test-height {
+#embedo-app form > input#test-height {
   width: 15%;
   border-top-right-radius: 30px;
   border-bottom-right-radius: 30px;
 }
 
-#embedo-app>section>div {
+#embedo-app > section > div {
   text-align: center;
 }
 
-#embedo-app.test>section>div {
+#embedo-app.test > section > div {
   text-align: center;
   margin: 25px auto;
 }
 
-#embedo-app.test>section .code-demo {
+#embedo-app.test > section .code-demo {
   border-radius: 5px;
   background-color: #00000045;
   padding: 25px;
 }
 
-#embedo-app.test>section .code-demo h2 {
+#embedo-app.test > section .code-demo h2 {
   text-align: left;
   font-size: 1.6em;
   margin-bottom: 15px;
 }
 
 #embedo-app .code-editor,
-#embedo-app>section>code {
+#embedo-app > section > code {
   text-align: left;
   background-color: rgba(0, 0, 0, 0.87);
 }
@@ -423,7 +424,7 @@ section.readme {
   text-align: center;
 }
 
-[data-embedo-source="facebook"]>div {
+[data-embedo-source="facebook"] > div {
   background-color: white;
   border-radius: 3px;
 }
@@ -480,12 +481,12 @@ section.readme {
   top: 5px;
 }
 
-.topbar .packages>a {
+.topbar .packages > a {
   position: relative;
   line-height: 30px;
 }
 
-pre[class*=language-] {
+pre[class*="language-"] {
   margin: 0 auto;
 }
 
@@ -507,7 +508,7 @@ footer .supported-sites {
   text-align: center;
 }
 
-footer .supported-sites>h4 {
+footer .supported-sites > h4 {
   font-size: 16px;
   margin-bottom: 15px;
 }
@@ -541,11 +542,11 @@ footer .site-description {
   width: 90%;
 }
 
-footer>div {
+footer > div {
   padding: 20px 0;
 }
 
-footer div span>iframe {
+footer div span > iframe {
   position: relative;
   top: 5px;
   margin-left: 5px;
@@ -556,7 +557,7 @@ footer div span {
   font-weight: 600;
 }
 
-footer .buyme-button {
+.buyme-button {
   line-height: 1.6;
   color: #fff;
   background: linear-gradient(90deg, #223cbf, #883fa6 51%, #105dd9) 100%;
@@ -566,7 +567,6 @@ footer .buyme-button {
   flex: 1 1 auto;
   font-weight: bold;
   font-size: 16px;
-  margin: 10px;
   padding: 25px;
   transition: 0.5s;
   text-align: center;
@@ -736,7 +736,7 @@ body #superman .cape .inner {
 }
 
 body #superman .cape:before {
-  content: '';
+  content: "";
   position: absolute;
   width: 30%;
   height: 70%;
@@ -751,7 +751,7 @@ body #superman .cape:before {
 }
 
 body #superman .cape:after {
-  content: '';
+  content: "";
   position: absolute;
   width: 50%;
   height: 100%;
@@ -789,7 +789,7 @@ body #superman .shoe.rear {
 }
 
 body #superman .shoe:before {
-  content: '';
+  content: "";
   position: absolute;
   width: 0;
   height: 0;
@@ -812,7 +812,7 @@ body #superman .head {
 }
 
 body #superman .head:before {
-  content: '';
+  content: "";
   position: absolute;
   width: 90px;
   height: 30px;
@@ -822,7 +822,7 @@ body #superman .head:before {
 }
 
 body #superman:before {
-  content: '';
+  content: "";
   background: #33608e;
   width: 80px;
   height: 100px;
@@ -848,7 +848,7 @@ body #superman .arm {
 }
 
 body #superman .arm:after {
-  content: '';
+  content: "";
   position: absolute;
   width: 80px;
   height: 100px;
@@ -859,7 +859,7 @@ body #superman .arm:after {
 }
 
 body #superman .arm:before {
-  content: '';
+  content: "";
   position: absolute;
   border-bottom: 40px solid #ecc9a5;
   border-left: 0px solid transparent;
@@ -932,7 +932,7 @@ body #superman .belt {
 }
 
 body #superman .belt:before {
-  content: '';
+  content: "";
   position: absolute;
   width: 85px;
   height: 85px;
@@ -1003,7 +1003,7 @@ body #superman .leg.back:after {
 }
 
 body #superman .leg:after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -1013,7 +1013,7 @@ body #superman .leg:after {
 }
 
 body #superman .leg:before {
-  content: '';
+  content: "";
   position: absolute;
   width: 40px;
   height: 85px;
@@ -1040,7 +1040,7 @@ body #superman .leg:before {
 
 .cloud:before,
 .cloud:after {
-  content: '';
+  content: "";
   position: absolute;
   background: #fff;
   width: 50%;
@@ -1094,7 +1094,8 @@ body #superman .leg:before {
 
 @font-face {
   font-family: octicons-link;
-  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+  src: url(data:font/woff;charset=utf-8;base64,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)
+    format("woff");
 }
 
 .markdown-body {
@@ -1433,14 +1434,16 @@ body #superman .leg:before {
 }
 
 .markdown-body code {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
   font-size: 12px;
 }
 
 .markdown-body pre {
   margin-top: 0;
   margin-bottom: 0;
-  font: 12px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font: 12px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
 }
 
 .markdown-body .octicon {
@@ -1486,11 +1489,11 @@ body #superman .leg:before {
   content: "";
 }
 
-.markdown-body>*:first-child {
+.markdown-body > *:first-child {
   margin-top: 0 !important;
 }
 
-.markdown-body>*:last-child {
+.markdown-body > *:last-child {
   margin-bottom: 0 !important;
 }
 
@@ -1536,11 +1539,11 @@ body #superman .leg:before {
   border-left: 0.25em solid rgba(103, 103, 103, 0.19);
 }
 
-.markdown-body blockquote>:first-child {
+.markdown-body blockquote > :first-child {
   margin-top: 0;
 }
 
-.markdown-body blockquote>:last-child {
+.markdown-body blockquote > :last-child {
   margin-bottom: 0;
 }
 
@@ -1643,11 +1646,11 @@ body #superman .leg:before {
   margin-bottom: 0;
 }
 
-.markdown-body li>p {
+.markdown-body li > p {
   margin-top: 16px;
 }
 
-.markdown-body li+li {
+.markdown-body li + li {
   margin-top: 0.25em;
 }
 
@@ -1715,7 +1718,7 @@ body #superman .leg:before {
   word-wrap: normal;
 }
 
-.markdown-body pre>code {
+.markdown-body pre > code {
   padding: 0;
   margin: 0;
   font-size: 100%;
@@ -1769,7 +1772,8 @@ body #superman .leg:before {
 .markdown-body kbd {
   display: inline-block;
   padding: 3px 5px;
-  font: 11px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font: 11px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
   line-height: 10px;
   color: #444d56;
   vertical-align: middle;
@@ -1781,7 +1785,7 @@ body #superman .leg:before {
   box-shadow: inset 0 -1px 0 #959da5;
 }
 
-.markdown-body :checked+.radio-label {
+.markdown-body :checked + .radio-label {
   position: relative;
   z-index: 1;
   border-color: #5393dc;
@@ -1791,7 +1795,7 @@ body #superman .leg:before {
   list-style-type: none;
 }
 
-.markdown-body .task-list-item+.task-list-item {
+.markdown-body .task-list-item + .task-list-item {
   margin-top: 3px;
 }
 
@@ -1808,7 +1812,7 @@ code[class*="language-"],
 pre[class*="language-"] {
   color: #f8f8f2;
   background: none;
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
   text-align: left;
   white-space: pre;
   word-spacing: normal;
@@ -1823,27 +1827,25 @@ pre[class*="language-"] {
   hyphens: none;
 }
 
-
 /* Code blocks */
 
 pre[class*="language-"] {
   padding: 1em;
-  margin: .5em 0;
+  margin: 0.5em 0;
   overflow: auto;
   border-radius: 0.3em;
 }
 
-:not(pre)>code[class*="language-"],
+:not(pre) > code[class*="language-"],
 pre[class*="language-"] {
   background: rgba(148, 148, 148, 0.14);
 }
 
-
 /* Inline code */
 
-:not(pre)>code[class*="language-"] {
-  padding: .1em;
-  border-radius: .3em;
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em;
+  border-radius: 0.3em;
   white-space: normal;
 }
 
@@ -1859,7 +1861,7 @@ pre[class*="language-"] {
 }
 
 .namespace {
-  opacity: .7;
+  opacity: 0.7;
 }
 
 .token.property,
@@ -1988,15 +1990,15 @@ pre[class*="language-"] {
     padding: 0;
   }
 
-  #embedo-app>section.teaser {
+  #embedo-app > section.teaser {
     padding: 25px;
   }
 
-  #embedo-app>section.teaser>p {
+  #embedo-app > section.teaser > p {
     font-size: 13px;
   }
 
-  #embedo-app form>input {
+  #embedo-app form > input {
     font-size: 11px;
     padding: 15px 10px;
   }

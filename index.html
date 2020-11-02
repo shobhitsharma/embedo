@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>embedo - Social Media Embed Plugin</title>
+    <meta
+      content="A simple, fast, lightweight and standalone content embed plugin for web"
+      name="description"
+    />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link href="https://github.com/favicon.ico" rel="icon" type="image/ico" />
+    <!-- Global OG Tags -->
+    <meta
+      content="embedo - Social Media Embed Plugin"
+      property="og:site_name"
+    />
+    <meta content="website" property="og:type" />
+    <meta
+      content="https://i.ibb.co/CPtJ4Xt/embedo.png"
+      property="og:image"
+    />
+    <meta
+      content="A simple, fast, lightweight and standalone content embed plugin for web"
+      property="og:description"
+    />
+    <meta content="embedo - Social Media Embed Plugin" property="og:title" />
+    <meta content="https://shobhitsharma.github.io/embedo" property="og:url" />
+    <!-- Twitter OG Tags -->
+    <meta content="summary_large_image" name="twitter:card" />
+    <meta content="@Sh0bhit" name="twitter:site" />
+    <meta content="@Sh0bhit" name="twitter:creator" />
+    <meta content="embedo - Social Media Embed Plugin" name="twitter:title" />
+    <meta
+      content="A simple, fast, lightweight and standalone content embed plugin for web."
+      name="twitter:description"
+    />
+    <meta content="https://shobhitsharma.github.io/embedo" name="twitter:url" />
+    <meta
+      content="https://i.ibb.co/CPtJ4Xt/embedo.png"
+      property="og:image"
+    />
+    <meta
+      content="https://i.ibb.co/CPtJ4Xt/embedo.png"
+      name="twitter:image"
+    />
+    <link href="./css/style.css" rel="stylesheet" />
+    <!--[if IE]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.1/core.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <main>
+      <div id="embedo-app">
+        <header class="header">
+          <a class="active">Setup</a>
+          <a href="https://shobhitsharma.github.io/embedo/usage">Usage</a>
+          <a href="https://github.com/shobhitsharma/embedo/wiki">Docs</a>
+          <a
+            class="github-link"
+            href="https://github.com/shobhitsharma/embedo"
+            target="_blank"
+            ><i class="fab fa-github"></i
+          ></a>
+        </header>
+        <section class="teaser">
+          <h1>embedo</h1>
+          <p>
+            A simple, lightweight and standalone content embed plugin for web
+          </p>
+          <div class="buttons">
+            <a href="https://github.com/shobhitsharma/embedo"
+              ><i class="fas fa-star"></i> Star</a
+            >
+            <a href="https://github.com/shobhitsharma/embedo/wiki"
+              ><i class="fab fa-readme"></i> Documentation</a
+            >
+            <a href="https://www.paypal.me/shobhitsharma" class="buyme-button"
+              >Buy me ☕️ or 🍺</a
+            >
+          </div>
+        </section>
+        <section class="test-case" id="test-case">
+          <form class="has-shadow">
+            <input
+              id="test-url"
+              placeholder="enter your URL from supported sources here"
+            />
+            <input id="test-width" placeholder="width" />
+            <input id="test-height" placeholder="height" />
+          </form>
+          <div id="test-container"></div>
+        </section>
+        <section class="code-editor-container">
+          <div class="topbar">
+            <div class="action-buttons"></div>
+            <h2>embedo.js</h2>
+            <div class="packages">
+              <a href="https://badge.fury.io/bo/embedo" target="_blank"
+                ><img
+                  alt="Bower version"
+                  height="18"
+                  src="https://badge.fury.io/bo/embedo@2x.png"
+              /></a>
+              <a href="https://badge.fury.io/js/embedo" target="_blank"
+                ><img
+                  alt="npm version"
+                  height="18"
+                  src="https://badge.fury.io/js/embedo@2x.png"
+              /></a>
+            </div>
+          </div>
+          <div class="code-editor">
+            <pre class="line-numbers">
+        <code class="language-javascript">
+ /**
+  * @implements Embedo setup
+  *
+  * @package {npm} npm install embedo --save
+  * @package {bower} bower install embedo
+  *
+  * @import {jsdelivr} https://cdn.jsdelivr.net/npm/embedo
+  * @import {cdnjs} https://cdnjs.com/libraries/embedo
+  * @import {unpkg} https://unpkg.com/embedo
+  */
+
+  import Embedo from './my/vendor/folder';
+
+  const embedo = new Embedo({
+    facebook: {
+      appId: 'my_app_id', // Enable facebook SDK
+      version: 'v8.0',
+      access_token: 'you_client_access_token'
+    },
+    twitter: true,  // Enable twitter SDK
+    instagram: {
+      access_token: 'you_client_access_token'
+    },  // Enable instagram SDK
+    pinterest: true  // Enable pinterest SDK,
+    googlemaps: {
+      key: 'my_api_key' // Enables google maps API
+    }
+  });
+
+  // Calling .load() event (HTMLElement, url[String|Array], options[Object])
+  embedo.load(
+    document.getElementById('my-awesome-container'),
+    'https://twitter.com/Twitter/status/849866660882206721'
+  )
+  .done((data) => {})
+  .fail((err) => {})
+
+  // OR calling .load() event (HTMLElement, url[String|Array], options[Object])
+  embedo.load(
+    document.getElementById('my-awesome-container'), [
+    'https://www.instagram.com/p/BX3fMnRjHpZ',
+    'https://www.instagram.com/p/BX3ejdJHmkD',
+    'https://www.instagram.com/p/BX3VEDqFvmg'
+  ], {
+    hidecaption: false
+  });
+
+  // Load with native and external options
+  embedo.load(
+    document.getElementById('my-awesome-container'),
+    'https://www.instagram.com/p/BSoJJjQA3Td/',
+    {
+      width: 640,
+      height: 480,
+      hidecaption: true
+    }
+  );
+
+  // Also, the jQuery way
+  embedo.load($('my-awesome-container').get(0), 'my://url');
+
+  // Refresh event (if no element passed, refreshes all embedo instances)
+  embedo.refresh(document.getElementById('my-awesome-container'));
+
+  // Destroy event (if no element passed, destroys all embedo instances)
+  embedo.destroy(document.getElementById('my-awesome-container'));
+
+  // Single instance event handler
+  embedo.load(el, url, options).done((data) => {}).fail((err) => {})
+
+  // Global instances event handlers
+  embedo.on('watch', (event, result) => {});
+  embedo.on('refresh', (result, data) => {});
+  embedo.on('destroy', () => {});
+        </code>
+      </pre>
+          </div>
+        </section>
+        <footer>
+          <div class="supported-sites">
+            <h4>What's currently supported?</h4>
+            <div class="supports">
+              <span class="site fab fa-facebook-square"></span>
+              <span class="site-description"
+                >Facebook URLs containing page, post, photos, videos or
+                comments</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-twitter"></span>
+              <span class="site-description"
+                >Twitter URLs containing user timeline and tweets</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-youtube"></span>
+              <span class="site-description"
+                >YouTube videos URLs, playlists will play in loop</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-instagram"></span>
+              <span class="site-description"
+                >Instagram URLs containing posts and videos</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-pinterest"></span>
+              <span class="site-description"
+                >Pinterest URLs containing boards, profile and pins</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-vimeo"></span>
+              <span class="site-description">Vimeo URLs containing videos</span>
+            </div>
+            <div class="supports">
+              <span class="site fab fa-soundcloud"></span>
+              <span class="site-description"
+                >SoundCloud URLs containing videos</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-reddit-alien"></span>
+              <span class="site-description"
+                >Reddit posts or comments as plugin</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fab fa-google"></span>
+              <span class="site-description"
+                >Google Maps URLs containing cordinates to a location</span
+              >
+            </div>
+            <div class="supports">
+              <span class="site fas fa-code"></span>
+              <span class="site-description"
+                >Fallback to iframe for allowed CORS urls or formats like .pdf,
+                .webm, etc.</span
+              >
+            </div>
+          </div>
+          <div class="copyrights">
+            <a
+              href="https://github.com/shobhitsharma/embedo/blob/master/LICENSE.md"
+              target="_blank"
+            >
+              <i class="fas fa-copyright"></i> Distributed under MIT License
+            </a>
+          </div>
+        </footer>
+      </div>
+      <div class="sky">
+        <div class="cloud-1 cloud">
+          <div class="cloud--inner"></div>
+        </div>
+        <div class="cloud-2 cloud">
+          <div class="cloud--inner"></div>
+        </div>
+        <div class="cloud-3 cloud">
+          <div class="cloud--inner"></div>
+        </div>
+      </div>
+      <section id="action-hero">
+        <div id="superman">
+          <div class="cape">
+            <div class="inner"></div>
+          </div>
+          <div class="head"></div>
+          <div class="arm"></div>
+          <div class="neck"></div>
+          <div class="collar"></div>
+          <div class="pants"></div>
+          <div class="belt"></div>
+          <div class="leg"></div>
+          <div class="leg three"></div>
+          <div class="leg two"></div>
+          <div class="leg back"></div>
+          <div class="leg back two"></div>
+          <div class="shoe"></div>
+          <div class="shoe rear"></div>
+        </div>
+      </section>
+    </main>
+    <script>
+      (function (i, s, o, g, r, a, m) {
+        i["GoogleAnalyticsObject"] = r;
+        (i[r] =
+          i[r] ||
+          function () {
+            (i[r].q = i[r].q || []).push(arguments);
+          }),
+          (i[r].l = 1 * new Date());
+        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m);
+      })(
+        window,
+        document,
+        "script",
+        "https://www.google-analytics.com/analytics.js",
+        "ga"
+      );
+      ga("create", "UA-80234662-2", "auto");
+      ga("send", "pageview");
+    </script>
+    <!-- Here is how embedo.js get declared on top of your implementation -->
+    <script src="https://unpkg.com/embedo/embedo.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js"></script>
+    <script src="./js/main.js"></script>
+  </body>
+</html>
